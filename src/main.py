@@ -8,6 +8,8 @@ from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 from mediapipe.tasks.python.vision import drawing_styles, drawing_utils
 
+DEBUG = True
+
 WINDOW_NAME = "You Are Fish"
 CAMERA_INDEX = 0
 MODEL_URL = (
@@ -58,6 +60,72 @@ def draw_face_landmarks(frame, face_landmarks) -> None:
     )
 
 
+def get_landmark_confidence(result) -> float | None:
+    if not result or not result.face_landmarks:
+        return None
+
+    presence_values = [
+        landmark.presence
+        for landmark in result.face_landmarks[0]
+        if landmark.presence is not None
+    ]
+    if not presence_values:
+        return None
+
+    return sum(presence_values) / len(presence_values)
+
+
+def draw_debug_overlay(
+    frame,
+    fps: int,
+    face_detected: bool,
+    confidence: float | None,
+    width: int,
+    height: int,
+) -> None:
+    if confidence is None:
+        confidence_text = "n/a"
+    else:
+        confidence_text = f"{confidence:.2f}"
+
+    lines = [
+        f"FPS  {fps}",
+        f"Face {'yes' if face_detected else 'no'}",
+        f"Conf {confidence_text}",
+        f"Res  {width}x{height}",
+    ]
+
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    font_scale = 0.5
+    thickness = 1
+    line_height = 18
+    x = 8
+    y = 18
+
+    for index, line in enumerate(lines):
+        baseline_y = y + index * line_height
+        cv2.putText(
+            frame,
+            line,
+            (x + 1, baseline_y + 1),
+            font,
+            font_scale,
+            (0, 0, 0),
+            thickness,
+            cv2.LINE_AA,
+        )
+        cv2.putText(
+            frame,
+            line,
+            (x, baseline_y),
+            font,
+            font_scale,
+            (255, 255, 255),
+            thickness,
+            cv2.LINE_AA,
+        )
+
+
 def main() -> None:
     model_path = ensure_model()
 
@@ -80,13 +148,22 @@ def main() -> None:
 
     start_time = time.monotonic()
     last_timestamp_ms = -1
+    last_frame_time = None
+    fps = 0
 
     try:
         with vision.FaceLandmarker.create_from_options(options) as landmarker:
             while True:
+                frame_start = time.monotonic()
                 ok, frame = cap.read()
                 if not ok:
                     raise RuntimeError("Failed to read frame from camera")
+
+                if last_frame_time is not None:
+                    frame_delta = frame_start - last_frame_time
+                    if frame_delta > 0:
+                        fps = int(round(1 / frame_delta))
+                last_frame_time = frame_start
 
                 rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                 mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb_frame)
@@ -99,8 +176,20 @@ def main() -> None:
                 landmarker.detect_async(mp_image, timestamp_ms)
 
                 result = latest_result["value"]
-                if result and result.face_landmarks:
+                face_detected = bool(result and result.face_landmarks)
+                if face_detected:
                     draw_face_landmarks(frame, result.face_landmarks[0])
+
+                if DEBUG:
+                    frame_height, frame_width = frame.shape[:2]
+                    draw_debug_overlay(
+                        frame,
+                        fps=fps,
+                        face_detected=face_detected,
+                        confidence=get_landmark_confidence(result),
+                        width=frame_width,
+                        height=frame_height,
+                    )
 
                 cv2.imshow(WINDOW_NAME, frame)
 
