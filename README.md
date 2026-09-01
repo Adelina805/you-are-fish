@@ -22,7 +22,7 @@ pip install -r requirements.txt
 ```
 
 ```bash
-python main.py
+python src/main.py
 ```
 
 Press `Q` or `q` to exit.
