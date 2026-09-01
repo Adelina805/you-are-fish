@@ -1,17 +1,24 @@
 # You Are Fish
 
-Computer vision prototype for a webcam-based project.
+Webcam computer-vision prototype. Live at [you-are-fish.vercel.app](https://you-are-fish.vercel.app). Click **Enable camera**, then **Calibrate**. Head pose is computed on your device; frames are not uploaded.
+
+```bash
+npm install
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000).
 
 ## Milestone 5: Directional classifier
 
 After calibration, calibrated yaw/pitch are smoothed with an exponential moving average, then classified into one of five directions: `CENTER`, `LEFT`, `RIGHT`, `UP`, or `DOWN`. The detected direction is shown as large centered text. No fish yet.
 
-Thresholds live in [`src/direction.py`](src/direction.py):
+Thresholds live in [`lib/direction.ts`](lib/direction.ts):
 
-- `YAW_DEAD_ZONE_DEG` (default `8.0`)
-- `PITCH_DEAD_ZONE_DEG` (default `8.0`)
+- `YAW_DEAD_ZONE_DEG` (default `8`)
+- `PITCH_DEAD_ZONE_DEG` (default `8`)
 
-Smoothing strength is in [`src/smoothing.py`](src/smoothing.py) as `SMOOTHING_ALPHA` (default `0.25`).
+Smoothing strength is in [`lib/smoothing.ts`](lib/smoothing.ts) as `SMOOTHING_ALPHA` (default `0.25`).
 
 ### What is a dead zone?
 
@@ -35,7 +42,7 @@ If both axes leave the dead zone at once (a diagonal glance), the classifier pic
 
 ## Milestone 4: Per-user calibration
 
-On startup, click **Calibrate** when you are ready. The app then asks you to look comfortably straight at the screen, collects head-pose samples for about 1.5 seconds, and computes a neutral yaw/pitch baseline. Later measurements subtract that baseline so zero means your comfortable rest pose, not a fixed canonical face. Click **Calibrate** again any time to redo it.
+Click **Calibrate** when you are ready. The app then asks you to look comfortably straight at the screen, collects head-pose samples for about 1.5 seconds, and computes a neutral yaw/pitch baseline. Later measurements subtract that baseline so zero means your comfortable rest pose, not a fixed canonical face. Click **Calibrate** again any time to redo it.
 
 The HUD shows:
 
@@ -43,7 +50,7 @@ The HUD shows:
 - calibrated yaw/pitch (after baseline subtraction)
 - the calculated neutral baseline
 
-With `DEBUG = True`, the pose signal viz uses calibrated values after calibration completes.
+With `DEBUG = true`, the pose signal viz uses calibrated values after calibration completes.
 
 ### Why calibrate per user?
 
@@ -51,7 +58,7 @@ MediaPipe's facial transformation matrix is a Procrustes fit to a canonical 3D f
 
 ## Milestone 3: Head orientation
 
-Open the default webcam, detect one face, and estimate head orientation from MediaPipe Face Landmarker’s facial transformation matrix.
+Open the webcam in the browser, detect one face, and estimate head orientation from MediaPipe Face Landmarker’s facial transformation matrix.
 
 The matrix is a weighted Procrustes alignment of the canonical 3D face to the detected face (scale + rotation + translation). The app recovers the rotation with SVD and converts it to intrinsic Tait-Bryan YXZ angles. Values are shown in degrees; they are not classified into LEFT/RIGHT/UP/DOWN.
 
@@ -61,61 +68,17 @@ Sign convention (unmirrored webcam):
 - Positive pitch: looking up
 - Positive roll: tilting clockwise from the camera’s view
 
-With `DEBUG = True`, a top-right debug panel shows raw yaw (horizontal bar) and pitch (vertical bar) with a zero crosshair, current marker, and recent unsmoothed history trail.
+With `DEBUG = true`, a top-right debug panel shows raw yaw (horizontal bar) and pitch (vertical bar) with a zero crosshair, current marker, and recent unsmoothed history trail.
 
-On first run, the face landmarker model is downloaded automatically to `models/face_landmarker.task`.
+The Face Landmarker model is loaded in the browser from MediaPipe’s CDN.
 
 ## Milestone 2: One-face Face Landmarker
 
-Open the default webcam, detect one face with MediaPipe Tasks Face Landmarker, draw the face mesh over the live feed, and quit with `Q`.
-
-On first run, the face landmarker model is downloaded automatically to `models/face_landmarker.task`.
+Open the webcam, detect one face with MediaPipe Tasks Face Landmarker, and draw the face mesh over the live feed.
 
 ## Milestone 1: Webcam feed
 
-Open the default webcam, display the live feed, and quit with `Q`.
-
-## Live web app
-
-The webcam prototype also runs in the browser at [you-are-fish.vercel.app](https://you-are-fish.vercel.app). Click **Enable camera**, then **Calibrate**. Head pose is computed on your device; frames are not uploaded.
-
-```bash
-npm install
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000). The original Python desktop app below still works locally.
-
-### Requirements
-
-- Python 3.10–3.13
-- `mediapipe==0.10.35` (pinned; MediaPipe 1.0.x currently crashes on macOS when initializing Face Landmarker)
-
-### Setup
-
-```bash
-cd /Users/adelinamartinez/you-are-fish
-python3 --version
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install --upgrade pip
-pip install -r requirements.txt
-```
-
-```bash
-python src/main.py
-```
-
-Press `Q` or `q` to exit.
-
-### Deactivate
-
-```bash
-deactivate
-```
-
-To recreate the environment, delete `.venv` and repeat the setup steps.
-
+Open the webcam and display the live feed in the browser.
 
 ### LATER:
 
