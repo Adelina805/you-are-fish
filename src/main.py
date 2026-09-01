@@ -9,6 +9,7 @@ from mediapipe.tasks.python import vision
 from mediapipe.tasks.python.vision import drawing_styles, drawing_utils
 
 from head_pose import HeadPose, estimate_head_pose
+from pose_viz import PoseHistory, draw_pose_signal_viz
 
 DEBUG = True
 
@@ -89,6 +90,17 @@ def get_head_pose(result) -> HeadPose | None:
     return estimate_head_pose(result.facial_transformation_matrixes[0])
 
 
+DEBUG_OVERLAY_MARGIN = 16
+DEBUG_OVERLAY_FONT_SCALE = 0.75
+DEBUG_OVERLAY_THICKNESS = 2
+DEBUG_OVERLAY_LINE_HEIGHT = 28
+DEBUG_OVERLAY_BACKING_ALPHA = 0.55
+
+
+def debug_overlay_height(line_count: int) -> int:
+    return DEBUG_OVERLAY_MARGIN + line_count * DEBUG_OVERLAY_LINE_HEIGHT + DEBUG_OVERLAY_MARGIN
+
+
 def draw_debug_overlay(
     frame,
     fps: int,
@@ -97,7 +109,7 @@ def draw_debug_overlay(
     width: int,
     height: int,
     pose: HeadPose | None,
-) -> None:
+) -> int:
     lines = [
         f"Yaw   {_format_angle(None if pose is None else pose.yaw_deg)}",
         f"Pitch {_format_angle(None if pose is None else pose.pitch_deg)}",
@@ -117,14 +129,41 @@ def draw_debug_overlay(
         ]
 
     font = cv2.FONT_HERSHEY_SIMPLEX
-    font_scale = 0.5
-    thickness = 1
-    line_height = 18
-    x = 8
-    y = 18
+    font_scale = DEBUG_OVERLAY_FONT_SCALE
+    thickness = DEBUG_OVERLAY_THICKNESS
+    line_height = DEBUG_OVERLAY_LINE_HEIGHT
+    margin = DEBUG_OVERLAY_MARGIN
+    pad = 10
+
+    text_sizes = [cv2.getTextSize(line, font, font_scale, thickness)[0] for line in lines]
+    panel_width = max(size[0] for size in text_sizes) + pad * 2
+    panel_height = debug_overlay_height(len(lines)) - DEBUG_OVERLAY_MARGIN + pad
+    panel_right = width - margin
+    panel_left = panel_right - panel_width
+    panel_top = margin
+    panel_bottom = panel_top + panel_height
+
+    overlay = frame.copy()
+    cv2.rectangle(
+        overlay,
+        (panel_left, panel_top),
+        (panel_right, panel_bottom),
+        (20, 20, 20),
+        thickness=-1,
+    )
+    cv2.addWeighted(
+        overlay,
+        DEBUG_OVERLAY_BACKING_ALPHA,
+        frame,
+        1.0 - DEBUG_OVERLAY_BACKING_ALPHA,
+        0,
+        frame,
+    )
 
     for index, line in enumerate(lines):
-        baseline_y = y + index * line_height
+        text_width = text_sizes[index][0]
+        x = panel_right - pad - text_width
+        baseline_y = panel_top + pad + (index + 1) * line_height - 6
         cv2.putText(
             frame,
             line,
@@ -145,6 +184,8 @@ def draw_debug_overlay(
             thickness,
             cv2.LINE_AA,
         )
+
+    return panel_bottom + margin
 
 
 def main() -> None:
@@ -172,6 +213,7 @@ def main() -> None:
     last_timestamp_ms = -1
     last_frame_time = None
     fps = 0
+    pose_history = PoseHistory()
 
     try:
         with vision.FaceLandmarker.create_from_options(options) as landmarker:
@@ -200,11 +242,13 @@ def main() -> None:
                 result = latest_result["value"]
                 face_detected = bool(result and result.face_landmarks)
                 pose = get_head_pose(result)
+                if pose is not None:
+                    pose_history.append(pose)
                 if face_detected:
                     draw_face_landmarks(frame, result.face_landmarks[0])
 
                 frame_height, frame_width = frame.shape[:2]
-                draw_debug_overlay(
+                hud_bottom = draw_debug_overlay(
                     frame,
                     fps=fps,
                     face_detected=face_detected,
@@ -213,6 +257,8 @@ def main() -> None:
                     height=frame_height,
                     pose=pose,
                 )
+                if DEBUG:
+                    draw_pose_signal_viz(frame, pose, pose_history, top_offset=hud_bottom)
 
                 cv2.imshow(WINDOW_NAME, frame)
 

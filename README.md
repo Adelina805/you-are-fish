@@ -14,6 +14,8 @@ Sign convention (unmirrored webcam):
 - Positive pitch: looking up
 - Positive roll: tilting clockwise from the camera’s view
 
+With `DEBUG = True`, a top-right debug panel shows raw yaw (horizontal bar) and pitch (vertical bar) with a zero crosshair, current marker, and recent unsmoothed history trail.
+
 On first run, the face landmarker model is downloaded automatically to `models/face_landmarker.task`.
 
 ## Milestone 2: One-face Face Landmarker
