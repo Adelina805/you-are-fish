@@ -2,6 +2,20 @@
 
 Computer vision prototype for a webcam-based project.
 
+## Milestone 3: Head orientation
+
+Open the default webcam, detect one face, and estimate head orientation from MediaPipe Face Landmarker’s facial transformation matrix.
+
+The matrix is a weighted Procrustes alignment of the canonical 3D face to the detected face (scale + rotation + translation). The app recovers the rotation with SVD and converts it to intrinsic Tait-Bryan YXZ angles. Values are shown in degrees; they are not classified into LEFT/RIGHT/UP/DOWN.
+
+Sign convention (unmirrored webcam):
+
+- Positive yaw: looking left
+- Positive pitch: looking up
+- Positive roll: tilting clockwise from the camera’s view
+
+On first run, the face landmarker model is downloaded automatically to `models/face_landmarker.task`.
+
 ## Milestone 2: One-face Face Landmarker
 
 Open the default webcam, detect one face with MediaPipe Tasks Face Landmarker, draw the face mesh over the live feed, and quit with `Q`.

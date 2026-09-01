@@ -8,6 +8,8 @@ from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 from mediapipe.tasks.python.vision import drawing_styles, drawing_utils
 
+from head_pose import HeadPose, estimate_head_pose
+
 DEBUG = True
 
 WINDOW_NAME = "You Are Fish"
@@ -75,6 +77,18 @@ def get_landmark_confidence(result) -> float | None:
     return sum(presence_values) / len(presence_values)
 
 
+def _format_angle(degrees: float | None) -> str:
+    if degrees is None:
+        return "n/a"
+    return f"{degrees:+.1f}"
+
+
+def get_head_pose(result) -> HeadPose | None:
+    if not result or not result.facial_transformation_matrixes:
+        return None
+    return estimate_head_pose(result.facial_transformation_matrixes[0])
+
+
 def draw_debug_overlay(
     frame,
     fps: int,
@@ -82,18 +96,25 @@ def draw_debug_overlay(
     confidence: float | None,
     width: int,
     height: int,
+    pose: HeadPose | None,
 ) -> None:
-    if confidence is None:
-        confidence_text = "n/a"
-    else:
-        confidence_text = f"{confidence:.2f}"
-
     lines = [
-        f"FPS  {fps}",
-        f"Face {'yes' if face_detected else 'no'}",
-        f"Conf {confidence_text}",
-        f"Res  {width}x{height}",
+        f"Yaw   {_format_angle(None if pose is None else pose.yaw_deg)}",
+        f"Pitch {_format_angle(None if pose is None else pose.pitch_deg)}",
+        f"Roll  {_format_angle(None if pose is None else pose.roll_deg)}",
     ]
+    if DEBUG:
+        if confidence is None:
+            confidence_text = "n/a"
+        else:
+            confidence_text = f"{confidence:.2f}"
+        lines = [
+            f"FPS   {fps}",
+            f"Face  {'yes' if face_detected else 'no'}",
+            f"Conf  {confidence_text}",
+            f"Res   {width}x{height}",
+            *lines,
+        ]
 
     font = cv2.FONT_HERSHEY_SIMPLEX
     font_scale = 0.5
@@ -139,6 +160,7 @@ def main() -> None:
         base_options=python.BaseOptions(model_asset_path=str(model_path)),
         running_mode=vision.RunningMode.LIVE_STREAM,
         num_faces=1,
+        output_facial_transformation_matrixes=True,
         result_callback=on_result,
     )
 
@@ -177,19 +199,20 @@ def main() -> None:
 
                 result = latest_result["value"]
                 face_detected = bool(result and result.face_landmarks)
+                pose = get_head_pose(result)
                 if face_detected:
                     draw_face_landmarks(frame, result.face_landmarks[0])
 
-                if DEBUG:
-                    frame_height, frame_width = frame.shape[:2]
-                    draw_debug_overlay(
-                        frame,
-                        fps=fps,
-                        face_detected=face_detected,
-                        confidence=get_landmark_confidence(result),
-                        width=frame_width,
-                        height=frame_height,
-                    )
+                frame_height, frame_width = frame.shape[:2]
+                draw_debug_overlay(
+                    frame,
+                    fps=fps,
+                    face_detected=face_detected,
+                    confidence=get_landmark_confidence(result),
+                    width=frame_width,
+                    height=frame_height,
+                    pose=pose,
+                )
 
                 cv2.imshow(WINDOW_NAME, frame)
 
