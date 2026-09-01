@@ -75,6 +75,17 @@ On first run, the face landmarker model is downloaded automatically to `models/f
 
 Open the default webcam, display the live feed, and quit with `Q`.
 
+## Live web app
+
+The webcam prototype also runs in the browser at [you-are-fish.vercel.app](https://you-are-fish.vercel.app). Click **Enable camera**, then **Calibrate**. Head pose is computed on your device; frames are not uploaded.
+
+```bash
+npm install
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000). The original Python desktop app below still works locally.
+
 ### Requirements
 
 - Python 3.10–3.13

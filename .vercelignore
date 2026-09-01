@@ -1,0 +1,7 @@
+.venv
+src
+models
+requirements.txt
+*.pyc
+__pycache__
+.cursor
