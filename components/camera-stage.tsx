@@ -21,7 +21,76 @@ import { PoseSmoother } from "@/lib/smoothing";
 const MODEL_URL =
   "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task";
 const WASM_URL = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.35/wasm";
+const CAMERA_ENABLED_KEY = "you-are-fish:camera-enabled";
 const DEBUG = true;
+
+// MediaPipe's WASM binds console.error at init and writes INFO/WARNING logs to
+// stderr. Next.js treats those as overlay errors, so drop the known noise first.
+const MEDIAPIPE_WASM_LOG_NOISE = [
+  "Created TensorFlow Lite XNNPACK delegate for CPU",
+  "Sets FaceBlendshapesGraph acceleration to xnnpack by default",
+  "OpenGL error checking is disabled",
+];
+
+function isMediapipeWasmLogNoise(args: unknown[]): boolean {
+  return args.some(
+    (arg) =>
+      typeof arg === "string" &&
+      MEDIAPIPE_WASM_LOG_NOISE.some((noise) => arg.includes(noise)),
+  );
+}
+
+let mediapipeWasmLogsSilenced = false;
+
+function silenceMediapipeWasmLogs(): void {
+  if (mediapipeWasmLogsSilenced) {
+    return;
+  }
+  mediapipeWasmLogsSilenced = true;
+
+  const originalError = console.error.bind(console);
+  console.error = (...args: Parameters<typeof console.error>) => {
+    if (isMediapipeWasmLogNoise(args)) {
+      return;
+    }
+    originalError(...args);
+  };
+}
+
+function setCameraEnabledFlag(enabled: boolean): void {
+  try {
+    if (enabled) {
+      localStorage.setItem(CAMERA_ENABLED_KEY, "true");
+    } else {
+      localStorage.removeItem(CAMERA_ENABLED_KEY);
+    }
+  } catch {
+    // localStorage may be unavailable in private browsing or restricted contexts
+  }
+}
+
+function hasCameraEnabledFlag(): boolean {
+  try {
+    return localStorage.getItem(CAMERA_ENABLED_KEY) === "true";
+  } catch {
+    return false;
+  }
+}
+
+async function shouldAutoStartCamera(): Promise<boolean> {
+  try {
+    const result = await navigator.permissions.query({ name: "camera" as PermissionName });
+    if (result.state === "granted") {
+      return true;
+    }
+    if (result.state === "denied") {
+      return false;
+    }
+  } catch {
+    // Safari and some browsers do not support permissions.query for camera
+  }
+  return hasCameraEnabledFlag();
+}
 
 type Status = "idle" | "loading" | "running" | "error";
 
@@ -30,6 +99,8 @@ type MeshStyle = {
   color: string;
   lineWidth: number;
 };
+
+type SessionMode = "stopped" | "preview" | "running";
 
 type Session = {
   landmarker: FaceLandmarkerType | null;
@@ -42,7 +113,7 @@ type Session = {
   lastTimestamp: number;
   lastFrameTime: number | null;
   fps: number;
-  running: boolean;
+  mode: SessionMode;
   frameId: number;
 };
 
@@ -58,12 +129,37 @@ function createSession(): Session {
     lastTimestamp: -1,
     lastFrameTime: null,
     fps: 0,
-    running: false,
+    mode: "stopped",
     frameId: 0,
   };
 }
 
+function drawMirroredVideo(
+  ctx: CanvasRenderingContext2D,
+  canvas: HTMLCanvasElement,
+  video: HTMLVideoElement,
+): boolean {
+  const width = video.videoWidth;
+  const height = video.videoHeight;
+  if (width === 0 || height === 0) {
+    return false;
+  }
+
+  if (canvas.width !== width || canvas.height !== height) {
+    canvas.width = width;
+    canvas.height = height;
+  }
+
+  ctx.save();
+  ctx.translate(width, 0);
+  ctx.scale(-1, 1);
+  ctx.drawImage(video, 0, 0, width, height);
+  ctx.restore();
+  return true;
+}
+
 async function loadVision(session: Session): Promise<void> {
+  silenceMediapipeWasmLogs();
   const vision = await import("@mediapipe/tasks-vision");
   const fileset = await vision.FilesetResolver.forVisionTasks(WASM_URL);
   const options = {
@@ -121,13 +217,13 @@ export default function CameraStage() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const sessionRef = useRef<Session>(createSession());
-  const [status, setStatus] = useState<Status>("idle");
+  const [status, setStatus] = useState<Status>("loading");
   const [error, setError] = useState<string | null>(null);
   const [calibrating, setCalibrating] = useState(false);
 
   const stop = useCallback(() => {
     const session = sessionRef.current;
-    session.running = false;
+    session.mode = "stopped";
     if (session.frameId) {
       cancelAnimationFrame(session.frameId);
       session.frameId = 0;
@@ -146,9 +242,32 @@ export default function CameraStage() {
     session.landmarker = null;
   }, []);
 
+  const previewLoop = useCallback(() => {
+    const session = sessionRef.current;
+    if (session.mode !== "preview") {
+      return;
+    }
+
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    if (!video || !canvas || video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) {
+      session.frameId = requestAnimationFrame(previewLoop);
+      return;
+    }
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) {
+      session.frameId = requestAnimationFrame(previewLoop);
+      return;
+    }
+
+    drawMirroredVideo(ctx, canvas, video);
+    session.frameId = requestAnimationFrame(previewLoop);
+  }, []);
+
   const loop = useCallback(() => {
     const session = sessionRef.current;
-    if (!session.running) {
+    if (session.mode !== "running") {
       return;
     }
 
@@ -188,11 +307,7 @@ export default function CameraStage() {
     }
     session.lastFrameTime = now;
 
-    ctx.save();
-    ctx.translate(width, 0);
-    ctx.scale(-1, 1);
-    ctx.drawImage(video, 0, 0, width, height);
-    ctx.restore();
+    drawMirroredVideo(ctx, canvas, video);
 
     let timestamp = now;
     if (timestamp <= session.lastTimestamp) {
@@ -267,36 +382,63 @@ export default function CameraStage() {
     session.frameId = requestAnimationFrame(loop);
   }, []);
 
-  const start = useCallback(async () => {
-    setError(null);
-    setStatus("loading");
-    sessionRef.current = createSession();
-    const session = sessionRef.current;
+  const start = useCallback(
+    async (options?: { isCancelled?: () => boolean }) => {
+      const isCancelled = () => options?.isCancelled?.() ?? false;
 
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "user", width: { ideal: 1280 }, height: { ideal: 720 } },
-        audio: false,
-      });
-      const video = videoRef.current;
-      if (!video) {
-        throw new Error("Video element missing");
+      setError(null);
+      setStatus("loading");
+      sessionRef.current = createSession();
+      const session = sessionRef.current;
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "user", width: { ideal: 1280 }, height: { ideal: 720 } },
+          audio: false,
+        });
+        if (isCancelled()) {
+          for (const track of stream.getTracks()) {
+            track.stop();
+          }
+          return;
+        }
+
+        const video = videoRef.current;
+        if (!video) {
+          throw new Error("Video element missing");
+        }
+        video.srcObject = stream;
+        await video.play();
+
+        session.mode = "preview";
+        session.frameId = requestAnimationFrame(previewLoop);
+
+        await loadVision(session);
+        if (isCancelled()) {
+          stop();
+          return;
+        }
+
+        setCameraEnabledFlag(true);
+        session.mode = "running";
+        setStatus("running");
+        session.frameId = requestAnimationFrame(loop);
+      } catch (caught) {
+        if (isCancelled()) {
+          return;
+        }
+        stop();
+        if (caught instanceof DOMException && caught.name === "NotAllowedError") {
+          setCameraEnabledFlag(false);
+        }
+        const message =
+          caught instanceof Error ? caught.message : "Could not start the camera.";
+        setError(message);
+        setStatus("error");
       }
-      video.srcObject = stream;
-      await video.play();
-
-      await loadVision(session);
-      session.running = true;
-      setStatus("running");
-      session.frameId = requestAnimationFrame(loop);
-    } catch (caught) {
-      stop();
-      const message =
-        caught instanceof Error ? caught.message : "Could not start the camera.";
-      setError(message);
-      setStatus("error");
-    }
-  }, [loop, stop]);
+    },
+    [loop, previewLoop, stop],
+  );
 
   const onCalibrate = useCallback(() => {
     const session = sessionRef.current;
@@ -307,16 +449,31 @@ export default function CameraStage() {
   }, []);
 
   useEffect(() => {
-    return () => stop();
-  }, [stop]);
+    let cancelled = false;
+
+    void (async () => {
+      if (await shouldAutoStartCamera()) {
+        await start({ isCancelled: () => cancelled });
+        return;
+      }
+      if (!cancelled) {
+        setStatus("idle");
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+      stop();
+    };
+  }, [start, stop]);
 
   return (
-    <div className="relative flex h-dvh w-full items-center justify-center overflow-hidden bg-[#061018]">
+    <div className="relative flex h-dvh w-full items-center justify-center overflow-hidden">
       <video ref={videoRef} className="hidden" playsInline muted autoPlay />
       <canvas ref={canvasRef} className="h-full w-full object-contain" />
 
-      {status !== "running" ? (
-        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 px-6 text-center">
+      {status === "idle" || status === "error" ? (
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 bg-[#061018] px-6 text-center">
           <h1 className="font-serif text-5xl tracking-wide text-[#d7ecf5] sm:text-6xl">
             You Are Fish
           </h1>
@@ -327,11 +484,10 @@ export default function CameraStage() {
           {error ? <p className="max-w-md text-sm text-red-300">{error}</p> : null}
           <button
             type="button"
-            onClick={start}
-            disabled={status === "loading"}
-            className="rounded-full bg-[#3778dc] px-6 py-3 text-white transition hover:bg-[#4b8aee] disabled:opacity-60"
+            onClick={() => start()}
+            className="rounded-full bg-[#3778dc] px-6 py-3 text-white transition hover:bg-[#4b8aee]"
           >
-            {status === "loading" ? "Starting camera…" : "Enable camera"}
+            Enable camera
           </button>
         </div>
       ) : null}
