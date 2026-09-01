@@ -8,6 +8,7 @@ from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 from mediapipe.tasks.python.vision import drawing_styles, drawing_utils
 
+from calibration import NeutralPoseCalibrator
 from head_pose import HeadPose, estimate_head_pose
 from pose_viz import PoseHistory, draw_pose_signal_viz
 
@@ -109,12 +110,40 @@ def draw_debug_overlay(
     width: int,
     height: int,
     pose: HeadPose | None,
+    calibrated_pose: HeadPose | None,
+    calibrator: NeutralPoseCalibrator,
 ) -> int:
-    lines = [
-        f"Yaw   {_format_angle(None if pose is None else pose.yaw_deg)}",
-        f"Pitch {_format_angle(None if pose is None else pose.pitch_deg)}",
-        f"Roll  {_format_angle(None if pose is None else pose.roll_deg)}",
-    ]
+    raw_yaw = None if pose is None else pose.yaw_deg
+    raw_pitch = None if pose is None else pose.pitch_deg
+    cal_yaw = None if calibrated_pose is None else calibrated_pose.yaw_deg
+    cal_pitch = None if calibrated_pose is None else calibrated_pose.pitch_deg
+
+    if calibrator.is_active:
+        lines = [
+            "Calibrating...",
+            f"Yaw   raw {_format_angle(raw_yaw)}",
+            f"Pitch raw {_format_angle(raw_pitch)}",
+            f"Roll  {_format_angle(None if pose is None else pose.roll_deg)}",
+        ]
+    elif calibrator.is_complete:
+        lines = [
+            f"Yaw   raw {_format_angle(raw_yaw)}  cal {_format_angle(cal_yaw)}",
+            f"Pitch raw {_format_angle(raw_pitch)}  cal {_format_angle(cal_pitch)}",
+            (
+                "Neutral yaw "
+                f"{_format_angle(calibrator.baseline_yaw)}  "
+                f"pitch {_format_angle(calibrator.baseline_pitch)}"
+            ),
+            f"Roll  {_format_angle(None if pose is None else pose.roll_deg)}",
+        ]
+    else:
+        lines = [
+            "Not calibrated",
+            f"Yaw   raw {_format_angle(raw_yaw)}",
+            f"Pitch raw {_format_angle(raw_pitch)}",
+            f"Roll  {_format_angle(None if pose is None else pose.roll_deg)}",
+        ]
+
     if DEBUG:
         if confidence is None:
             confidence_text = "n/a"
@@ -188,6 +217,123 @@ def draw_debug_overlay(
     return panel_bottom + margin
 
 
+CALIBRATION_PROMPT = "Look comfortably straight at the screen"
+CALIBRATION_HINT = "Hold still..."
+CALIBRATION_PROMPT_FONT_SCALE = 0.9
+CALIBRATION_HINT_FONT_SCALE = 0.65
+CALIBRATION_FONT = cv2.FONT_HERSHEY_SIMPLEX
+CALIBRATION_THICKNESS = 2
+
+
+def draw_calibration_prompt(frame, calibrator: NeutralPoseCalibrator) -> None:
+    if not calibrator.is_active:
+        return
+
+    frame_height, frame_width = frame.shape[:2]
+    center_x = frame_width // 2
+    center_y = frame_height // 2
+
+    prompt_size, _ = cv2.getTextSize(
+        CALIBRATION_PROMPT,
+        CALIBRATION_FONT,
+        CALIBRATION_PROMPT_FONT_SCALE,
+        CALIBRATION_THICKNESS,
+    )
+    hint_size, _ = cv2.getTextSize(
+        CALIBRATION_HINT,
+        CALIBRATION_FONT,
+        CALIBRATION_HINT_FONT_SCALE,
+        CALIBRATION_THICKNESS,
+    )
+
+    prompt_x = center_x - prompt_size[0] // 2
+    prompt_y = center_y
+    hint_x = center_x - hint_size[0] // 2
+    hint_y = prompt_y + 36
+
+    overlay = frame.copy()
+    panel_left = min(prompt_x, hint_x) - 20
+    panel_right = max(prompt_x + prompt_size[0], hint_x + hint_size[0]) + 20
+    panel_top = prompt_y - prompt_size[1] - 20
+    panel_bottom = hint_y + 20
+    cv2.rectangle(
+        overlay,
+        (panel_left, panel_top),
+        (panel_right, panel_bottom),
+        (20, 20, 20),
+        thickness=-1,
+    )
+    cv2.addWeighted(overlay, 0.65, frame, 0.35, 0, frame)
+
+    cv2.putText(
+        frame,
+        CALIBRATION_PROMPT,
+        (prompt_x, prompt_y),
+        CALIBRATION_FONT,
+        CALIBRATION_PROMPT_FONT_SCALE,
+        (255, 255, 255),
+        CALIBRATION_THICKNESS,
+        cv2.LINE_AA,
+    )
+    cv2.putText(
+        frame,
+        CALIBRATION_HINT,
+        (hint_x, hint_y),
+        CALIBRATION_FONT,
+        CALIBRATION_HINT_FONT_SCALE,
+        (200, 200, 200),
+        CALIBRATION_THICKNESS,
+        cv2.LINE_AA,
+    )
+
+
+CALIBRATE_BUTTON_LABEL = "Calibrate"
+CALIBRATE_BUTTON_MARGIN = 16
+CALIBRATE_BUTTON_PAD_X = 18
+CALIBRATE_BUTTON_PAD_Y = 10
+CALIBRATE_BUTTON_FONT_SCALE = 0.75
+CALIBRATE_BUTTON_THICKNESS = 2
+CALIBRATE_BUTTON_FONT = cv2.FONT_HERSHEY_SIMPLEX
+_CALIBRATE_BUTTON_FILL = (55, 120, 220)
+_CALIBRATE_BUTTON_BORDER = (90, 160, 255)
+_CALIBRATE_BUTTON_TEXT = (255, 255, 255)
+
+
+def draw_calibrate_button(frame, calibrator: NeutralPoseCalibrator) -> tuple[int, int, int, int] | None:
+    if calibrator.is_active:
+        return None
+
+    text_size, baseline = cv2.getTextSize(
+        CALIBRATE_BUTTON_LABEL,
+        CALIBRATE_BUTTON_FONT,
+        CALIBRATE_BUTTON_FONT_SCALE,
+        CALIBRATE_BUTTON_THICKNESS,
+    )
+    button_width = text_size[0] + CALIBRATE_BUTTON_PAD_X * 2
+    button_height = text_size[1] + baseline + CALIBRATE_BUTTON_PAD_Y * 2
+    left = CALIBRATE_BUTTON_MARGIN
+    top = frame.shape[0] - CALIBRATE_BUTTON_MARGIN - button_height
+    right = left + button_width
+    bottom = top + button_height
+
+    cv2.rectangle(frame, (left, top), (right, bottom), _CALIBRATE_BUTTON_FILL, thickness=-1)
+    cv2.rectangle(frame, (left, top), (right, bottom), _CALIBRATE_BUTTON_BORDER, thickness=2)
+
+    text_x = left + CALIBRATE_BUTTON_PAD_X
+    text_y = bottom - CALIBRATE_BUTTON_PAD_Y - baseline
+    cv2.putText(
+        frame,
+        CALIBRATE_BUTTON_LABEL,
+        (text_x, text_y),
+        CALIBRATE_BUTTON_FONT,
+        CALIBRATE_BUTTON_FONT_SCALE,
+        _CALIBRATE_BUTTON_TEXT,
+        CALIBRATE_BUTTON_THICKNESS,
+        cv2.LINE_AA,
+    )
+    return left, top, right, bottom
+
+
 def main() -> None:
     model_path = ensure_model()
 
@@ -214,6 +360,28 @@ def main() -> None:
     last_frame_time = None
     fps = 0
     pose_history = PoseHistory()
+    calibrator = NeutralPoseCalibrator()
+    ui_state = {
+        "button_rect": None,
+        "calibrator": calibrator,
+        "pose_history": pose_history,
+    }
+
+    def on_mouse(event: int, x: int, y: int, _flags: int, _param: object) -> None:
+        if event != cv2.EVENT_LBUTTONDOWN:
+            return
+
+        button_rect = ui_state["button_rect"]
+        if button_rect is None:
+            return
+
+        left, top, right, bottom = button_rect
+        if left <= x <= right and top <= y <= bottom:
+            ui_state["calibrator"].start()
+            ui_state["pose_history"].clear()
+
+    cv2.namedWindow(WINDOW_NAME)
+    cv2.setMouseCallback(WINDOW_NAME, on_mouse)
 
     try:
         with vision.FaceLandmarker.create_from_options(options) as landmarker:
@@ -242,12 +410,23 @@ def main() -> None:
                 result = latest_result["value"]
                 face_detected = bool(result and result.face_landmarks)
                 pose = get_head_pose(result)
-                if pose is not None:
-                    pose_history.append(pose)
+
+                was_complete = calibrator.is_complete
+                if calibrator.is_active:
+                    calibrator.update(pose, frame_start)
+                if not was_complete and calibrator.is_complete:
+                    pose_history.clear()
+
+                calibrated_pose = calibrator.apply(pose) if pose is not None else None
+                viz_pose = calibrated_pose if calibrator.is_complete else pose
+                if viz_pose is not None:
+                    pose_history.append(viz_pose)
                 if face_detected:
                     draw_face_landmarks(frame, result.face_landmarks[0])
 
                 frame_height, frame_width = frame.shape[:2]
+                draw_calibration_prompt(frame, calibrator)
+                ui_state["button_rect"] = draw_calibrate_button(frame, calibrator)
                 hud_bottom = draw_debug_overlay(
                     frame,
                     fps=fps,
@@ -256,9 +435,11 @@ def main() -> None:
                     width=frame_width,
                     height=frame_height,
                     pose=pose,
+                    calibrated_pose=calibrated_pose,
+                    calibrator=calibrator,
                 )
                 if DEBUG:
-                    draw_pose_signal_viz(frame, pose, pose_history, top_offset=hud_bottom)
+                    draw_pose_signal_viz(frame, viz_pose, pose_history, top_offset=hud_bottom)
 
                 cv2.imshow(WINDOW_NAME, frame)
 

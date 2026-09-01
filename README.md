@@ -2,6 +2,22 @@
 
 Computer vision prototype for a webcam-based project.
 
+## Milestone 4: Per-user calibration
+
+On startup, click **Calibrate** when you are ready. The app then asks you to look comfortably straight at the screen, collects head-pose samples for about 1.5 seconds, and computes a neutral yaw/pitch baseline. Later measurements subtract that baseline so zero means your comfortable rest pose, not a fixed canonical face. Click **Calibrate** again any time to redo it.
+
+The HUD shows:
+
+- raw yaw/pitch
+- calibrated yaw/pitch (after baseline subtraction)
+- the calculated neutral baseline
+
+With `DEBUG = True`, the pose signal viz uses calibrated values after calibration completes.
+
+### Why calibrate per user?
+
+MediaPipe's facial transformation matrix is a Procrustes fit to a canonical 3D face, so its Euler angles are relative to that model, not to "this person looking at this screen." A global zero of `(0, 0)` would assume identical camera geometry, seating posture, anatomy, and session setup for everyone. In practice, laptop webcams sit below eye level, people sit differently, and face shape varies. Per-user calibration makes zero mean "looking comfortably at the screen right now," which is what later directional controls will need.
+
 ## Milestone 3: Head orientation
 
 Open the default webcam, detect one face, and estimate head orientation from MediaPipe Face Landmarker’s facial transformation matrix.

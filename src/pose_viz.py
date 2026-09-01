@@ -49,6 +49,10 @@ class PoseHistory:
     def pitch_samples(self) -> list[float]:
         return list(self._pitch)
 
+    def clear(self) -> None:
+        self._yaw.clear()
+        self._pitch.clear()
+
 
 def _clamp(value: float, low: float, high: float) -> float:
     return max(low, min(high, value))
