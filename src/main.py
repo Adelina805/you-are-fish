@@ -9,8 +9,10 @@ from mediapipe.tasks.python import vision
 from mediapipe.tasks.python.vision import drawing_styles, drawing_utils
 
 from calibration import NeutralPoseCalibrator
+from direction import Direction, classify_direction
 from head_pose import HeadPose, estimate_head_pose
 from pose_viz import PoseHistory, draw_pose_signal_viz
+from smoothing import PoseSmoother
 
 DEBUG = True
 
@@ -111,6 +113,7 @@ def draw_debug_overlay(
     height: int,
     pose: HeadPose | None,
     calibrated_pose: HeadPose | None,
+    smoothed_pose: HeadPose | None,
     calibrator: NeutralPoseCalibrator,
 ) -> int:
     raw_yaw = None if pose is None else pose.yaw_deg
@@ -126,9 +129,12 @@ def draw_debug_overlay(
             f"Roll  {_format_angle(None if pose is None else pose.roll_deg)}",
         ]
     elif calibrator.is_complete:
+        sm_yaw = None if smoothed_pose is None else smoothed_pose.yaw_deg
+        sm_pitch = None if smoothed_pose is None else smoothed_pose.pitch_deg
         lines = [
             f"Yaw   raw {_format_angle(raw_yaw)}  cal {_format_angle(cal_yaw)}",
             f"Pitch raw {_format_angle(raw_pitch)}  cal {_format_angle(cal_pitch)}",
+            f"Sm    yaw {_format_angle(sm_yaw)}  pitch {_format_angle(sm_pitch)}",
             (
                 "Neutral yaw "
                 f"{_format_angle(calibrator.baseline_yaw)}  "
@@ -311,8 +317,8 @@ def draw_calibrate_button(frame, calibrator: NeutralPoseCalibrator) -> tuple[int
     )
     button_width = text_size[0] + CALIBRATE_BUTTON_PAD_X * 2
     button_height = text_size[1] + baseline + CALIBRATE_BUTTON_PAD_Y * 2
-    left = CALIBRATE_BUTTON_MARGIN
-    top = frame.shape[0] - CALIBRATE_BUTTON_MARGIN - button_height
+    left = (frame.shape[1] - button_width) // 2
+    top = CALIBRATE_BUTTON_MARGIN
     right = left + button_width
     bottom = top + button_height
 
@@ -332,6 +338,58 @@ def draw_calibrate_button(frame, calibrator: NeutralPoseCalibrator) -> tuple[int
         cv2.LINE_AA,
     )
     return left, top, right, bottom
+
+
+DIRECTION_FONT = cv2.FONT_HERSHEY_SIMPLEX
+DIRECTION_FONT_SCALE = 2.0
+DIRECTION_THICKNESS = 3
+DIRECTION_COLOR = (255, 255, 255)
+DIRECTION_SHADOW_COLOR = (0, 0, 0)
+DIRECTION_INACTIVE_COLOR = (120, 120, 120)
+
+
+def draw_direction_label(
+    frame,
+    direction: Direction | None,
+    *,
+    show: bool,
+) -> None:
+    if not show:
+        return
+
+    frame_height, frame_width = frame.shape[:2]
+    label = "—" if direction is None else direction.value
+    color = DIRECTION_INACTIVE_COLOR if direction is None else DIRECTION_COLOR
+
+    text_size, baseline = cv2.getTextSize(
+        label,
+        DIRECTION_FONT,
+        DIRECTION_FONT_SCALE,
+        DIRECTION_THICKNESS,
+    )
+    x = (frame_width - text_size[0]) // 2
+    y = frame_height // 2 + text_size[1] // 2
+
+    cv2.putText(
+        frame,
+        label,
+        (x + 2, y + 2),
+        DIRECTION_FONT,
+        DIRECTION_FONT_SCALE,
+        DIRECTION_SHADOW_COLOR,
+        DIRECTION_THICKNESS,
+        cv2.LINE_AA,
+    )
+    cv2.putText(
+        frame,
+        label,
+        (x, y),
+        DIRECTION_FONT,
+        DIRECTION_FONT_SCALE,
+        color,
+        DIRECTION_THICKNESS,
+        cv2.LINE_AA,
+    )
 
 
 def main() -> None:
@@ -361,10 +419,12 @@ def main() -> None:
     fps = 0
     pose_history = PoseHistory()
     calibrator = NeutralPoseCalibrator()
+    pose_smoother = PoseSmoother()
     ui_state = {
         "button_rect": None,
         "calibrator": calibrator,
         "pose_history": pose_history,
+        "pose_smoother": pose_smoother,
     }
 
     def on_mouse(event: int, x: int, y: int, _flags: int, _param: object) -> None:
@@ -379,6 +439,7 @@ def main() -> None:
         if left <= x <= right and top <= y <= bottom:
             ui_state["calibrator"].start()
             ui_state["pose_history"].clear()
+            ui_state["pose_smoother"].reset()
 
     cv2.namedWindow(WINDOW_NAME)
     cv2.setMouseCallback(WINDOW_NAME, on_mouse)
@@ -390,6 +451,7 @@ def main() -> None:
                 ok, frame = cap.read()
                 if not ok:
                     raise RuntimeError("Failed to read frame from camera")
+                frame = cv2.flip(frame, 1)
 
                 if last_frame_time is not None:
                     frame_delta = frame_start - last_frame_time
@@ -416,8 +478,19 @@ def main() -> None:
                     calibrator.update(pose, frame_start)
                 if not was_complete and calibrator.is_complete:
                     pose_history.clear()
+                    pose_smoother.reset()
 
                 calibrated_pose = calibrator.apply(pose) if pose is not None else None
+                smoothed_pose = (
+                    pose_smoother.update(calibrated_pose)
+                    if calibrator.is_complete
+                    else None
+                )
+                direction = (
+                    classify_direction(smoothed_pose)
+                    if calibrator.is_complete and face_detected
+                    else None
+                )
                 viz_pose = calibrated_pose if calibrator.is_complete else pose
                 if viz_pose is not None:
                     pose_history.append(viz_pose)
@@ -426,6 +499,11 @@ def main() -> None:
 
                 frame_height, frame_width = frame.shape[:2]
                 draw_calibration_prompt(frame, calibrator)
+                draw_direction_label(
+                    frame,
+                    direction,
+                    show=calibrator.is_complete and not calibrator.is_active,
+                )
                 ui_state["button_rect"] = draw_calibrate_button(frame, calibrator)
                 hud_bottom = draw_debug_overlay(
                     frame,
@@ -436,6 +514,7 @@ def main() -> None:
                     height=frame_height,
                     pose=pose,
                     calibrated_pose=calibrated_pose,
+                    smoothed_pose=smoothed_pose,
                     calibrator=calibrator,
                 )
                 if DEBUG:

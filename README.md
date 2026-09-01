@@ -2,6 +2,37 @@
 
 Computer vision prototype for a webcam-based project.
 
+## Milestone 5: Directional classifier
+
+After calibration, calibrated yaw/pitch are smoothed with an exponential moving average, then classified into one of five directions: `CENTER`, `LEFT`, `RIGHT`, `UP`, or `DOWN`. The detected direction is shown as large centered text. No fish yet.
+
+Thresholds live in [`src/direction.py`](src/direction.py):
+
+- `YAW_DEAD_ZONE_DEG` (default `8.0`)
+- `PITCH_DEAD_ZONE_DEG` (default `8.0`)
+
+Smoothing strength is in [`src/smoothing.py`](src/smoothing.py) as `SMOOTHING_ALPHA` (default `0.25`).
+
+### What is a dead zone?
+
+A **dead zone** is a band around the calibrated origin where the classifier reports `CENTER` even though yaw/pitch are not exactly zero. With default thresholds, if `|yaw| <= 8°` and `|pitch| <= 8°`, you are considered looking at the screen.
+
+### Why it matters
+
+A still head is never a perfect `(0, 0)`. MediaPipe jitter, breathing, micro-adjustments, and sitting slightly off your calibration pose all produce small angle changes. Without a dead zone, those motions would flicker between directions and would accidentally steer a fish later. The dead zone is the "I am looking at the screen" region; only a deliberate turn should leave it.
+
+### How to choose thresholds experimentally
+
+The defaults are starting guesses, not a one-shot tune:
+
+1. **Calibrate**, then sit still for 10–15 seconds. Watch the HUD `Sm yaw` / `Sm pitch` line. Note the noise envelope (e.g. yaw within ±2°, pitch within ±3°). The dead zone must be **larger** than that envelope, with a little margin.
+2. Make the **smallest turn you want to count** as LEFT / RIGHT / UP / DOWN. Record typical peak smoothed angles. The threshold must sit **below** that gesture, or you will have to over-turn.
+3. Set each axis between those two bounds: `noise_ceiling < dead_zone < intentional_gesture`. Yaw and pitch often differ, so keep separate constants.
+4. Re-test: still → stays `CENTER`; slow glance → one direction; return to rest → `CENTER` again. If it flickers at the edge, raise the dead zone slightly. If you must crane your neck, lower it.
+5. Repeat after changing chair, camera height, or distance.
+
+If both axes leave the dead zone at once (a diagonal glance), the classifier picks the axis with the larger `|angle| / threshold` ratio.
+
 ## Milestone 4: Per-user calibration
 
 On startup, click **Calibrate** when you are ready. The app then asks you to look comfortably straight at the screen, collects head-pose samples for about 1.5 seconds, and computes a neutral yaw/pitch baseline. Later measurements subtract that baseline so zero means your comfortable rest pose, not a fixed canonical face. Click **Calibrate** again any time to redo it.
@@ -73,3 +104,17 @@ deactivate
 ```
 
 To recreate the environment, delete `.venv` and repeat the setup steps.
+
+
+### LATER:
+
+Facial expressions:
+ mouth open → bubbles
+ cheek puff → inflate
+ eyebrows → ???
+
+Hand gestures -> currents / whirlpools
+
+Fish movement -> particle force field -> fluid-like ocean
+
+Session behavior -> Fishsona parameters -> persistent aquarium
