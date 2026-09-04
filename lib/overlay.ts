@@ -6,7 +6,6 @@ import type { PoseHistory } from "@/lib/pose-history";
 const DEBUG = true;
 
 const HUD_MARGIN = 16;
-const HUD_LINE_HEIGHT = 28;
 const HUD_PAD = 10;
 
 const YAW_RANGE_DEG = 45;
@@ -31,6 +30,11 @@ export function getUiScale(width: number, height: number): number {
     return 1;
   }
   return Math.max(fit, Math.min(width / 480, height / 700, 0.9));
+}
+
+/** Shared screen-pixel label size for debug HUD + pose graph. */
+function debugLabelFontSize(fit: number): number {
+  return Math.max(11, Math.round(14 * Math.max(fit, 0.75)));
 }
 
 function beginScaledUi(
@@ -113,18 +117,25 @@ export function drawDebugOverlay(
     ];
   }
 
-  const space = beginScaledUi(ctx, width, ctx.canvas.height);
-  ctx.font = "16px ui-monospace, SFMono-Regular, Menlo, monospace";
+  const height = ctx.canvas.height;
+  const fit = Math.min(1, width / 1280, height / 720);
+  const fontSize = debugLabelFontSize(fit);
+  const pad = Math.max(6, Math.round(HUD_PAD * Math.max(fit, 0.55)));
+  const margin = Math.max(8, Math.round(HUD_MARGIN * Math.max(fit, 0.55)));
+  const lineHeight = Math.round(fontSize * 1.45);
+
+  ctx.save();
+  ctx.font = `${fontSize}px ui-monospace, SFMono-Regular, Menlo, monospace`;
   ctx.textBaseline = "alphabetic";
   const textWidths = lines.map((line) => ctx.measureText(line).width);
   const panelWidth = Math.min(
-    Math.max(...textWidths) + HUD_PAD * 2,
-    space.width - HUD_MARGIN * 2,
+    Math.max(...textWidths) + pad * 2,
+    width - margin * 2,
   );
-  const panelHeight = HUD_PAD + lines.length * HUD_LINE_HEIGHT + HUD_PAD;
-  const panelRight = space.width - HUD_MARGIN;
+  const panelHeight = pad + lines.length * lineHeight + pad;
+  const panelRight = width - margin;
   const panelLeft = panelRight - panelWidth;
-  const panelTop = HUD_MARGIN;
+  const panelTop = margin;
 
   ctx.fillStyle = "rgba(20, 20, 20, 0.55)";
   ctx.fillRect(panelLeft, panelTop, panelWidth, panelHeight);
@@ -134,17 +145,17 @@ export function drawDebugOverlay(
   ctx.rect(panelLeft, panelTop, panelWidth, panelHeight);
   ctx.clip();
   lines.forEach((line, index) => {
-    const x = panelRight - HUD_PAD - textWidths[index];
-    const y = panelTop + HUD_PAD + (index + 1) * HUD_LINE_HEIGHT - 8;
+    const x = panelRight - pad - textWidths[index];
+    const y = panelTop + pad + (index + 1) * lineHeight - Math.round(fontSize * 0.28);
     ctx.fillStyle = "#000000";
     ctx.fillText(line, x + 1, y + 1);
     ctx.fillStyle = "#ffffff";
     ctx.fillText(line, x, y);
   });
   ctx.restore();
-
   ctx.restore();
-  return (panelTop + panelHeight + HUD_MARGIN) * space.scale;
+
+  return panelTop + panelHeight + margin;
 }
 
 export function drawCalibrationPrompt(
@@ -314,6 +325,15 @@ function pitchToY(pitchDeg: number, centerY: number, halfLen: number): number {
   return Math.round(centerY - ratio * halfLen);
 }
 
+function poseVizFit(width: number, height: number, topOffset: number): number {
+  const panelW = YAW_BAR_LEN + PANEL_PAD * 2;
+  const panelH = PITCH_BAR_LEN + PANEL_PAD * 2;
+  const maxW = Math.min(panelW, width * 0.32);
+  const availH = Math.max(64, height - topOffset - PANEL_MARGIN * 2);
+  const maxH = Math.min(panelH, height * 0.3, availH);
+  return Math.min(1, maxW / panelW, maxH / panelH);
+}
+
 export function drawPoseSignalViz(
   ctx: CanvasRenderingContext2D,
   width: number,
@@ -322,27 +342,37 @@ export function drawPoseSignalViz(
   topOffset: number,
 ): void {
   const height = ctx.canvas.height;
-  const space = beginScaledUi(ctx, width, height);
-  const top = topOffset / space.scale;
-  const yawHalf = YAW_BAR_LEN / 2;
-  const pitchHalf = PITCH_BAR_LEN / 2;
-  const cornerX = space.width - PANEL_MARGIN - yawHalf;
-  const cornerY = PANEL_MARGIN + top + pitchHalf;
+  // Size in screen pixels. HUD text keeps a higher scale floor for readability;
+  // this graph was a 288×208 widget and stayed huge on phones under that floor.
+  const fit = poseVizFit(width, height, topOffset);
+  const yawHalf = (YAW_BAR_LEN * fit) / 2;
+  const pitchHalf = (PITCH_BAR_LEN * fit) / 2;
+  const pad = Math.max(8, PANEL_PAD * fit);
+  const margin = Math.max(10, PANEL_MARGIN * fit);
+  const tick = Math.max(4, 6 * fit);
+  const zeroArm = Math.max(5, 8 * fit);
+  const historyR = Math.max(2, 3 * fit);
+  const markerR = Math.max(4, 8 * fit);
+  const fontSize = debugLabelFontSize(fit);
+
+  const cornerX = width - margin - yawHalf;
+  const cornerY = topOffset + margin + pitchHalf;
   const yawLeft = cornerX - yawHalf;
   const yawRight = cornerX + yawHalf;
   const pitchTop = cornerY - pitchHalf;
   const pitchBottom = cornerY + pitchHalf;
 
+  ctx.save();
   ctx.fillStyle = "rgba(20, 20, 20, 0.55)";
   ctx.fillRect(
-    yawLeft - PANEL_PAD,
-    pitchTop - PANEL_PAD,
-    yawRight - yawLeft + PANEL_PAD * 2,
-    pitchBottom - pitchTop + PANEL_PAD * 2,
+    yawLeft - pad,
+    pitchTop - pad,
+    yawRight - yawLeft + pad * 2,
+    pitchBottom - pitchTop + pad * 2,
   );
 
   ctx.strokeStyle = "rgb(140, 140, 140)";
-  ctx.lineWidth = 2;
+  ctx.lineWidth = Math.max(1.25, 2 * fit);
   ctx.beginPath();
   ctx.moveTo(yawLeft, cornerY);
   ctx.lineTo(yawRight, cornerY);
@@ -352,21 +382,21 @@ export function drawPoseSignalViz(
 
   ctx.strokeStyle = "rgb(220, 220, 220)";
   ctx.beginPath();
-  ctx.moveTo(cornerX - 8, cornerY);
-  ctx.lineTo(cornerX + 8, cornerY);
-  ctx.moveTo(cornerX, cornerY - 8);
-  ctx.lineTo(cornerX, cornerY + 8);
+  ctx.moveTo(cornerX - zeroArm, cornerY);
+  ctx.lineTo(cornerX + zeroArm, cornerY);
+  ctx.moveTo(cornerX, cornerY - zeroArm);
+  ctx.lineTo(cornerX, cornerY + zeroArm);
   ctx.stroke();
 
   ctx.strokeStyle = "rgb(140, 140, 140)";
-  for (const tick of [-1, 1]) {
-    const tickX = yawToX(tick * YAW_RANGE_DEG, cornerX, yawHalf);
-    const tickY = pitchToY(tick * PITCH_RANGE_DEG, cornerY, pitchHalf);
+  for (const tickSign of [-1, 1]) {
+    const tickX = yawToX(tickSign * YAW_RANGE_DEG, cornerX, yawHalf);
+    const tickY = pitchToY(tickSign * PITCH_RANGE_DEG, cornerY, pitchHalf);
     ctx.beginPath();
-    ctx.moveTo(tickX, cornerY - 6);
-    ctx.lineTo(tickX, cornerY + 6);
-    ctx.moveTo(cornerX - 6, tickY);
-    ctx.lineTo(cornerX + 6, tickY);
+    ctx.moveTo(tickX, cornerY - tick);
+    ctx.lineTo(tickX, cornerY + tick);
+    ctx.moveTo(cornerX - tick, tickY);
+    ctx.lineTo(cornerX + tick, tickY);
     ctx.stroke();
   }
 
@@ -378,28 +408,28 @@ export function drawPoseSignalViz(
     const shade = 0.25 + 0.75 * fade;
     ctx.fillStyle = `rgb(${Math.round(80 * shade)}, ${Math.round(200 * shade)}, ${Math.round(180 * shade)})`;
     ctx.beginPath();
-    ctx.arc(yawToX(yawSamples[index], cornerX, yawHalf), cornerY, 3, 0, Math.PI * 2);
+    ctx.arc(yawToX(yawSamples[index], cornerX, yawHalf), cornerY, historyR, 0, Math.PI * 2);
     ctx.fill();
     ctx.beginPath();
-    ctx.arc(cornerX, pitchToY(pitchSamples[index], cornerY, pitchHalf), 3, 0, Math.PI * 2);
+    ctx.arc(cornerX, pitchToY(pitchSamples[index], cornerY, pitchHalf), historyR, 0, Math.PI * 2);
     ctx.fill();
   }
 
   if (pose) {
     ctx.fillStyle = "rgb(255, 220, 80)";
     ctx.beginPath();
-    ctx.arc(yawToX(pose.yawDeg, cornerX, yawHalf), cornerY, 8, 0, Math.PI * 2);
+    ctx.arc(yawToX(pose.yawDeg, cornerX, yawHalf), cornerY, markerR, 0, Math.PI * 2);
     ctx.fill();
     ctx.beginPath();
-    ctx.arc(cornerX, pitchToY(pose.pitchDeg, cornerY, pitchHalf), 8, 0, Math.PI * 2);
+    ctx.arc(cornerX, pitchToY(pose.pitchDeg, cornerY, pitchHalf), markerR, 0, Math.PI * 2);
     ctx.fill();
   }
 
   ctx.fillStyle = "rgb(200, 200, 200)";
-  ctx.font = "14px ui-sans-serif, system-ui, sans-serif";
+  ctx.font = `${fontSize}px ui-sans-serif, system-ui, sans-serif`;
   ctx.textBaseline = "top";
-  ctx.fillText("yaw", yawLeft, cornerY + 10);
-  ctx.fillText("pitch", cornerX + 10, pitchTop);
-  ctx.fillText("0", cornerX + 8, cornerY + 8);
+  ctx.fillText("yaw", yawLeft, cornerY + Math.max(6, 10 * fit));
+  ctx.fillText("pitch", cornerX + Math.max(6, 10 * fit), pitchTop);
+  ctx.fillText("0", cornerX + Math.max(5, 8 * fit), cornerY + Math.max(5, 8 * fit));
   ctx.restore();
 }
