@@ -250,11 +250,11 @@ export default function CameraStage() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const sessionRef = useRef<Session>(createSession());
-  const showTestingUiRef = useRef(true);
+  const showTestingUiRef = useRef(false);
   const [status, setStatus] = useState<Status>("loading");
   const [error, setError] = useState<string | null>(null);
   const [calibrating, setCalibrating] = useState(false);
-  const [showTestingUi, setShowTestingUi] = useState(true);
+  const [showTestingUi, setShowTestingUi] = useState(false);
 
   const stop = useCallback(() => {
     const session = sessionRef.current;
