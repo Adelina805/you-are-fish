@@ -87,7 +87,7 @@ Open the webcam and display the live feed in the browser.
 ### LATER:
 
 Facial expressions:
- mouth open → bubbles
+ mouth open → bubbles (done: `jawOpen` blendshape + hysteresis in `lib/mouth.ts`)
  cheek puff → inflate
  eyebrows → ???
 

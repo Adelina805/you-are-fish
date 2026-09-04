@@ -6,10 +6,19 @@ import type {
 } from "@mediapipe/tasks-vision";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import {
+  createBubbleEmitter,
+  drawBubbles,
+  emitBubblesContinuous,
+  updateBubbles,
+  type Bubble,
+  type BubbleEmitter,
+} from "@/lib/bubbles";
 import { NeutralPoseCalibrator } from "@/lib/calibration";
 import { classifyDirection } from "@/lib/direction";
 import { createFish, drawFish, updateFish, type FishState } from "@/lib/fish";
 import { estimateHeadPose } from "@/lib/head-pose";
+import { MouthTracker } from "@/lib/mouth";
 import {
   drawCalibrationPrompt,
   drawDebugOverlay,
@@ -111,7 +120,10 @@ type Session = {
   calibrator: NeutralPoseCalibrator;
   smoother: PoseSmoother;
   history: PoseHistory;
+  mouth: MouthTracker;
   fish: FishState | null;
+  bubbles: Bubble[];
+  bubbleEmitter: BubbleEmitter;
   lastTimestamp: number;
   lastFrameTime: number | null;
   fps: number;
@@ -128,7 +140,10 @@ function createSession(): Session {
     calibrator: new NeutralPoseCalibrator(),
     smoother: new PoseSmoother(),
     history: new PoseHistory(),
+    mouth: new MouthTracker(),
     fish: null,
+    bubbles: [],
+    bubbleEmitter: createBubbleEmitter(),
     lastTimestamp: -1,
     lastFrameTime: null,
     fps: 0,
@@ -183,6 +198,7 @@ async function loadVision(session: Session): Promise<void> {
     runningMode: "VIDEO" as const,
     numFaces: 1,
     outputFacialTransformationMatrixes: true,
+    outputFaceBlendshapes: true,
   };
 
   try {
@@ -342,6 +358,10 @@ export default function CameraStage() {
     const faceDetected = Boolean(faceLandmarks);
     const matrix = result.facialTransformationMatrixes[0];
     const pose = estimateHeadPose(matrix?.data);
+    const mouthStatus = session.mouth.update(
+      result.faceBlendshapes[0],
+      faceDetected,
+    );
 
     const wasComplete = session.calibrator.isComplete;
     const wasActive = session.calibrator.isActive;
@@ -387,7 +407,18 @@ export default function CameraStage() {
     } else {
       updateFish(session.fish, null, 0, width, height);
     }
+    if (session.fish) {
+      emitBubblesContinuous(
+        session.bubbles,
+        session.fish,
+        mouthStatus.openness,
+        dt,
+        session.bubbleEmitter,
+      );
+    }
+    updateBubbles(session.bubbles, dt, width, height);
     drawFish(ctx, session.fish);
+    drawBubbles(ctx, session.bubbles);
 
     drawCalibrationPrompt(ctx, width, height, session.calibrator);
     if (showTestingUiRef.current) {
@@ -407,6 +438,7 @@ export default function CameraStage() {
         calibratedPose,
         smoothedPose,
         session.calibrator,
+        mouthStatus,
       );
       if (DEBUG) {
         drawPoseSignalViz(ctx, width, vizPose, session.history, hudBottom);

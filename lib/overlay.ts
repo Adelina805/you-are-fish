@@ -1,6 +1,7 @@
 import type { NeutralPoseCalibrator } from "@/lib/calibration";
 import type { LookDirection } from "@/lib/direction";
 import type { HeadPose } from "@/lib/head-pose";
+import type { MouthStatus } from "@/lib/mouth";
 import type { PoseHistory } from "@/lib/pose-history";
 
 const DEBUG = true;
@@ -77,6 +78,7 @@ export function drawDebugOverlay(
   calibratedPose: HeadPose | null,
   smoothedPose: HeadPose | null,
   calibrator: NeutralPoseCalibrator,
+  mouth: MouthStatus | null = null,
 ): number {
   const rawYaw = pose?.yawDeg ?? null;
   const rawPitch = pose?.pitchDeg ?? null;
@@ -109,10 +111,14 @@ export function drawDebugOverlay(
   }
 
   if (DEBUG) {
+    const mouthLine = mouth
+      ? `Mouth ${mouth.openness.toFixed(2)}  ${mouth.state}`
+      : "Mouth n/a";
     lines = [
       `FPS   ${fps}`,
       `Face  ${faceDetected ? "yes" : "no"}`,
       `Res   ${width}x${ctx.canvas.height}`,
+      mouthLine,
       ...lines,
     ];
   }

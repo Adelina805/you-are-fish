@@ -1,7 +1,7 @@
 import type { HeadPose } from "@/lib/head-pose";
 
-export const YAW_DEAD_ZONE_DEG = 8;
-export const PITCH_DEAD_ZONE_DEG = 8;
+export const YAW_DEAD_ZONE_DEG = 3;
+export const PITCH_DEAD_ZONE_DEG = 3;
 
 /**
  * Screen-space look direction after calibration.
