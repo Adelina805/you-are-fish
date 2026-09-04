@@ -16,7 +16,14 @@ import {
 } from "@/lib/bubbles";
 import { NeutralPoseCalibrator } from "@/lib/calibration";
 import { classifyDirection } from "@/lib/direction";
-import { createFish, drawFish, updateFish, type FishState } from "@/lib/fish";
+import { faceBoundsFromLandmarks } from "@/lib/face-bounds";
+import {
+  createFish,
+  drawFish,
+  updateFish,
+  type FishFaceSource,
+  type FishState,
+} from "@/lib/fish";
 import { estimateHeadPose } from "@/lib/head-pose";
 import { MouthTracker } from "@/lib/mouth";
 import {
@@ -33,6 +40,7 @@ const MODEL_URL =
 const WASM_URL = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.35/wasm";
 const CAMERA_ENABLED_KEY = "you-are-fish:camera-enabled";
 const DEBUG = true;
+const BLUE_WASH = "rgba(20, 80, 140, 0.35)";
 
 // MediaPipe's WASM binds console.error at init and writes INFO/WARNING logs to
 // stderr. Next.js treats those as overlay errors, so drop the known noise first.
@@ -124,6 +132,8 @@ type Session = {
   fish: FishState | null;
   bubbles: Bubble[];
   bubbleEmitter: BubbleEmitter;
+  /** Ephemeral per-frame face crop buffer; never persisted. */
+  faceCropCanvas: HTMLCanvasElement | null;
   lastTimestamp: number;
   lastFrameTime: number | null;
   fps: number;
@@ -144,12 +154,44 @@ function createSession(): Session {
     fish: null,
     bubbles: [],
     bubbleEmitter: createBubbleEmitter(),
+    faceCropCanvas: null,
     lastTimestamp: -1,
     lastFrameTime: null,
     fps: 0,
     mode: "stopped",
     frameId: 0,
   };
+}
+
+/**
+ * Copy a face region from the live canvas into a reusable offscreen buffer
+ * so the blue wash does not tint the crop. Buffer is overwritten each frame.
+ */
+function captureFaceCrop(
+  session: Session,
+  source: HTMLCanvasElement,
+  sx: number,
+  sy: number,
+  sw: number,
+  sh: number,
+): FishFaceSource | null {
+  const width = Math.max(1, Math.round(sw));
+  const height = Math.max(1, Math.round(sh));
+  if (!session.faceCropCanvas) {
+    session.faceCropCanvas = document.createElement("canvas");
+  }
+  const crop = session.faceCropCanvas;
+  if (crop.width !== width || crop.height !== height) {
+    crop.width = width;
+    crop.height = height;
+  }
+  const cropCtx = crop.getContext("2d");
+  if (!cropCtx) {
+    return null;
+  }
+  cropCtx.clearRect(0, 0, width, height);
+  cropCtx.drawImage(source, sx, sy, sw, sh, 0, 0, width, height);
+  return { source: crop, sx: 0, sy: 0, sw: width, sh: height };
 }
 
 function fitCanvasToDisplay(canvas: HTMLCanvasElement): boolean {
@@ -275,6 +317,7 @@ export default function CameraStage() {
     }
     session.landmarker?.close();
     session.landmarker = null;
+    session.faceCropCanvas = null;
   }, []);
 
   const previewLoop = useCallback(() => {
@@ -363,6 +406,23 @@ export default function CameraStage() {
       faceDetected,
     );
 
+    const bounds = faceDetected
+      ? faceBoundsFromLandmarks(faceLandmarks, width, height)
+      : null;
+    const faceSource = bounds
+      ? captureFaceCrop(
+          session,
+          canvas,
+          bounds.x,
+          bounds.y,
+          bounds.width,
+          bounds.height,
+        )
+      : null;
+
+    ctx.fillStyle = BLUE_WASH;
+    ctx.fillRect(0, 0, width, height);
+
     const wasComplete = session.calibrator.isComplete;
     const wasActive = session.calibrator.isActive;
     if (session.calibrator.isActive) {
@@ -417,7 +477,7 @@ export default function CameraStage() {
       );
     }
     updateBubbles(session.bubbles, dt, width, height);
-    drawFish(ctx, session.fish);
+    drawFish(ctx, session.fish, faceSource);
     drawBubbles(ctx, session.bubbles);
 
     drawCalibrationPrompt(ctx, width, height, session.calibrator);
@@ -523,6 +583,27 @@ export default function CameraStage() {
   }, []);
 
   useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "d" && event.key !== "D") {
+        return;
+      }
+      const target = event.target;
+      if (
+        target instanceof HTMLElement &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.isContentEditable)
+      ) {
+        return;
+      }
+      event.preventDefault();
+      onToggleTestingUi();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [onToggleTestingUi]);
+
+  useEffect(() => {
     let cancelled = false;
 
     void (async () => {
@@ -572,7 +653,7 @@ export default function CameraStage() {
           onClick={onToggleTestingUi}
           className="absolute top-3 left-3 z-10 rounded-md border-2 border-[#5aa0ff] bg-[#3778dc] px-3 py-1.5 text-sm text-white sm:top-4 sm:left-4 sm:px-5 sm:py-2 sm:text-lg"
         >
-          {showTestingUi ? "Hide UI" : "Show UI"}
+          {showTestingUi ? "Hide debug" : "Debug"}
         </button>
       ) : null}
 

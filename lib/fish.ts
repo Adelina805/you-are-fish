@@ -21,7 +21,16 @@ export const FISH_MAX_SPEED = 600;
  */
 export const FISH_IDLE_SPEED = 80;
 
-export const FISH_RADIUS = 18;
+export const FISH_RADIUS = 72;
+
+/** Live face crop to blit onto the fish body (ephemeral; never persisted). */
+export type FishFaceSource = {
+  source: CanvasImageSource;
+  sx: number;
+  sy: number;
+  sw: number;
+  sh: number;
+};
 
 /** Ignore tiny speeds when updating facing / zeroing residual velocity. */
 const FISH_SPEED_EPSILON = 1;
@@ -132,6 +141,7 @@ export function updateFish(
 export function drawFish(
   ctx: CanvasRenderingContext2D,
   fish: FishState,
+  face: FishFaceSource | null = null,
 ): void {
   const { x, y, headingX, headingY } = fish;
   const len = Math.hypot(headingX, headingY) || 1;
@@ -140,6 +150,9 @@ export function drawFish(
   const px = -uy;
   const py = ux;
   const r = FISH_RADIUS;
+  const bodyRx = r * 1.15;
+  const bodyRy = r * 0.75;
+  const bodyAngle = Math.atan2(uy, ux);
 
   ctx.save();
 
@@ -157,19 +170,52 @@ export function drawFish(
   ctx.closePath();
   ctx.fill();
 
-  // Body
-  ctx.fillStyle = "#f0a030";
-  ctx.beginPath();
-  ctx.ellipse(x, y, r * 1.15, r * 0.75, Math.atan2(uy, ux), 0, Math.PI * 2);
-  ctx.fill();
+  if (face && face.sw > 0 && face.sh > 0) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.ellipse(x, y, bodyRx, bodyRy, bodyAngle, 0, Math.PI * 2);
+    ctx.clip();
 
-  // Eye centered on the forward face
-  const eyeX = x + ux * r * 0.5;
-  const eyeY = y + uy * r * 0.5;
-  ctx.fillStyle = "#1a1a1a";
-  ctx.beginPath();
-  ctx.arc(eyeX, eyeY, r * 0.14, 0, Math.PI * 2);
-  ctx.fill();
+    // Object-fit: cover the axis-aligned bbox of the ellipse.
+    const destW = bodyRx * 2;
+    const destH = bodyRy * 2;
+    const scale = Math.max(destW / face.sw, destH / face.sh);
+    const drawW = face.sw * scale;
+    const drawH = face.sh * scale;
+    const destX = x - drawW / 2;
+    const destY = y - drawH / 2;
+    ctx.drawImage(
+      face.source,
+      face.sx,
+      face.sy,
+      face.sw,
+      face.sh,
+      destX,
+      destY,
+      drawW,
+      drawH,
+    );
+    ctx.restore();
+
+    ctx.beginPath();
+    ctx.ellipse(x, y, bodyRx, bodyRy, bodyAngle, 0, Math.PI * 2);
+    ctx.strokeStyle = "#f0a030";
+    ctx.lineWidth = Math.max(2, r * 0.06);
+    ctx.stroke();
+  } else {
+    ctx.beginPath();
+    ctx.ellipse(x, y, bodyRx, bodyRy, bodyAngle, 0, Math.PI * 2);
+    ctx.fillStyle = "#f0a030";
+    ctx.fill();
+
+    // Eye centered on the forward face when no live crop.
+    const eyeX = x + ux * r * 0.5;
+    const eyeY = y + uy * r * 0.5;
+    ctx.fillStyle = "#1a1a1a";
+    ctx.beginPath();
+    ctx.arc(eyeX, eyeY, r * 0.14, 0, Math.PI * 2);
+    ctx.fill();
+  }
 
   ctx.restore();
 }

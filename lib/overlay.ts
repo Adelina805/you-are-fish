@@ -1,7 +1,15 @@
 import type { NeutralPoseCalibrator } from "@/lib/calibration";
-import type { LookDirection } from "@/lib/direction";
+import {
+  PITCH_DEAD_ZONE_DEG,
+  YAW_DEAD_ZONE_DEG,
+  type LookDirection,
+} from "@/lib/direction";
 import type { HeadPose } from "@/lib/head-pose";
-import type { MouthStatus } from "@/lib/mouth";
+import {
+  MOUTH_CLOSE_THRESHOLD,
+  MOUTH_OPEN_THRESHOLD,
+  type MouthStatus,
+} from "@/lib/mouth";
 import type { PoseHistory } from "@/lib/pose-history";
 
 const DEBUG = true;
@@ -114,11 +122,13 @@ export function drawDebugOverlay(
     const mouthLine = mouth
       ? `Mouth ${mouth.openness.toFixed(2)}  ${mouth.state}`
       : "Mouth n/a";
+    const thresholdsLine = `Thr  yaw±${YAW_DEAD_ZONE_DEG}° pitch±${PITCH_DEAD_ZONE_DEG}° mouth ${MOUTH_OPEN_THRESHOLD}/${MOUTH_CLOSE_THRESHOLD}`;
     lines = [
       `FPS   ${fps}`,
       `Face  ${faceDetected ? "yes" : "no"}`,
       `Res   ${width}x${ctx.canvas.height}`,
       mouthLine,
+      thresholdsLine,
       ...lines,
     ];
   }
