@@ -96,3 +96,5 @@ Hand gestures -> currents / whirlpools
 Fish movement -> particle force field -> fluid-like ocean
 
 Session behavior -> Fishsona parameters -> persistent aquarium
+
+movement feel → one facial action → real fish/avatar → fluid response → guided game → Fishsona → persistence/database last.

@@ -234,9 +234,11 @@ export default function CameraStage() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const sessionRef = useRef<Session>(createSession());
+  const showTestingUiRef = useRef(true);
   const [status, setStatus] = useState<Status>("loading");
   const [error, setError] = useState<string | null>(null);
   const [calibrating, setCalibrating] = useState(false);
+  const [showTestingUi, setShowTestingUi] = useState(true);
 
   const stop = useCallback(() => {
     const session = sessionRef.current;
@@ -365,7 +367,7 @@ export default function CameraStage() {
       session.history.append(vizPose);
     }
 
-    if (faceLandmarks && session.DrawingUtils) {
+    if (showTestingUiRef.current && faceLandmarks && session.DrawingUtils) {
       if (!session.drawing) {
         session.drawing = new session.DrawingUtils(ctx);
       }
@@ -388,25 +390,27 @@ export default function CameraStage() {
     drawFish(ctx, session.fish);
 
     drawCalibrationPrompt(ctx, width, height, session.calibrator);
-    drawDirectionLabel(
-      ctx,
-      width,
-      height,
-      direction,
-      session.calibrator.isComplete && !session.calibrator.isActive,
-    );
-    const hudBottom = drawDebugOverlay(
-      ctx,
-      width,
-      session.fps,
-      faceDetected,
-      pose,
-      calibratedPose,
-      smoothedPose,
-      session.calibrator,
-    );
-    if (DEBUG) {
-      drawPoseSignalViz(ctx, width, vizPose, session.history, hudBottom);
+    if (showTestingUiRef.current) {
+      drawDirectionLabel(
+        ctx,
+        width,
+        height,
+        direction,
+        session.calibrator.isComplete && !session.calibrator.isActive,
+      );
+      const hudBottom = drawDebugOverlay(
+        ctx,
+        width,
+        session.fps,
+        faceDetected,
+        pose,
+        calibratedPose,
+        smoothedPose,
+        session.calibrator,
+      );
+      if (DEBUG) {
+        drawPoseSignalViz(ctx, width, vizPose, session.history, hudBottom);
+      }
     }
 
     session.frameId = requestAnimationFrame(loop);
@@ -478,6 +482,14 @@ export default function CameraStage() {
     setCalibrating(true);
   }, []);
 
+  const onToggleTestingUi = useCallback(() => {
+    setShowTestingUi((prev) => {
+      const next = !prev;
+      showTestingUiRef.current = next;
+      return next;
+    });
+  }, []);
+
   useEffect(() => {
     let cancelled = false;
 
@@ -520,6 +532,16 @@ export default function CameraStage() {
             Enable camera
           </button>
         </div>
+      ) : null}
+
+      {status === "running" ? (
+        <button
+          type="button"
+          onClick={onToggleTestingUi}
+          className="absolute top-3 left-3 z-10 rounded-md border-2 border-[#5aa0ff] bg-[#3778dc] px-3 py-1.5 text-sm text-white sm:top-4 sm:left-4 sm:px-5 sm:py-2 sm:text-lg"
+        >
+          {showTestingUi ? "Hide UI" : "Show UI"}
+        </button>
       ) : null}
 
       {status === "running" && !calibrating ? (
