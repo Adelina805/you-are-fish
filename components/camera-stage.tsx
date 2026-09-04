@@ -8,6 +8,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { NeutralPoseCalibrator } from "@/lib/calibration";
 import { classifyDirection } from "@/lib/direction";
+import { createFish, drawFish, updateFish, type FishState } from "@/lib/fish";
 import { estimateHeadPose } from "@/lib/head-pose";
 import {
   drawCalibrationPrompt,
@@ -110,6 +111,7 @@ type Session = {
   calibrator: NeutralPoseCalibrator;
   smoother: PoseSmoother;
   history: PoseHistory;
+  fish: FishState | null;
   lastTimestamp: number;
   lastFrameTime: number | null;
   fps: number;
@@ -126,6 +128,7 @@ function createSession(): Session {
     calibrator: new NeutralPoseCalibrator(),
     smoother: new PoseSmoother(),
     history: new PoseHistory(),
+    fish: null,
     lastTimestamp: -1,
     lastFrameTime: null,
     fps: 0,
@@ -310,11 +313,14 @@ export default function CameraStage() {
     }
 
     const now = performance.now();
+    let dt = 0;
     if (session.lastFrameTime !== null) {
-      const delta = (now - session.lastFrameTime) / 1000;
-      if (delta > 0) {
-        session.fps = Math.round(1 / delta);
+      dt = (now - session.lastFrameTime) / 1000;
+      if (dt > 0) {
+        session.fps = Math.round(1 / dt);
       }
+      // Cap so a long tab-hide pause does not teleport the fish.
+      dt = Math.min(dt, 0.05);
     }
     session.lastFrameTime = now;
 
@@ -370,6 +376,16 @@ export default function CameraStage() {
         });
       }
     }
+
+    if (!session.fish) {
+      session.fish = createFish(width, height);
+    }
+    if (session.calibrator.isComplete) {
+      updateFish(session.fish, direction, dt, width, height);
+    } else {
+      updateFish(session.fish, null, 0, width, height);
+    }
+    drawFish(ctx, session.fish);
 
     drawCalibrationPrompt(ctx, width, height, session.calibrator);
     drawDirectionLabel(
