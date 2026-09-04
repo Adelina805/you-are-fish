@@ -134,26 +134,40 @@ function createSession(): Session {
   };
 }
 
+function fitCanvasToDisplay(canvas: HTMLCanvasElement): boolean {
+  const width = Math.max(1, Math.round(canvas.clientWidth));
+  const height = Math.max(1, Math.round(canvas.clientHeight));
+  const resized = canvas.width !== width || canvas.height !== height;
+  if (resized) {
+    canvas.width = width;
+    canvas.height = height;
+  }
+  return resized;
+}
+
 function drawMirroredVideo(
   ctx: CanvasRenderingContext2D,
   canvas: HTMLCanvasElement,
   video: HTMLVideoElement,
 ): boolean {
-  const width = video.videoWidth;
-  const height = video.videoHeight;
-  if (width === 0 || height === 0) {
+  const videoWidth = video.videoWidth;
+  const videoHeight = video.videoHeight;
+  if (videoWidth === 0 || videoHeight === 0) {
     return false;
   }
 
-  if (canvas.width !== width || canvas.height !== height) {
-    canvas.width = width;
-    canvas.height = height;
-  }
+  const width = canvas.width;
+  const height = canvas.height;
+  const scale = Math.max(width / videoWidth, height / videoHeight);
+  const drawWidth = videoWidth * scale;
+  const drawHeight = videoHeight * scale;
+  const offsetX = (width - drawWidth) / 2;
+  const offsetY = (height - drawHeight) / 2;
 
   ctx.save();
   ctx.translate(width, 0);
   ctx.scale(-1, 1);
-  ctx.drawImage(video, 0, 0, width, height);
+  ctx.drawImage(video, offsetX, offsetY, drawWidth, drawHeight);
   ctx.restore();
   return true;
 }
@@ -255,6 +269,7 @@ export default function CameraStage() {
       return;
     }
 
+    fitCanvasToDisplay(canvas);
     const ctx = canvas.getContext("2d");
     if (!ctx) {
       session.frameId = requestAnimationFrame(previewLoop);
@@ -279,16 +294,12 @@ export default function CameraStage() {
       return;
     }
 
-    const width = video.videoWidth;
-    const height = video.videoHeight;
-    if (width === 0 || height === 0) {
+    if (video.videoWidth === 0 || video.videoHeight === 0) {
       session.frameId = requestAnimationFrame(loop);
       return;
     }
 
-    if (canvas.width !== width || canvas.height !== height) {
-      canvas.width = width;
-      canvas.height = height;
+    if (fitCanvasToDisplay(canvas)) {
       session.drawing = null;
     }
 
@@ -308,6 +319,9 @@ export default function CameraStage() {
     session.lastFrameTime = now;
 
     drawMirroredVideo(ctx, canvas, video);
+
+    const width = canvas.width;
+    const height = canvas.height;
 
     let timestamp = now;
     if (timestamp <= session.lastTimestamp) {
@@ -468,13 +482,13 @@ export default function CameraStage() {
   }, [start, stop]);
 
   return (
-    <div className="relative h-dvh w-full overflow-hidden bg-black">
+    <div className="fixed inset-0 overflow-hidden bg-black">
       <video ref={videoRef} className="hidden" playsInline muted autoPlay />
-      <canvas ref={canvasRef} className="absolute inset-0 h-full w-full object-cover" />
+      <canvas ref={canvasRef} className="absolute inset-0 block h-full w-full" />
 
       {status === "idle" || status === "error" ? (
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 bg-[#061018] px-6 text-center">
-          <h1 className="font-serif text-5xl tracking-wide text-[#d7ecf5] sm:text-6xl">
+          <h1 className="font-serif text-4xl tracking-wide text-[#d7ecf5] sm:text-5xl md:text-6xl">
             You Are Fish
           </h1>
           <p className="max-w-md text-[#9ec3d4]">
@@ -496,7 +510,7 @@ export default function CameraStage() {
         <button
           type="button"
           onClick={onCalibrate}
-          className="absolute top-4 left-1/2 z-10 -translate-x-1/2 rounded-md border-2 border-[#5aa0ff] bg-[#3778dc] px-5 py-2 text-lg text-white"
+          className="absolute top-3 left-1/2 z-10 -translate-x-1/2 rounded-md border-2 border-[#5aa0ff] bg-[#3778dc] px-3 py-1.5 text-sm text-white sm:top-4 sm:px-5 sm:py-2 sm:text-lg"
         >
           Calibrate
         </button>

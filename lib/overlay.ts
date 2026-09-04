@@ -16,6 +16,34 @@ const PITCH_BAR_LEN = 180;
 const PANEL_MARGIN = 20;
 const PANEL_PAD = 14;
 
+/**
+ * Overlay sizes were authored for a 1280×720 canvas. After matching the canvas
+ * to the CSS viewport, those constants are 1:1 with screen pixels — huge in
+ * mobile / DevTools device mode (~390px). Scale down on small viewports, but
+ * not all the way to 720p-fit (that would make HUD text unreadably small).
+ */
+export function getUiScale(width: number, height: number): number {
+  if (width <= 0 || height <= 0) {
+    return 1;
+  }
+  const fit = Math.min(width / 1280, height / 720);
+  if (fit >= 1) {
+    return 1;
+  }
+  return Math.max(fit, Math.min(width / 480, height / 700, 0.9));
+}
+
+function beginScaledUi(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+): { width: number; height: number; scale: number } {
+  const scale = getUiScale(width, height);
+  ctx.save();
+  ctx.scale(scale, scale);
+  return { width: width / scale, height: height / scale, scale };
+}
+
 function formatAngle(degrees: number | null | undefined): string {
   if (degrees === null || degrees === undefined) {
     return "n/a";
@@ -85,18 +113,26 @@ export function drawDebugOverlay(
     ];
   }
 
+  const space = beginScaledUi(ctx, width, ctx.canvas.height);
   ctx.font = "16px ui-monospace, SFMono-Regular, Menlo, monospace";
   ctx.textBaseline = "alphabetic";
   const textWidths = lines.map((line) => ctx.measureText(line).width);
-  const panelWidth = Math.max(...textWidths) + HUD_PAD * 2;
+  const panelWidth = Math.min(
+    Math.max(...textWidths) + HUD_PAD * 2,
+    space.width - HUD_MARGIN * 2,
+  );
   const panelHeight = HUD_PAD + lines.length * HUD_LINE_HEIGHT + HUD_PAD;
-  const panelRight = width - HUD_MARGIN;
+  const panelRight = space.width - HUD_MARGIN;
   const panelLeft = panelRight - panelWidth;
   const panelTop = HUD_MARGIN;
 
   ctx.fillStyle = "rgba(20, 20, 20, 0.55)";
   ctx.fillRect(panelLeft, panelTop, panelWidth, panelHeight);
 
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(panelLeft, panelTop, panelWidth, panelHeight);
+  ctx.clip();
   lines.forEach((line, index) => {
     const x = panelRight - HUD_PAD - textWidths[index];
     const y = panelTop + HUD_PAD + (index + 1) * HUD_LINE_HEIGHT - 8;
@@ -105,8 +141,10 @@ export function drawDebugOverlay(
     ctx.fillStyle = "#ffffff";
     ctx.fillText(line, x, y);
   });
+  ctx.restore();
 
-  return panelTop + panelHeight + HUD_MARGIN;
+  ctx.restore();
+  return (panelTop + panelHeight + HUD_MARGIN) * space.scale;
 }
 
 export function drawCalibrationPrompt(
@@ -119,6 +157,7 @@ export function drawCalibrationPrompt(
     return;
   }
 
+  const space = beginScaledUi(ctx, width, height);
   const prompt = "Look comfortably straight at the screen";
   const hint = "Hold still...";
   ctx.textAlign = "center";
@@ -127,19 +166,28 @@ export function drawCalibrationPrompt(
   const promptWidth = ctx.measureText(prompt).width;
   ctx.font = "16px ui-sans-serif, system-ui, sans-serif";
   const hintWidth = ctx.measureText(hint).width;
-  const panelWidth = Math.max(promptWidth, hintWidth) + 40;
+  const panelWidth = Math.min(
+    Math.max(promptWidth, hintWidth) + 40,
+    space.width - HUD_MARGIN * 2,
+  );
   const panelHeight = 84;
-  const left = (width - panelWidth) / 2;
-  const top = height / 2 - panelHeight / 2;
+  const left = (space.width - panelWidth) / 2;
+  const top = space.height / 2 - panelHeight / 2;
 
   roundRect(ctx, left, top, panelWidth, panelHeight, "rgba(20, 20, 20, 0.65)");
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(left, top, panelWidth, panelHeight);
+  ctx.clip();
   ctx.fillStyle = "#ffffff";
   ctx.font = "22px ui-sans-serif, system-ui, sans-serif";
-  ctx.fillText(prompt, width / 2, height / 2 - 10);
+  ctx.fillText(prompt, space.width / 2, space.height / 2 - 10);
   ctx.fillStyle = "#c8c8c8";
   ctx.font = "16px ui-sans-serif, system-ui, sans-serif";
-  ctx.fillText(hint, width / 2, height / 2 + 18);
+  ctx.fillText(hint, space.width / 2, space.height / 2 + 18);
+  ctx.restore();
   ctx.textAlign = "start";
+  ctx.restore();
 }
 
 export function drawDirectionLabel(
@@ -153,15 +201,17 @@ export function drawDirectionLabel(
     return;
   }
 
+  const space = beginScaledUi(ctx, width, height);
   const label = direction ?? "—";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.font = "bold 72px ui-sans-serif, system-ui, sans-serif";
   ctx.fillStyle = "#000000";
-  ctx.fillText(label, width / 2 + 2, height / 2 + 2);
+  ctx.fillText(label, space.width / 2 + 2, space.height / 2 + 2);
   ctx.fillStyle = direction ? "#ffffff" : "#787878";
-  ctx.fillText(label, width / 2, height / 2);
+  ctx.fillText(label, space.width / 2, space.height / 2);
   ctx.textAlign = "start";
+  ctx.restore();
 }
 
 function clamp(value: number, low: number, high: number): number {
@@ -185,10 +235,13 @@ export function drawPoseSignalViz(
   history: PoseHistory,
   topOffset: number,
 ): void {
+  const height = ctx.canvas.height;
+  const space = beginScaledUi(ctx, width, height);
+  const top = topOffset / space.scale;
   const yawHalf = YAW_BAR_LEN / 2;
   const pitchHalf = PITCH_BAR_LEN / 2;
-  const cornerX = width - PANEL_MARGIN - yawHalf;
-  const cornerY = PANEL_MARGIN + topOffset + pitchHalf;
+  const cornerX = space.width - PANEL_MARGIN - yawHalf;
+  const cornerY = PANEL_MARGIN + top + pitchHalf;
   const yawLeft = cornerX - yawHalf;
   const yawRight = cornerX + yawHalf;
   const pitchTop = cornerY - pitchHalf;
@@ -262,4 +315,5 @@ export function drawPoseSignalViz(
   ctx.fillText("yaw", yawLeft, cornerY + 10);
   ctx.fillText("pitch", cornerX + 10, pitchTop);
   ctx.fillText("0", cornerX + 8, cornerY + 8);
+  ctx.restore();
 }
