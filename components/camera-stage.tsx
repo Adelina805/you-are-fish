@@ -468,9 +468,9 @@ export default function CameraStage() {
   }, [start, stop]);
 
   return (
-    <div className="relative flex h-dvh w-full items-center justify-center overflow-hidden">
+    <div className="relative h-dvh w-full overflow-hidden bg-black">
       <video ref={videoRef} className="hidden" playsInline muted autoPlay />
-      <canvas ref={canvasRef} className="h-full w-full object-contain" />
+      <canvas ref={canvasRef} className="absolute inset-0 h-full w-full object-cover" />
 
       {status === "idle" || status === "error" ? (
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 bg-[#061018] px-6 text-center">
