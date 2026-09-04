@@ -1,5 +1,5 @@
 import type { NeutralPoseCalibrator } from "@/lib/calibration";
-import type { Direction } from "@/lib/direction";
+import type { LookDirection } from "@/lib/direction";
 import type { HeadPose } from "@/lib/head-pose";
 import type { PoseHistory } from "@/lib/pose-history";
 
@@ -190,11 +190,65 @@ export function drawCalibrationPrompt(
   ctx.restore();
 }
 
+function formatSigned(value: number, digits = 2): string {
+  const sign = value >= 0 ? "+" : "";
+  return `${sign}${value.toFixed(digits)}`;
+}
+
+function drawLookArrow(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  x: number,
+  y: number,
+  length: number,
+): void {
+  // Screen y grows downward; LookDirection.y is look-up, so flip for canvas.
+  const tipX = cx + x * length;
+  const tipY = cy - y * length;
+  const angle = Math.atan2(tipY - cy, tipX - cx);
+  const headLen = Math.min(28, length * 0.35);
+  const headAngle = Math.PI / 6;
+
+  ctx.strokeStyle = "#ffffff";
+  ctx.fillStyle = "#ffffff";
+  ctx.lineWidth = 6;
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.lineTo(tipX, tipY);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(tipX, tipY);
+  ctx.lineTo(
+    tipX - headLen * Math.cos(angle - headAngle),
+    tipY - headLen * Math.sin(angle - headAngle),
+  );
+  ctx.lineTo(
+    tipX - headLen * Math.cos(angle + headAngle),
+    tipY - headLen * Math.sin(angle + headAngle),
+  );
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.fillStyle = "#000000";
+  ctx.beginPath();
+  ctx.arc(cx, cy, 6, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = "#ffffff";
+  ctx.beginPath();
+  ctx.arc(cx, cy, 4, 0, Math.PI * 2);
+  ctx.fill();
+}
+
 export function drawDirectionLabel(
   ctx: CanvasRenderingContext2D,
   width: number,
   height: number,
-  direction: Direction | null,
+  direction: LookDirection | null,
   show: boolean,
 ): void {
   if (!show) {
@@ -202,14 +256,46 @@ export function drawDirectionLabel(
   }
 
   const space = beginScaledUi(ctx, width, height);
-  const label = direction ?? "—";
+  const cx = space.width / 2;
+  const cy = space.height / 2;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.font = "bold 72px ui-sans-serif, system-ui, sans-serif";
-  ctx.fillStyle = "#000000";
-  ctx.fillText(label, space.width / 2 + 2, space.height / 2 + 2);
-  ctx.fillStyle = direction ? "#ffffff" : "#787878";
-  ctx.fillText(label, space.width / 2, space.height / 2);
+
+  if (!direction) {
+    ctx.font = "bold 72px ui-sans-serif, system-ui, sans-serif";
+    ctx.fillStyle = "#000000";
+    ctx.fillText("—", cx + 2, cy + 2);
+    ctx.fillStyle = "#787878";
+    ctx.fillText("—", cx, cy);
+  } else if (direction.magnitude === 0) {
+    ctx.font = "bold 72px ui-sans-serif, system-ui, sans-serif";
+    ctx.fillStyle = "#000000";
+    ctx.fillText("CENTER", cx + 2, cy + 2);
+    ctx.fillStyle = "#ffffff";
+    ctx.fillText("CENTER", cx, cy);
+  } else {
+    const arrowLen = 110;
+    drawLookArrow(ctx, cx, cy - 28, direction.x, direction.y, arrowLen);
+
+    const coords = `${formatSigned(direction.x)}, ${formatSigned(direction.y)}`;
+    const angle =
+      direction.angleDeg === null
+        ? ""
+        : `${direction.angleDeg >= 0 ? "+" : ""}${direction.angleDeg.toFixed(0)}°`;
+
+    ctx.font = "bold 36px ui-monospace, SFMono-Regular, Menlo, monospace";
+    ctx.fillStyle = "#000000";
+    ctx.fillText(coords, cx + 2, cy + 72 + 2);
+    ctx.fillStyle = "#ffffff";
+    ctx.fillText(coords, cx, cy + 72);
+
+    ctx.font = "22px ui-sans-serif, system-ui, sans-serif";
+    ctx.fillStyle = "#000000";
+    ctx.fillText(angle, cx + 1, cy + 108 + 1);
+    ctx.fillStyle = "#c8c8c8";
+    ctx.fillText(angle, cx, cy + 108);
+  }
+
   ctx.textAlign = "start";
   ctx.restore();
 }

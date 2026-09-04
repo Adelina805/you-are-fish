@@ -3,31 +3,46 @@ import type { HeadPose } from "@/lib/head-pose";
 export const YAW_DEAD_ZONE_DEG = 8;
 export const PITCH_DEAD_ZONE_DEG = 8;
 
-export type Direction = "CENTER" | "LEFT" | "RIGHT" | "UP" | "DOWN";
+/**
+ * Screen-space look direction after calibration.
+ * +x = look toward screen right, +y = look up.
+ * angleDeg: atan2(y, x); 0° = right, 90° = up; null at center.
+ * magnitude: 0 in the dead zone; hypot(nx, ny) - 1 outside it.
+ */
+export type LookDirection = {
+  x: number;
+  y: number;
+  angleDeg: number | null;
+  magnitude: number;
+};
 
 export function classifyDirection(
   pose: HeadPose | null,
   yawDeadZoneDeg = YAW_DEAD_ZONE_DEG,
   pitchDeadZoneDeg = PITCH_DEAD_ZONE_DEG,
-): Direction | null {
+): LookDirection | null {
   if (pose === null) {
     return null;
   }
 
-  const yaw = pose.yawDeg;
-  const pitch = pose.pitchDeg;
-  const yawInZone = Math.abs(yaw) <= yawDeadZoneDeg;
-  const pitchInZone = Math.abs(pitch) <= pitchDeadZoneDeg;
+  const yawDz = yawDeadZoneDeg > 0 ? yawDeadZoneDeg : 1;
+  const pitchDz = pitchDeadZoneDeg > 0 ? pitchDeadZoneDeg : 1;
 
-  if (yawInZone && pitchInZone) {
-    return "CENTER";
+  // Normalize into screen space: +yaw is look left → -x; +pitch is look up → +y.
+  const nx = -pose.yawDeg / yawDz;
+  const ny = pose.pitchDeg / pitchDz;
+  const r = Math.hypot(nx, ny);
+
+  if (r <= 1) {
+    return { x: 0, y: 0, angleDeg: null, magnitude: 0 };
   }
 
-  const yawRatio = yawDeadZoneDeg > 0 ? Math.abs(yaw) / yawDeadZoneDeg : 0;
-  const pitchRatio = pitchDeadZoneDeg > 0 ? Math.abs(pitch) / pitchDeadZoneDeg : 0;
-
-  if (yawRatio >= pitchRatio) {
-    return yaw > 0 ? "RIGHT" : "LEFT";
-  }
-  return pitch > 0 ? "DOWN" : "UP";
+  const x = nx / r;
+  const y = ny / r;
+  return {
+    x,
+    y,
+    angleDeg: (Math.atan2(y, x) * 180) / Math.PI,
+    magnitude: r - 1,
+  };
 }

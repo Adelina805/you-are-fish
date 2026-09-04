@@ -11,9 +11,15 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Milestone 5: Directional classifier
 
-After calibration, calibrated yaw/pitch are smoothed with an exponential moving average, then classified into one of five directions: `CENTER`, `LEFT`, `RIGHT`, `UP`, or `DOWN`. The detected direction is shown as large centered text. No fish yet.
+After calibration, calibrated yaw/pitch are smoothed with an exponential moving average, then classified into a continuous 2D look vector in screen space. Inside the dead zone the UI shows `CENTER`; outside it shows a direction arrow plus unit coordinates `(x, y)` and angle. No fish yet.
 
-Thresholds live in [`lib/direction.ts`](lib/direction.ts):
+The look vector lives in [`lib/direction.ts`](lib/direction.ts) as `LookDirection`:
+
+- `x`, `y`: unit vector; `+x` = look toward screen right, `+y` = look up
+- `angleDeg`: `atan2(y, x)` in degrees (`0°` = right, `90°` = up); `null` at center
+- `magnitude`: `0` in the dead zone; `hypot(nx, ny) - 1` outside it (for later fish speed)
+
+Thresholds:
 
 - `YAW_DEAD_ZONE_DEG` (default `8`)
 - `PITCH_DEAD_ZONE_DEG` (default `8`)
@@ -22,23 +28,21 @@ Smoothing strength is in [`lib/smoothing.ts`](lib/smoothing.ts) as `SMOOTHING_AL
 
 ### What is a dead zone?
 
-A **dead zone** is a band around the calibrated origin where the classifier reports `CENTER` even though yaw/pitch are not exactly zero. With default thresholds, if `|yaw| <= 8°` and `|pitch| <= 8°`, you are considered looking at the screen.
+A **dead zone** is an ellipse around the calibrated origin where the classifier reports `CENTER` even though yaw/pitch are not exactly zero. Pose is normalized as `nx = -yaw / yawDeadZone`, `ny = pitch / pitchDeadZone`. With default thresholds, if `hypot(nx, ny) <= 1`, you are considered looking at the screen. Outside the ellipse the unit vector `(nx, ny) / r` is the continuous look direction, so diagonals are first-class (no cardinal snap).
 
 ### Why it matters
 
-A still head is never a perfect `(0, 0)`. MediaPipe jitter, breathing, micro-adjustments, and sitting slightly off your calibration pose all produce small angle changes. Without a dead zone, those motions would flicker between directions and would accidentally steer a fish later. The dead zone is the "I am looking at the screen" region; only a deliberate turn should leave it.
+A still head is never a perfect `(0, 0)`. MediaPipe jitter, breathing, micro-adjustments, and sitting slightly off your calibration pose all produce small angle changes. Without a dead zone, those motions would flicker between directions and would accidentally steer a fish later. The dead zone is the "I am looking at the screen" region; only a deliberate turn should leave it. An ellipse (not an axis-aligned box) means a 45° glance crosses the threshold at the same intent as a pure left/right glance.
 
 ### How to choose thresholds experimentally
 
 The defaults are starting guesses, not a one-shot tune:
 
 1. **Calibrate**, then sit still for 10–15 seconds. Watch the HUD `Sm yaw` / `Sm pitch` line. Note the noise envelope (e.g. yaw within ±2°, pitch within ±3°). The dead zone must be **larger** than that envelope, with a little margin.
-2. Make the **smallest turn you want to count** as LEFT / RIGHT / UP / DOWN. Record typical peak smoothed angles. The threshold must sit **below** that gesture, or you will have to over-turn.
+2. Make the **smallest turn you want to count** as a look (any angle, including diagonals). Record typical peak smoothed angles. The threshold must sit **below** that gesture, or you will have to over-turn.
 3. Set each axis between those two bounds: `noise_ceiling < dead_zone < intentional_gesture`. Yaw and pitch often differ, so keep separate constants.
-4. Re-test: still → stays `CENTER`; slow glance → one direction; return to rest → `CENTER` again. If it flickers at the edge, raise the dead zone slightly. If you must crane your neck, lower it.
+4. Re-test: still → stays `CENTER`; slow glance → arrow tracks continuously; return to rest → `CENTER` again. If it flickers at the edge, raise the dead zone slightly. If you must crane your neck, lower it.
 5. Repeat after changing chair, camera height, or distance.
-
-If both axes leave the dead zone at once (a diagonal glance), the classifier picks the axis with the larger `|angle| / threshold` ratio.
 
 ## Milestone 4: Per-user calibration
 
@@ -60,9 +64,9 @@ MediaPipe's facial transformation matrix is a Procrustes fit to a canonical 3D f
 
 Open the webcam in the browser, detect one face, and estimate head orientation from MediaPipe Face Landmarker’s facial transformation matrix.
 
-The matrix is a weighted Procrustes alignment of the canonical 3D face to the detected face (scale + rotation + translation). The app recovers the rotation with SVD and converts it to intrinsic Tait-Bryan YXZ angles. Values are shown in degrees; they are not classified into LEFT/RIGHT/UP/DOWN.
+The matrix is a weighted Procrustes alignment of the canonical 3D face to the detected face (scale + rotation + translation). The app recovers the rotation with SVD and converts it to intrinsic Tait-Bryan YXZ angles. Values are shown in degrees; directional classification (Milestone 5) is applied only after calibration.
 
-Sign convention (unmirrored webcam):
+Sign convention (after correcting for the mirrored selfie canvas):
 
 - Positive yaw: looking left
 - Positive pitch: looking up

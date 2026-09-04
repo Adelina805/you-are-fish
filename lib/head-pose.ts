@@ -5,8 +5,11 @@ export type HeadPose = {
 };
 
 const GIMBAL_LOCK_EPS = 1e-6;
-const YAW_SIGN = 1;
-const PITCH_SIGN = 1;
+// Detection runs on the horizontally mirrored selfie canvas. Empirically both
+// yaw and pitch from the facial transform are inverted vs screen-space look
+// direction, so flip them here once for HUD, viz, and the look classifier.
+const YAW_SIGN = -1;
+const PITCH_SIGN = -1;
 const ROLL_SIGN = 1;
 
 export function estimateHeadPose(matrix: ArrayLike<number> | undefined): HeadPose | null {
