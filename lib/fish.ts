@@ -21,7 +21,7 @@ export const FISH_MAX_SPEED = 600;
  */
 export const FISH_IDLE_SPEED = 80;
 
-export const FISH_RADIUS = 72;
+export const FISH_RADIUS = 36;
 
 /** Live face crop to blit onto the fish body (ephemeral; never persisted). */
 export type FishFaceSource = {
