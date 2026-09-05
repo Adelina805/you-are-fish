@@ -16,7 +16,11 @@ import {
 } from "@/lib/bubbles";
 import { NeutralPoseCalibrator } from "@/lib/calibration";
 import { classifyDirection } from "@/lib/direction";
-import { faceBoundsFromLandmarks } from "@/lib/face-bounds";
+import {
+  faceBoundsFromLandmarks,
+  faceOvalPointsInCrop,
+  type LandmarkConnection,
+} from "@/lib/face-bounds";
 import {
   createFish,
   drawFish,
@@ -125,6 +129,7 @@ type Session = {
   drawing: DrawingUtilsType | null;
   DrawingUtils: (typeof import("@mediapipe/tasks-vision"))["DrawingUtils"] | null;
   meshStyles: MeshStyle[];
+  faceOvalConnections: LandmarkConnection[];
   calibrator: NeutralPoseCalibrator;
   smoother: PoseSmoother;
   history: PoseHistory;
@@ -147,6 +152,7 @@ function createSession(): Session {
     drawing: null,
     DrawingUtils: null,
     meshStyles: [],
+    faceOvalConnections: [],
     calibrator: new NeutralPoseCalibrator(),
     smoother: new PoseSmoother(),
     history: new PoseHistory(),
@@ -174,6 +180,7 @@ function captureFaceCrop(
   sy: number,
   sw: number,
   sh: number,
+  oval: { x: number; y: number }[],
 ): FishFaceSource | null {
   const width = Math.max(1, Math.round(sw));
   const height = Math.max(1, Math.round(sh));
@@ -191,7 +198,7 @@ function captureFaceCrop(
   }
   cropCtx.clearRect(0, 0, width, height);
   cropCtx.drawImage(source, sx, sy, sw, sh, 0, 0, width, height);
-  return { source: crop, sx: 0, sy: 0, sw: width, sh: height };
+  return { source: crop, sx: 0, sy: 0, sw: width, sh: height, oval };
 }
 
 function fitCanvasToDisplay(canvas: HTMLCanvasElement): boolean {
@@ -268,6 +275,7 @@ async function loadVision(session: Session): Promise<void> {
       ...(FaceLandmarker.FACE_LANDMARKS_RIGHT_EYEBROW ?? []),
     ];
 
+  session.faceOvalConnections = FaceLandmarker.FACE_LANDMARKS_FACE_OVAL ?? [];
   session.meshStyles = [
     {
       connections: FaceLandmarker.FACE_LANDMARKS_TESSELATION,
@@ -409,16 +417,29 @@ export default function CameraStage() {
     const bounds = faceDetected
       ? faceBoundsFromLandmarks(faceLandmarks, width, height)
       : null;
-    const faceSource = bounds
-      ? captureFaceCrop(
-          session,
-          canvas,
-          bounds.x,
-          bounds.y,
-          bounds.width,
-          bounds.height,
-        )
-      : null;
+    let faceSource: FishFaceSource | null = null;
+    if (bounds) {
+      const cropW = Math.max(1, Math.round(bounds.width));
+      const cropH = Math.max(1, Math.round(bounds.height));
+      const oval = faceOvalPointsInCrop(
+        faceLandmarks,
+        bounds,
+        session.faceOvalConnections,
+        width,
+        height,
+        cropW,
+        cropH,
+      );
+      faceSource = captureFaceCrop(
+        session,
+        canvas,
+        bounds.x,
+        bounds.y,
+        bounds.width,
+        bounds.height,
+        oval,
+      );
+    }
 
     ctx.fillStyle = BLUE_WASH;
     ctx.fillRect(0, 0, width, height);

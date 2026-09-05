@@ -12,6 +12,17 @@ export type NormalizedPoint = {
   y: number;
 };
 
+export type Point2 = {
+  x: number;
+  y: number;
+};
+
+/** MediaPipe-style edge between landmark indices. */
+export type LandmarkConnection = {
+  start: number;
+  end: number;
+};
+
 const PADDING = 0.12;
 
 /**
@@ -63,4 +74,70 @@ export function faceBoundsFromLandmarks(
   }
 
   return { x, y, width, height };
+}
+
+/**
+ * Walk face-oval connections into a closed ring of landmark indices.
+ */
+export function orderOvalIndices(
+  connections: LandmarkConnection[] | undefined | null,
+): number[] {
+  if (!connections?.length) {
+    return [];
+  }
+
+  const next = new Map<number, number>();
+  for (const edge of connections) {
+    next.set(edge.start, edge.end);
+  }
+
+  const start = connections[0].start;
+  const ordered = [start];
+  let current = next.get(start);
+  while (current !== undefined && current !== start) {
+    ordered.push(current);
+    current = next.get(current);
+    if (ordered.length > connections.length + 1) {
+      break;
+    }
+  }
+  return ordered;
+}
+
+/**
+ * Face-oval polygon in crop-local pixels (relative to bounds / crop canvas).
+ * Accounts for rounded crop canvas size vs float bounds.
+ */
+export function faceOvalPointsInCrop(
+  landmarks: NormalizedPoint[] | undefined | null,
+  bounds: FaceBounds,
+  ovalConnections: LandmarkConnection[] | undefined | null,
+  canvasWidth: number,
+  canvasHeight: number,
+  cropWidth: number,
+  cropHeight: number,
+): Point2[] {
+  const indices = orderOvalIndices(ovalConnections);
+  if (!landmarks?.length || indices.length < 3 || bounds.width <= 0 || bounds.height <= 0) {
+    return [];
+  }
+
+  const scaleX = cropWidth / bounds.width;
+  const scaleY = cropHeight / bounds.height;
+  const points: Point2[] = [];
+
+  for (const index of indices) {
+    const landmark = landmarks[index];
+    if (!landmark || typeof landmark.x !== "number" || typeof landmark.y !== "number") {
+      continue;
+    }
+    const canvasX = landmark.x * canvasWidth;
+    const canvasY = landmark.y * canvasHeight;
+    points.push({
+      x: (canvasX - bounds.x) * scaleX,
+      y: (canvasY - bounds.y) * scaleY,
+    });
+  }
+
+  return points.length >= 3 ? points : [];
 }

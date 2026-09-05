@@ -23,13 +23,18 @@ export const FISH_IDLE_SPEED = 80;
 
 export const FISH_RADIUS = 36;
 
-/** Live face crop to blit onto the fish body (ephemeral; never persisted). */
+/** Target width of the head cutout on the fish (oval bbox maps to this). */
+export const FISH_HEAD_WIDTH = FISH_RADIUS * 1.1;
+
+/** Live face crop + oval mask to place on the fish face (ephemeral). */
 export type FishFaceSource = {
   source: CanvasImageSource;
   sx: number;
   sy: number;
   sw: number;
   sh: number;
+  /** Face-oval polygon in crop-local pixels; empty → no head sticker. */
+  oval: { x: number; y: number }[];
 };
 
 /** Ignore tiny speeds when updating facing / zeroing residual velocity. */
@@ -170,47 +175,92 @@ export function drawFish(
   ctx.closePath();
   ctx.fill();
 
-  if (face && face.sw > 0 && face.sh > 0) {
-    ctx.save();
-    ctx.beginPath();
-    ctx.ellipse(x, y, bodyRx, bodyRy, bodyAngle, 0, Math.PI * 2);
-    ctx.clip();
+  // Solid orange body.
+  ctx.beginPath();
+  ctx.ellipse(x, y, bodyRx, bodyRy, bodyAngle, 0, Math.PI * 2);
+  ctx.fillStyle = "#f0a030";
+  ctx.fill();
 
-    // Object-fit: cover the axis-aligned bbox of the ellipse.
-    const destW = bodyRx * 2;
-    const destH = bodyRy * 2;
-    const scale = Math.max(destW / face.sw, destH / face.sh);
-    const drawW = face.sw * scale;
-    const drawH = face.sh * scale;
-    const destX = x - drawW / 2;
-    const destY = y - drawH / 2;
-    ctx.drawImage(
-      face.source,
-      face.sx,
-      face.sy,
-      face.sw,
-      face.sh,
-      destX,
-      destY,
-      drawW,
-      drawH,
-    );
-    ctx.restore();
+  const eyeX = x + ux * r * 0.5;
+  const eyeY = y + uy * r * 0.5;
+  const hasOval =
+    face &&
+    face.sw > 0 &&
+    face.sh > 0 &&
+    face.oval.length >= 3;
 
-    ctx.beginPath();
-    ctx.ellipse(x, y, bodyRx, bodyRy, bodyAngle, 0, Math.PI * 2);
-    ctx.strokeStyle = "#f0a030";
-    ctx.lineWidth = Math.max(2, r * 0.06);
-    ctx.stroke();
+  if (hasOval && face) {
+    let ominX = Infinity;
+    let ominY = Infinity;
+    let omaxX = -Infinity;
+    let omaxY = -Infinity;
+    for (const p of face.oval) {
+      if (p.x < ominX) ominX = p.x;
+      if (p.y < ominY) ominY = p.y;
+      if (p.x > omaxX) omaxX = p.x;
+      if (p.y > omaxY) omaxY = p.y;
+    }
+    const ovalW = omaxX - ominX;
+    const ovalH = omaxY - ominY;
+    if (ovalW > 1 && ovalH > 1) {
+      const scale = FISH_HEAD_WIDTH / ovalW;
+      const ovalCx = (ominX + omaxX) / 2;
+      const ovalCy = (ominY + omaxY) / 2;
+
+      ctx.save();
+      ctx.beginPath();
+      const first = face.oval[0];
+      ctx.moveTo(
+        eyeX + (first.x - ovalCx) * scale,
+        eyeY + (first.y - ovalCy) * scale,
+      );
+      for (let i = 1; i < face.oval.length; i += 1) {
+        const p = face.oval[i];
+        ctx.lineTo(
+          eyeX + (p.x - ovalCx) * scale,
+          eyeY + (p.y - ovalCy) * scale,
+        );
+      }
+      ctx.closePath();
+      ctx.clip();
+
+      ctx.drawImage(
+        face.source,
+        face.sx,
+        face.sy,
+        face.sw,
+        face.sh,
+        eyeX - ovalCx * scale,
+        eyeY - ovalCy * scale,
+        face.sw * scale,
+        face.sh * scale,
+      );
+      ctx.restore();
+
+      ctx.beginPath();
+      ctx.moveTo(
+        eyeX + (first.x - ovalCx) * scale,
+        eyeY + (first.y - ovalCy) * scale,
+      );
+      for (let i = 1; i < face.oval.length; i += 1) {
+        const p = face.oval[i];
+        ctx.lineTo(
+          eyeX + (p.x - ovalCx) * scale,
+          eyeY + (p.y - ovalCy) * scale,
+        );
+      }
+      ctx.closePath();
+      ctx.strokeStyle = "#f0a030";
+      ctx.lineWidth = Math.max(1.5, r * 0.05);
+      ctx.stroke();
+    } else {
+      ctx.fillStyle = "#1a1a1a";
+      ctx.beginPath();
+      ctx.arc(eyeX, eyeY, r * 0.14, 0, Math.PI * 2);
+      ctx.fill();
+    }
   } else {
-    ctx.beginPath();
-    ctx.ellipse(x, y, bodyRx, bodyRy, bodyAngle, 0, Math.PI * 2);
-    ctx.fillStyle = "#f0a030";
-    ctx.fill();
-
-    // Eye centered on the forward face when no live crop.
-    const eyeX = x + ux * r * 0.5;
-    const eyeY = y + uy * r * 0.5;
+    // Eye centered on the forward face when no live head cutout.
     ctx.fillStyle = "#1a1a1a";
     ctx.beginPath();
     ctx.arc(eyeX, eyeY, r * 0.14, 0, Math.PI * 2);
