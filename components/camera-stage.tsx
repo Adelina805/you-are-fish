@@ -15,6 +15,7 @@ import {
   type BubbleEmitter,
 } from "@/lib/bubbles";
 import { NeutralPoseCalibrator } from "@/lib/calibration";
+import { DEBUG } from "@/lib/debug";
 import { classifyDirection } from "@/lib/direction";
 import {
   faceBoundsFromLandmarks,
@@ -31,7 +32,6 @@ import {
 import { estimateHeadPose } from "@/lib/head-pose";
 import { MouthTracker } from "@/lib/mouth";
 import {
-  drawCalibrationPrompt,
   drawDebugOverlay,
   drawDirectionLabel,
   drawPoseSignalViz,
@@ -43,8 +43,9 @@ const MODEL_URL =
   "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task";
 const WASM_URL = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.35/wasm";
 const CAMERA_ENABLED_KEY = "you-are-fish:camera-enabled";
-const DEBUG = true;
 const BLUE_WASH = "rgba(20, 80, 140, 0.35)";
+const COUNTDOWN_SEC = 3;
+const SUCCESS_HOLD_MS = 1000;
 
 // MediaPipe's WASM binds console.error at init and writes INFO/WARNING logs to
 // stderr. Next.js treats those as overlay errors, so drop the known noise first.
@@ -114,7 +115,15 @@ async function shouldAutoStartCamera(): Promise<boolean> {
   return hasCameraEnabledFlag();
 }
 
-type Status = "idle" | "loading" | "running" | "error";
+type AppPhase =
+  | "camera_idle"
+  | "camera_loading"
+  | "camera_error"
+  | "calibration_ready"
+  | "countdown"
+  | "calibrating"
+  | "calibration_success"
+  | "playing";
 
 type MeshStyle = {
   connections: NonNullable<Parameters<DrawingUtilsType["drawConnectors"]>[1]>;
@@ -300,11 +309,17 @@ export default function CameraStage() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const sessionRef = useRef<Session>(createSession());
-  const showTestingUiRef = useRef(false);
-  const [status, setStatus] = useState<Status>("loading");
+  const showTrackingInfoRef = useRef(false);
+  const phaseRef = useRef<AppPhase>("camera_loading");
+  const [phase, setPhase] = useState<AppPhase>("camera_loading");
   const [error, setError] = useState<string | null>(null);
-  const [calibrating, setCalibrating] = useState(false);
-  const [showTestingUi, setShowTestingUi] = useState(false);
+  const [countdown, setCountdown] = useState<number | null>(null);
+  const [showTrackingInfo, setShowTrackingInfo] = useState(false);
+
+  const setAppPhase = useCallback((next: AppPhase) => {
+    phaseRef.current = next;
+    setPhase(next);
+  }, []);
 
   const stop = useCallback(() => {
     const session = sessionRef.current;
@@ -449,8 +464,9 @@ export default function CameraStage() {
     if (session.calibrator.isActive) {
       session.calibrator.update(pose, now / 1000);
     }
-    if (wasActive && !session.calibrator.isActive) {
-      setCalibrating(false);
+    if (wasActive && !session.calibrator.isActive && session.calibrator.isComplete) {
+      phaseRef.current = "calibration_success";
+      setPhase("calibration_success");
     }
     if (!wasComplete && session.calibrator.isComplete) {
       session.history.clear();
@@ -468,7 +484,8 @@ export default function CameraStage() {
       session.history.append(vizPose);
     }
 
-    if (showTestingUiRef.current && faceLandmarks && session.DrawingUtils) {
+    const trackingOpen = showTrackingInfoRef.current;
+    if (DEBUG && trackingOpen && faceLandmarks && session.DrawingUtils) {
       if (!session.drawing) {
         session.drawing = new session.DrawingUtils(ctx);
       }
@@ -480,15 +497,15 @@ export default function CameraStage() {
       }
     }
 
-    if (!session.fish) {
-      session.fish = createFish(width, height);
-    }
     if (session.calibrator.isComplete) {
-      updateFish(session.fish, direction, dt, width, height);
-    } else {
-      updateFish(session.fish, null, 0, width, height);
-    }
-    if (session.fish) {
+      if (!session.fish) {
+        session.fish = createFish(width, height);
+      }
+      if (phaseRef.current === "playing") {
+        updateFish(session.fish, direction, dt, width, height);
+      } else {
+        updateFish(session.fish, null, 0, width, height);
+      }
       emitBubblesContinuous(
         session.bubbles,
         session.fish,
@@ -496,20 +513,21 @@ export default function CameraStage() {
         dt,
         session.bubbleEmitter,
       );
+      updateBubbles(session.bubbles, dt, width, height);
+      drawFish(ctx, session.fish, faceSource);
+      drawBubbles(ctx, session.bubbles);
     }
-    updateBubbles(session.bubbles, dt, width, height);
-    drawFish(ctx, session.fish, faceSource);
-    drawBubbles(ctx, session.bubbles);
 
-    drawCalibrationPrompt(ctx, width, height, session.calibrator);
-    if (showTestingUiRef.current) {
-      drawDirectionLabel(
-        ctx,
-        width,
-        height,
-        direction,
-        session.calibrator.isComplete && !session.calibrator.isActive,
-      );
+    if (trackingOpen) {
+      if (DEBUG) {
+        drawDirectionLabel(
+          ctx,
+          width,
+          height,
+          direction,
+          session.calibrator.isComplete && !session.calibrator.isActive,
+        );
+      }
       const hudBottom = drawDebugOverlay(
         ctx,
         width,
@@ -534,7 +552,7 @@ export default function CameraStage() {
       const isCancelled = () => options?.isCancelled?.() ?? false;
 
       setError(null);
-      setStatus("loading");
+      setAppPhase("camera_loading");
       sessionRef.current = createSession();
       const session = sessionRef.current;
 
@@ -568,7 +586,7 @@ export default function CameraStage() {
 
         setCameraEnabledFlag(true);
         session.mode = "running";
-        setStatus("running");
+        setAppPhase("calibration_ready");
         session.frameId = requestAnimationFrame(loop);
       } catch (caught) {
         if (isCancelled()) {
@@ -581,31 +599,66 @@ export default function CameraStage() {
         const message =
           caught instanceof Error ? caught.message : "Could not start the camera.";
         setError(message);
-        setStatus("error");
+        setAppPhase("camera_error");
       }
     },
-    [loop, previewLoop, stop],
+    [loop, previewLoop, setAppPhase, stop],
   );
 
-  const onCalibrate = useCallback(() => {
+  const beginCalibration = useCallback(() => {
     const session = sessionRef.current;
     session.calibrator.start();
     session.history.clear();
     session.smoother.reset();
-    setCalibrating(true);
-  }, []);
+    setCountdown(null);
+    setAppPhase("calibrating");
+  }, [setAppPhase]);
 
-  const onToggleTestingUi = useCallback(() => {
-    setShowTestingUi((prev) => {
+  const startCountdown = useCallback(() => {
+    setShowTrackingInfo(false);
+    showTrackingInfoRef.current = false;
+    setCountdown(COUNTDOWN_SEC);
+    setAppPhase("countdown");
+  }, [setAppPhase]);
+
+  const onToggleTrackingInfo = useCallback(() => {
+    setShowTrackingInfo((prev) => {
       const next = !prev;
-      showTestingUiRef.current = next;
+      showTrackingInfoRef.current = next;
       return next;
     });
   }, []);
 
   useEffect(() => {
+    if (phase !== "countdown" || countdown === null) {
+      return;
+    }
+    if (countdown <= 0) {
+      beginCalibration();
+      return;
+    }
+    const timer = window.setTimeout(() => {
+      setCountdown((prev) => (prev === null ? null : prev - 1));
+    }, 1000);
+    return () => window.clearTimeout(timer);
+  }, [phase, countdown, beginCalibration]);
+
+  useEffect(() => {
+    if (phase !== "calibration_success") {
+      return;
+    }
+    const timer = window.setTimeout(() => {
+      setAppPhase("playing");
+    }, SUCCESS_HOLD_MS);
+    return () => window.clearTimeout(timer);
+  }, [phase, setAppPhase]);
+
+  useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key !== "d" && event.key !== "D") {
+        return;
+      }
+      if (phaseRef.current !== "playing") {
         return;
       }
       const target = event.target;
@@ -618,11 +671,11 @@ export default function CameraStage() {
         return;
       }
       event.preventDefault();
-      onToggleTestingUi();
+      onToggleTrackingInfo();
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [onToggleTestingUi]);
+  }, [onToggleTrackingInfo]);
 
   useEffect(() => {
     let cancelled = false;
@@ -633,7 +686,7 @@ export default function CameraStage() {
         return;
       }
       if (!cancelled) {
-        setStatus("idle");
+        setAppPhase("camera_idle");
       }
     })();
 
@@ -641,14 +694,14 @@ export default function CameraStage() {
       cancelled = true;
       stop();
     };
-  }, [start, stop]);
+  }, [start, stop, setAppPhase]);
 
   return (
     <div className="fixed inset-0 overflow-hidden bg-black">
       <video ref={videoRef} className="hidden" playsInline muted autoPlay />
       <canvas ref={canvasRef} className="absolute inset-0 block h-full w-full" />
 
-      {status === "idle" || status === "error" ? (
+      {phase === "camera_idle" || phase === "camera_error" ? (
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 bg-[#061018] px-6 text-center">
           <h1 className="font-serif text-4xl tracking-wide text-[#d7ecf5] sm:text-5xl md:text-6xl">
             You Are Fish
@@ -668,23 +721,96 @@ export default function CameraStage() {
         </div>
       ) : null}
 
-      {status === "running" ? (
+      {phase === "calibration_ready" ? (
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-black/45 px-6 text-center">
+          <h2 className="font-serif text-3xl tracking-wide text-[#d7ecf5] sm:text-4xl">
+            Get ready to become a fish
+          </h2>
+          <p className="max-w-sm text-[#9ec3d4]">
+            Look straight ahead and hold still for a moment.
+          </p>
+          <button
+            type="button"
+            onClick={startCountdown}
+            className="mt-2 rounded-full bg-[#3778dc] px-8 py-3 text-white transition hover:bg-[#4b8aee]"
+          >
+            Ready
+          </button>
+        </div>
+      ) : null}
+
+      {phase === "countdown" && countdown !== null && countdown > 0 ? (
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-black/45 px-6 text-center">
+          <p className="font-serif text-7xl tabular-nums text-[#d7ecf5] sm:text-8xl">
+            {countdown}
+          </p>
+          <p className="max-w-sm text-[#9ec3d4]">
+            Remain still and look straight ahead.
+          </p>
+        </div>
+      ) : null}
+
+      {phase === "calibration_success" ? (
+        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black/35 px-6 text-center">
+          <p className="font-serif text-4xl tracking-wide text-[#d7ecf5] sm:text-5xl">
+            Ready!
+          </p>
+        </div>
+      ) : null}
+
+      {phase === "playing" ? (
         <button
           type="button"
-          onClick={onToggleTestingUi}
-          className="absolute top-3 left-3 z-10 rounded-md border-2 border-[#5aa0ff] bg-[#3778dc] px-3 py-1.5 text-sm text-white sm:top-4 sm:left-4 sm:px-5 sm:py-2 sm:text-lg"
+          onClick={onToggleTrackingInfo}
+          aria-label={showTrackingInfo ? "Hide tracking info" : "Show tracking info"}
+          aria-pressed={showTrackingInfo}
+          className="absolute right-3 bottom-3 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-white/25 bg-black/45 text-[#c8c8c8] transition hover:bg-black/60 hover:text-white sm:right-4 sm:bottom-4"
         >
-          {showTestingUi ? "Hide debug" : "Debug"}
+          {showTrackingInfo ? (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49" />
+              <path d="M14.084 14.158a3 3 0 0 1-4.242-4.242" />
+              <path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143" />
+              <path d="m2 2 20 20" />
+            </svg>
+          ) : (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" />
+              <circle cx="12" cy="12" r="3" />
+            </svg>
+          )}
         </button>
       ) : null}
 
-      {status === "running" && !calibrating ? (
+      {phase === "playing" && showTrackingInfo ? (
         <button
           type="button"
-          onClick={onCalibrate}
-          className="absolute top-3 left-1/2 z-10 -translate-x-1/2 rounded-md border-2 border-[#5aa0ff] bg-[#3778dc] px-3 py-1.5 text-sm text-white sm:top-4 sm:px-5 sm:py-2 sm:text-lg"
+          onClick={startCountdown}
+          className="absolute bottom-3 left-1/2 z-10 -translate-x-1/2 rounded-md border border-[#5aa0ff]/80 bg-[#3778dc]/90 px-3 py-1.5 text-sm text-white transition hover:bg-[#4b8aee] sm:bottom-4"
         >
-          Calibrate
+          Recalibrate
         </button>
       ) : null}
     </div>

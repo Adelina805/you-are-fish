@@ -1,6 +1,8 @@
 # You Are Fish
 
-Webcam computer-vision prototype. Live at [you-are-fish.vercel.app](https://you-are-fish.vercel.app). Click **Enable camera**, then **Calibrate**. Head pose is computed on your device; frames are not uploaded.
+Webcam computer-vision prototype. Live at [you-are-fish.vercel.app](https://you-are-fish.vercel.app). Click **Enable camera**, then **Ready** for guided calibration. Head pose is computed on your device; frames are not uploaded.
+
+After onboarding, open **ⓘ** for Tracking Info (stats + **Recalibrate**). Set `DEBUG` in [`lib/debug.ts`](lib/debug.ts) to `false` for visitor mode (hides face mesh, direction label, and pose graph).
 
 ```bash
 npm install
@@ -38,7 +40,7 @@ A still head is never a perfect `(0, 0)`. MediaPipe jitter, breathing, micro-adj
 
 The defaults are starting guesses, not a one-shot tune:
 
-1. **Calibrate**, then sit still for 10–15 seconds. Watch the HUD `Sm yaw` / `Sm pitch` line. Note the noise envelope (e.g. yaw within ±2°, pitch within ±3°). The dead zone must be **larger** than that envelope, with a little margin.
+1. **Calibrate** (Ready / Recalibrate), then sit still for 10–15 seconds. Watch the HUD `Sm yaw` / `Sm pitch` line. Note the noise envelope (e.g. yaw within ±2°, pitch within ±3°). The dead zone must be **larger** than that envelope, with a little margin.
 2. Make the **smallest turn you want to count** as a look (any angle, including diagonals). Record typical peak smoothed angles. The threshold must sit **below** that gesture, or you will have to over-turn.
 3. Set each axis between those two bounds: `noise_ceiling < dead_zone < intentional_gesture`. Yaw and pitch often differ, so keep separate constants.
 4. Re-test: still → stays `CENTER`; slow glance → arrow tracks continuously; return to rest → `CENTER` again. If it flickers at the edge, raise the dead zone slightly. If you must crane your neck, lower it.
@@ -46,15 +48,16 @@ The defaults are starting guesses, not a one-shot tune:
 
 ## Milestone 4: Per-user calibration
 
-Click **Calibrate** when you are ready. The app then asks you to look comfortably straight at the screen, collects head-pose samples for about 1.5 seconds, and computes a neutral yaw/pitch baseline. Later measurements subtract that baseline so zero means your comfortable rest pose, not a fixed canonical face. Click **Calibrate** again any time to redo it.
+After the camera starts, a guided overlay asks you to get ready. Press **Ready**, hold still through a short countdown, and the app collects head-pose samples for about 1.5 seconds to compute a neutral yaw/pitch baseline. Later measurements subtract that baseline so zero means your comfortable rest pose, not a fixed canonical face. Use **Recalibrate** in Tracking Info (**ⓘ**) any time to redo it.
 
-The HUD shows:
+Tracking Info shows:
 
 - raw yaw/pitch
 - calibrated yaw/pitch (after baseline subtraction)
 - the calculated neutral baseline
+- FPS, face detected, and related stats
 
-With `DEBUG = true`, the pose signal viz uses calibrated values after calibration completes.
+With `DEBUG = true` in [`lib/debug.ts`](lib/debug.ts), the pose signal viz (and face mesh / direction label) appear when Tracking Info is open; they use calibrated values after calibration completes.
 
 ### Why calibrate per user?
 
@@ -72,7 +75,7 @@ Sign convention (after correcting for the mirrored selfie canvas):
 - Positive pitch: looking up
 - Positive roll: tilting clockwise from the camera’s view
 
-With `DEBUG = true`, a top-right debug panel shows raw yaw (horizontal bar) and pitch (vertical bar) with a zero crosshair, current marker, and recent unsmoothed history trail.
+With `DEBUG = true` in [`lib/debug.ts`](lib/debug.ts), a top-right debug panel shows raw yaw (horizontal bar) and pitch (vertical bar) with a zero crosshair, current marker, and recent unsmoothed history trail when Tracking Info is open.
 
 The Face Landmarker model is loaded in the browser from MediaPipe’s CDN.
 
@@ -87,7 +90,6 @@ Open the webcam and display the live feed in the browser.
 ### LATER:
 
 Facial expressions:
- mouth open → bubbles (done: `jawOpen` blendshape + hysteresis in `lib/mouth.ts`)
  cheek puff → inflate
  eyebrows → ???
 
@@ -97,4 +99,4 @@ Fish movement -> particle force field -> fluid-like ocean
 
 Session behavior -> Fishsona parameters -> persistent aquarium
 
-movement feel → one facial action → real fish/avatar → fluid response → guided game → Fishsona → persistence/database last.
+fluid response → guided game → Fishsona → persistence/database last.

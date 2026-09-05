@@ -12,8 +12,6 @@ import {
 } from "@/lib/mouth";
 import type { PoseHistory } from "@/lib/pose-history";
 
-const DEBUG = true;
-
 const HUD_MARGIN = 16;
 const HUD_PAD = 10;
 
@@ -65,18 +63,6 @@ function formatAngle(degrees: number | null | undefined): string {
   return `${sign}${degrees.toFixed(1)}`;
 }
 
-function roundRect(
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  width: number,
-  height: number,
-  fill: string,
-): void {
-  ctx.fillStyle = fill;
-  ctx.fillRect(x, y, width, height);
-}
-
 export function drawDebugOverlay(
   ctx: CanvasRenderingContext2D,
   width: number,
@@ -118,20 +104,18 @@ export function drawDebugOverlay(
     ];
   }
 
-  if (DEBUG) {
-    const mouthLine = mouth
-      ? `Mouth ${mouth.openness.toFixed(2)}  ${mouth.state}`
-      : "Mouth n/a";
-    const thresholdsLine = `Thr  yaw±${YAW_DEAD_ZONE_DEG}° pitch±${PITCH_DEAD_ZONE_DEG}° mouth ${MOUTH_OPEN_THRESHOLD}/${MOUTH_CLOSE_THRESHOLD}`;
-    lines = [
-      `FPS   ${fps}`,
-      `Face  ${faceDetected ? "yes" : "no"}`,
-      `Res   ${width}x${ctx.canvas.height}`,
-      mouthLine,
-      thresholdsLine,
-      ...lines,
-    ];
-  }
+  const mouthLine = mouth
+    ? `Mouth ${mouth.openness.toFixed(2)}  ${mouth.state}`
+    : "Mouth n/a";
+  const thresholdsLine = `Thr  yaw±${YAW_DEAD_ZONE_DEG}° pitch±${PITCH_DEAD_ZONE_DEG}° mouth ${MOUTH_OPEN_THRESHOLD}/${MOUTH_CLOSE_THRESHOLD}`;
+  lines = [
+    `FPS   ${fps}`,
+    `Face  ${faceDetected ? "yes" : "no"}`,
+    `Res   ${width}x${ctx.canvas.height}`,
+    mouthLine,
+    thresholdsLine,
+    ...lines,
+  ];
 
   const height = ctx.canvas.height;
   const fit = Math.min(1, width / 1280, height / 720);
@@ -172,49 +156,6 @@ export function drawDebugOverlay(
   ctx.restore();
 
   return panelTop + panelHeight + margin;
-}
-
-export function drawCalibrationPrompt(
-  ctx: CanvasRenderingContext2D,
-  width: number,
-  height: number,
-  calibrator: NeutralPoseCalibrator,
-): void {
-  if (!calibrator.isActive) {
-    return;
-  }
-
-  const space = beginScaledUi(ctx, width, height);
-  const prompt = "Look comfortably straight at the screen";
-  const hint = "Hold still...";
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.font = "22px ui-sans-serif, system-ui, sans-serif";
-  const promptWidth = ctx.measureText(prompt).width;
-  ctx.font = "16px ui-sans-serif, system-ui, sans-serif";
-  const hintWidth = ctx.measureText(hint).width;
-  const panelWidth = Math.min(
-    Math.max(promptWidth, hintWidth) + 40,
-    space.width - HUD_MARGIN * 2,
-  );
-  const panelHeight = 84;
-  const left = (space.width - panelWidth) / 2;
-  const top = space.height / 2 - panelHeight / 2;
-
-  roundRect(ctx, left, top, panelWidth, panelHeight, "rgba(20, 20, 20, 0.65)");
-  ctx.save();
-  ctx.beginPath();
-  ctx.rect(left, top, panelWidth, panelHeight);
-  ctx.clip();
-  ctx.fillStyle = "#ffffff";
-  ctx.font = "22px ui-sans-serif, system-ui, sans-serif";
-  ctx.fillText(prompt, space.width / 2, space.height / 2 - 10);
-  ctx.fillStyle = "#c8c8c8";
-  ctx.font = "16px ui-sans-serif, system-ui, sans-serif";
-  ctx.fillText(hint, space.width / 2, space.height / 2 + 18);
-  ctx.restore();
-  ctx.textAlign = "start";
-  ctx.restore();
 }
 
 function formatSigned(value: number, digits = 2): string {
