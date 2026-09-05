@@ -750,14 +750,6 @@ export default function CameraStage() {
         </div>
       ) : null}
 
-      {phase === "calibration_success" ? (
-        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-black/35 px-6 text-center">
-          <p className="font-serif text-4xl tracking-wide text-[#d7ecf5] sm:text-5xl">
-            Ready!
-          </p>
-        </div>
-      ) : null}
-
       {phase === "playing" ? (
         <button
           type="button"
