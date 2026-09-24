@@ -34,6 +34,8 @@ export type PhoneDebugStats = {
   afterNms: number;
   scoreThreshold: number;
   iouThreshold: number;
+  /** End-to-end ms of the latest completed YOLO infer. */
+  lastInferMs: number | null;
 };
 
 /**
@@ -149,6 +151,10 @@ export function drawDebugOverlay(
         phone.bestScore === null || phone.bestScore === undefined
           ? "n/a"
           : phone.bestScore.toFixed(2);
+      const inferMs =
+        phone.lastInferMs === null || phone.lastInferMs === undefined
+          ? "n/a"
+          : `${Math.round(phone.lastInferMs)}`;
       lines.push(
         "",
         "Object Detection",
@@ -158,6 +164,7 @@ export function drawDebugOverlay(
         `After NMS  ${phone.afterNms}`,
         `Conf thr  ${phone.scoreThreshold.toFixed(2)}`,
         `NMS IoU   ${phone.iouThreshold.toFixed(2)}`,
+        `Infer ms  ${inferMs}`,
       );
     }
   }

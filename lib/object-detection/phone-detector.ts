@@ -35,8 +35,11 @@ export type PhoneDetectResult = {
   bestScore: number;
 };
 
+/** Min phone-class score. Tune manually; do not auto-adjust. */
+export const PHONE_SCORE_THRESHOLD = 0.45;
+
 export const DEFAULT_PHONE_DETECTOR_CONFIG: PhoneDetectorConfig = {
-  scoreThreshold: 0.45,
+  scoreThreshold: PHONE_SCORE_THRESHOLD,
   iouThreshold: 0.45,
   nmsEnabled: true,
   inputSize: 640,

@@ -53,10 +53,10 @@ const BLUE_WASH = "rgba(20, 80, 140, 0.35)";
 const COUNTDOWN_SEC = 3;
 const SUCCESS_HOLD_MS = 1000;
 /**
- * Floor gap between phone-infer *starts*. Actual gap is also at least the
- * duration of the previous run so a slow machine cannot pin a core at 100%.
+ * Min start-to-start period for phone infer (~6.25 Hz). Actual gap is also at
+ * least the duration of the previous run so a slow machine cannot pin a core.
  */
-const PHONE_INFER_MIN_INTERVAL_MS = 200;
+const PHONE_INFER_MIN_INTERVAL_MS = 160;
 
 // MediaPipe's WASM binds console.error at init and writes INFO/WARNING logs to
 // stderr. Next.js treats those as overlay errors, so drop the known noise first.
@@ -164,6 +164,8 @@ type Session = {
   nextPhoneInferMs: number;
   /** Wall-clock of the most recent *successful* phone result. */
   lastPhoneResultMs: number;
+  /** End-to-end ms of the latest completed phone infer (success or failure). */
+  lastPhoneInferMs: number | null;
   phoneInferenceInFlight: boolean;
   /** Score-filtered proposals before NMS (phone class only). */
   phoneCandidates: PhoneDetection[];
@@ -198,6 +200,7 @@ function createSession(): Session {
     phoneDetector: null,
     nextPhoneInferMs: 0,
     lastPhoneResultMs: 0,
+    lastPhoneInferMs: null,
     phoneInferenceInFlight: false,
     phoneCandidates: [],
     phoneDetections: [],
@@ -399,9 +402,12 @@ function maybeStartPhoneInference(session: Session, canvas: HTMLCanvasElement, n
       }
       session.phoneInferenceInFlight = false;
       const elapsed = performance.now() - startedAt;
-      // Duty-cycle cap: wait at least as long as the run took (and a floor).
-      session.nextPhoneInferMs =
-        performance.now() + Math.max(PHONE_INFER_MIN_INTERVAL_MS, elapsed);
+      session.lastPhoneInferMs = elapsed;
+      // Start-to-start floor, plus duty-cycle cap when a run is slower than the interval.
+      session.nextPhoneInferMs = Math.max(
+        startedAt + PHONE_INFER_MIN_INTERVAL_MS,
+        performance.now() + elapsed,
+      );
     });
 }
 
@@ -657,6 +663,7 @@ export default function CameraStage() {
             afterNms: session.phoneDetections.length,
             scoreThreshold: config.scoreThreshold,
             iouThreshold: config.iouThreshold,
+            lastInferMs: session.lastPhoneInferMs,
           };
         } else if (session.phoneDetectorLoadAttempted) {
           phoneStats = {
@@ -667,6 +674,7 @@ export default function CameraStage() {
             afterNms: 0,
             scoreThreshold: 0,
             iouThreshold: 0,
+            lastInferMs: null,
           };
         } else {
           // Still loading — show section; Best score stays n/a until first result.
@@ -678,6 +686,7 @@ export default function CameraStage() {
             afterNms: 0,
             scoreThreshold: DEFAULT_PHONE_DETECTOR_CONFIG.scoreThreshold,
             iouThreshold: DEFAULT_PHONE_DETECTOR_CONFIG.iouThreshold,
+            lastInferMs: null,
           };
         }
       }
