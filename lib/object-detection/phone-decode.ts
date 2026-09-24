@@ -23,6 +23,16 @@ export type DecodePhoneOptions = {
   maxDetections: number;
 };
 
+export type DecodePhoneResult = {
+  /** Phone-class boxes above score threshold, before NMS. */
+  candidates: Detection[];
+  /**
+   * Max cell-phone class score across all YOLO predictions this frame,
+   * including those below the score threshold (for debug near-misses).
+   */
+  bestScore: number;
+};
+
 /**
  * Decode YOLOv8 raw output `[1, 84, N]` → phone-class boxes above score threshold.
  * Channels 0–3 are cx, cy, w, h in letterbox pixels; 4–83 are COCO class scores.
@@ -32,7 +42,7 @@ export function decodePhoneCandidates(
   dims: readonly number[],
   meta: LetterboxMeta,
   scoreThreshold: number,
-): Detection[] {
+): DecodePhoneResult {
   const numPreds = dims.length === 3 ? dims[2]! : dims[1] === 84 ? dims[2]! : 0;
   if (!numPreds) {
     throw new Error(`Unexpected YOLO output shape: [${dims.join(", ")}]`);
@@ -40,9 +50,13 @@ export function decodePhoneCandidates(
 
   const classChannel = 4 + CELL_PHONE_CLASS_ID;
   const candidates: Detection[] = [];
+  let bestScore = 0;
 
   for (let i = 0; i < numPreds; i += 1) {
     const score = data[classChannel * numPreds + i]!;
+    if (score > bestScore) {
+      bestScore = score;
+    }
     if (score < scoreThreshold) {
       continue;
     }
@@ -65,7 +79,7 @@ export function decodePhoneCandidates(
     });
   }
 
-  return candidates;
+  return { candidates, bestScore };
 }
 
 export function decodeAndNmsPhoneDetections(
@@ -73,8 +87,8 @@ export function decodeAndNmsPhoneDetections(
   dims: readonly number[],
   meta: LetterboxMeta,
   options: DecodePhoneOptions,
-): { candidates: Detection[]; detections: Detection[] } {
-  const candidates = decodePhoneCandidates(
+): DecodePhoneResult & { detections: Detection[] } {
+  const { candidates, bestScore } = decodePhoneCandidates(
     data,
     dims,
     meta,
@@ -85,7 +99,7 @@ export function decodeAndNmsPhoneDetections(
     enabled: options.nmsEnabled,
     maxDetections: options.maxDetections,
   });
-  return { candidates, detections };
+  return { candidates, detections, bestScore };
 }
 
 export function letterboxBoxToSource(

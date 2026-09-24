@@ -31,6 +31,8 @@ export type PhoneDetectResult = {
   candidates: Detection[];
   /** After NMS (or copy of candidates if NMS disabled). */
   detections: Detection[];
+  /** Max phone-class score this frame, including below threshold. */
+  bestScore: number;
 };
 
 export const DEFAULT_PHONE_DETECTOR_CONFIG: PhoneDetectorConfig = {
@@ -238,6 +240,7 @@ export class PhoneDetector {
       pending.resolve({
         candidates: message.candidates,
         detections: message.detections,
+        bestScore: message.bestScore,
       } satisfies PhoneDetectResult);
       return;
     }

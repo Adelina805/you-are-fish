@@ -10,6 +10,7 @@ import {
   MOUTH_OPEN_THRESHOLD,
   type MouthStatus,
 } from "@/lib/mouth";
+import type { Detection } from "@/lib/object-detection/phone-decode";
 import type { PoseHistory } from "@/lib/pose-history";
 
 const HUD_MARGIN = 16;
@@ -21,6 +22,19 @@ const YAW_BAR_LEN = 260;
 const PITCH_BAR_LEN = 180;
 const PANEL_MARGIN = 20;
 const PANEL_PAD = 14;
+
+/** Optional Object Detection block for the debug HUD (developer-only). */
+export type PhoneDebugStats = {
+  /** Detector finished loading successfully. */
+  available: boolean;
+  phoneDetected: boolean;
+  /** Max phone-class score this frame (pre-threshold). */
+  bestScore: number | null;
+  beforeNms: number;
+  afterNms: number;
+  scoreThreshold: number;
+  iouThreshold: number;
+};
 
 /**
  * Overlay sizes were authored for a 1280×720 canvas. After matching the canvas
@@ -82,6 +96,7 @@ export function drawDebugOverlay(
   smoothedPose: HeadPose | null,
   calibrator: NeutralPoseCalibrator,
   mouth: MouthStatus | null = null,
+  phone: PhoneDebugStats | null = null,
 ): number {
   const rawYaw = pose?.yawDeg ?? null;
   const rawPitch = pose?.pitchDeg ?? null;
@@ -126,6 +141,27 @@ export function drawDebugOverlay(
     ...lines,
   ];
 
+  if (phone) {
+    if (!phone.available) {
+      lines.push("", "Object Detection", "Detector  n/a");
+    } else {
+      const best =
+        phone.bestScore === null || phone.bestScore === undefined
+          ? "n/a"
+          : phone.bestScore.toFixed(2);
+      lines.push(
+        "",
+        "Object Detection",
+        `Phone     ${phone.phoneDetected ? "yes" : "no"}`,
+        `Best score ${best}`,
+        `Before NMS ${phone.beforeNms}`,
+        `After NMS  ${phone.afterNms}`,
+        `Conf thr  ${phone.scoreThreshold.toFixed(2)}`,
+        `NMS IoU   ${phone.iouThreshold.toFixed(2)}`,
+      );
+    }
+  }
+
   const height = ctx.canvas.height;
   const fit = Math.min(1, width / 1280, height / 720);
   const fontSize = debugLabelFontSize(fit);
@@ -139,7 +175,7 @@ export function drawDebugOverlay(
   ctx.textAlign = "right";
   const textWidths = lines.map((line) => ctx.measureText(line).width);
   const panelWidth = Math.min(
-    Math.max(...textWidths) + pad * 2,
+    Math.max(...textWidths, 1) + pad * 2,
     width - margin * 2,
   );
   const panelHeight = pad + lines.length * lineHeight + pad;
@@ -156,6 +192,9 @@ export function drawDebugOverlay(
   ctx.rect(panelLeft, panelTop, panelWidth, panelHeight);
   ctx.clip();
   lines.forEach((line, index) => {
+    if (!line) {
+      return;
+    }
     const y = panelTop + pad + (index + 1) * lineHeight - Math.round(fontSize * 0.28);
     ctx.fillStyle = "#000000";
     ctx.fillText(line, textRight + 1, y + 1);
@@ -166,6 +205,70 @@ export function drawDebugOverlay(
   ctx.restore();
 
   return panelTop + panelHeight + margin;
+}
+
+/**
+ * Draw post-NMS phone boxes on the camera canvas (developer debug).
+ * Boxes are already in mirrored source-canvas pixels.
+ */
+export function drawPhoneDetections(
+  ctx: CanvasRenderingContext2D,
+  detections: readonly Detection[],
+): void {
+  if (detections.length === 0) {
+    return;
+  }
+
+  const width = ctx.canvas.width;
+  const fit = Math.min(1, width / 1280, ctx.canvas.height / 720);
+  const fontSize = debugLabelFontSize(fit);
+  const lineWidth = Math.max(2, Math.round(2.5 * Math.max(fit, 0.55)));
+  const labelPad = Math.max(3, Math.round(4 * Math.max(fit, 0.55)));
+
+  ctx.save();
+  ctx.font = `bold ${fontSize}px ui-monospace, SFMono-Regular, Menlo, monospace`;
+  ctx.textAlign = "left";
+  ctx.textBaseline = "alphabetic";
+
+  for (const detection of detections) {
+    const { x, y, width: boxW, height: boxH } = detection.box;
+    if (boxW <= 0 || boxH <= 0) {
+      continue;
+    }
+
+    ctx.strokeStyle = "#000000";
+    ctx.lineWidth = lineWidth + 2;
+    ctx.strokeRect(x, y, boxW, boxH);
+    ctx.strokeStyle = "#ffffff";
+    ctx.lineWidth = lineWidth;
+    ctx.strokeRect(x, y, boxW, boxH);
+
+    const label = `CELL PHONE ${detection.score.toFixed(2)}`;
+    const metrics = ctx.measureText(label);
+    const labelH = fontSize + labelPad * 2;
+    let labelX = x;
+    let labelY = y - labelPad;
+    if (labelY - fontSize < 0) {
+      labelY = y + fontSize + labelPad;
+    }
+    if (labelX + metrics.width + labelPad * 2 > width) {
+      labelX = Math.max(0, width - metrics.width - labelPad * 2);
+    }
+
+    ctx.fillStyle = "rgba(20, 20, 20, 0.7)";
+    ctx.fillRect(
+      labelX,
+      labelY - fontSize - labelPad,
+      metrics.width + labelPad * 2,
+      labelH,
+    );
+    ctx.fillStyle = "#000000";
+    ctx.fillText(label, labelX + labelPad + 1, labelY - labelPad + 1);
+    ctx.fillStyle = "#ffffff";
+    ctx.fillText(label, labelX + labelPad, labelY - labelPad);
+  }
+
+  ctx.restore();
 }
 
 function formatSigned(value: number, digits = 2): string {

@@ -42,6 +42,8 @@ export type WorkerResultMessage = {
   requestId: number;
   candidates: Detection[];
   detections: Detection[];
+  /** Max phone-class score this frame (pre-threshold). */
+  bestScore: number;
 };
 
 export type WorkerErrorMessage = {

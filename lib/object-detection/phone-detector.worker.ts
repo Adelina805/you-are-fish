@@ -115,7 +115,7 @@ async function handleDetect(message: WorkerDetectMessage): Promise<void> {
     throw new Error("YOLOv8 ONNX model returned no output");
   }
 
-  const { candidates, detections } = decodeAndNmsPhoneDetections(
+  const { candidates, detections, bestScore } = decodeAndNmsPhoneDetections(
     output.data as Float32Array,
     output.dims,
     message.meta,
@@ -132,6 +132,7 @@ async function handleDetect(message: WorkerDetectMessage): Promise<void> {
     requestId: message.requestId,
     candidates,
     detections,
+    bestScore,
   };
   self.postMessage(out);
 }

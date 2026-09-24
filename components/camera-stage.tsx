@@ -31,13 +31,15 @@ import {
 } from "@/lib/fish";
 import { estimateHeadPose } from "@/lib/head-pose";
 import { MouthTracker } from "@/lib/mouth";
-import type {
-  Detection as PhoneDetection,
-  PhoneDetector,
+import {
+  DEFAULT_PHONE_DETECTOR_CONFIG,
+  type Detection as PhoneDetection,
+  type PhoneDetector,
 } from "@/lib/object-detection/phone-detector";
 import {
   drawDebugOverlay,
   drawDirectionLabel,
+  drawPhoneDetections,
   drawPoseSignalViz,
 } from "@/lib/overlay";
 import { PoseHistory } from "@/lib/pose-history";
@@ -167,6 +169,10 @@ type Session = {
   phoneCandidates: PhoneDetection[];
   /** After NMS (or same as candidates when NMS disabled). */
   phoneDetections: PhoneDetection[];
+  /** Max phone-class score from last successful infer (pre-threshold). */
+  phoneBestScore: number | null;
+  /** True once loadPhoneDetector finished (success or soft-fail). */
+  phoneDetectorLoadAttempted: boolean;
   lastTimestamp: number;
   lastFrameTime: number | null;
   fps: number;
@@ -195,6 +201,8 @@ function createSession(): Session {
     phoneInferenceInFlight: false,
     phoneCandidates: [],
     phoneDetections: [],
+    phoneBestScore: null,
+    phoneDetectorLoadAttempted: false,
     lastTimestamp: -1,
     lastFrameTime: null,
     fps: 0,
@@ -349,6 +357,8 @@ async function loadPhoneDetector(session: Session): Promise<void> {
       "[you-are-fish] Phone detector failed to load; face/fish continue.",
       caught,
     );
+  } finally {
+    session.phoneDetectorLoadAttempted = true;
   }
 }
 
@@ -377,6 +387,7 @@ function maybeStartPhoneInference(session: Session, canvas: HTMLCanvasElement, n
       }
       session.phoneCandidates = result.candidates;
       session.phoneDetections = result.detections;
+      session.phoneBestScore = result.bestScore;
       session.lastPhoneResultMs = performance.now();
     })
     .catch((caught) => {
@@ -631,7 +642,46 @@ export default function CameraStage() {
           direction,
           session.calibrator.isComplete && !session.calibrator.isActive,
         );
+        drawPhoneDetections(ctx, session.phoneDetections);
       }
+
+      let phoneStats = null;
+      if (DEBUG) {
+        if (session.phoneDetector) {
+          const config = session.phoneDetector.getConfig();
+          phoneStats = {
+            available: true,
+            phoneDetected: session.phoneDetections.length > 0,
+            bestScore: session.phoneBestScore,
+            beforeNms: session.phoneCandidates.length,
+            afterNms: session.phoneDetections.length,
+            scoreThreshold: config.scoreThreshold,
+            iouThreshold: config.iouThreshold,
+          };
+        } else if (session.phoneDetectorLoadAttempted) {
+          phoneStats = {
+            available: false,
+            phoneDetected: false,
+            bestScore: null,
+            beforeNms: 0,
+            afterNms: 0,
+            scoreThreshold: 0,
+            iouThreshold: 0,
+          };
+        } else {
+          // Still loading — show section; Best score stays n/a until first result.
+          phoneStats = {
+            available: true,
+            phoneDetected: false,
+            bestScore: null,
+            beforeNms: 0,
+            afterNms: 0,
+            scoreThreshold: DEFAULT_PHONE_DETECTOR_CONFIG.scoreThreshold,
+            iouThreshold: DEFAULT_PHONE_DETECTOR_CONFIG.iouThreshold,
+          };
+        }
+      }
+
       const hudBottom = drawDebugOverlay(
         ctx,
         width,
@@ -642,6 +692,7 @@ export default function CameraStage() {
         smoothedPose,
         session.calibrator,
         mouthStatus,
+        phoneStats,
       );
       if (DEBUG) {
         drawPoseSignalViz(ctx, width, vizPose, session.history, hudBottom);
