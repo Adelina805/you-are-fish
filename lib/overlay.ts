@@ -44,6 +44,15 @@ function debugLabelFontSize(fit: number): number {
   return Math.max(11, Math.round(14 * Math.max(fit, 0.75)));
 }
 
+/**
+ * Right inset shared by the debug HUD and pose graph.
+ * One formula at every viewport size so the two panels stay flush.
+ */
+function debugRightInset(width: number, height: number): number {
+  const fit = Math.min(1, width / 1280, height / 720);
+  return Math.max(8, Math.round(HUD_MARGIN * Math.max(fit, 0.55)));
+}
+
 function beginScaledUi(
   ctx: CanvasRenderingContext2D,
   width: number,
@@ -121,12 +130,13 @@ export function drawDebugOverlay(
   const fit = Math.min(1, width / 1280, height / 720);
   const fontSize = debugLabelFontSize(fit);
   const pad = Math.max(6, Math.round(HUD_PAD * Math.max(fit, 0.55)));
-  const margin = Math.max(8, Math.round(HUD_MARGIN * Math.max(fit, 0.55)));
+  const margin = debugRightInset(width, height);
   const lineHeight = Math.round(fontSize * 1.45);
 
   ctx.save();
   ctx.font = `${fontSize}px ui-monospace, SFMono-Regular, Menlo, monospace`;
   ctx.textBaseline = "alphabetic";
+  ctx.textAlign = "right";
   const textWidths = lines.map((line) => ctx.measureText(line).width);
   const panelWidth = Math.min(
     Math.max(...textWidths) + pad * 2,
@@ -136,6 +146,7 @@ export function drawDebugOverlay(
   const panelRight = width - margin;
   const panelLeft = panelRight - panelWidth;
   const panelTop = margin;
+  const textRight = panelRight - pad;
 
   ctx.fillStyle = "rgba(20, 20, 20, 0.55)";
   ctx.fillRect(panelLeft, panelTop, panelWidth, panelHeight);
@@ -145,12 +156,11 @@ export function drawDebugOverlay(
   ctx.rect(panelLeft, panelTop, panelWidth, panelHeight);
   ctx.clip();
   lines.forEach((line, index) => {
-    const x = panelRight - pad - textWidths[index];
     const y = panelTop + pad + (index + 1) * lineHeight - Math.round(fontSize * 0.28);
     ctx.fillStyle = "#000000";
-    ctx.fillText(line, x + 1, y + 1);
+    ctx.fillText(line, textRight + 1, y + 1);
     ctx.fillStyle = "#ffffff";
-    ctx.fillText(line, x, y);
+    ctx.fillText(line, textRight, y);
   });
   ctx.restore();
   ctx.restore();
@@ -305,17 +315,20 @@ export function drawPoseSignalViz(
   const yawHalf = (YAW_BAR_LEN * fit) / 2;
   const pitchHalf = (PITCH_BAR_LEN * fit) / 2;
   const pad = Math.max(8, PANEL_PAD * fit);
-  const margin = Math.max(10, PANEL_MARGIN * fit);
+  const stackGap = Math.max(10, PANEL_MARGIN * fit);
   const tick = Math.max(4, 6 * fit);
   const zeroArm = Math.max(5, 8 * fit);
   const historyR = Math.max(2, 3 * fit);
   const markerR = Math.max(4, 8 * fit);
   const fontSize = debugLabelFontSize(fit);
 
-  const cornerX = width - margin - yawHalf;
-  const cornerY = topOffset + margin + pitchHalf;
+  // Panel background ends on the same right edge as the debug HUD.
+  // Padding sits inside that edge; it used to hang past it.
+  const panelRight = width - debugRightInset(width, height);
+  const yawRight = panelRight - pad;
+  const cornerX = yawRight - yawHalf;
+  const cornerY = topOffset + stackGap + pitchHalf;
   const yawLeft = cornerX - yawHalf;
-  const yawRight = cornerX + yawHalf;
   const pitchTop = cornerY - pitchHalf;
   const pitchBottom = cornerY + pitchHalf;
 
