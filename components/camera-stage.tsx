@@ -31,9 +31,9 @@ import {
 } from "@/lib/fish";
 import { estimateHeadPose } from "@/lib/head-pose";
 import { MouthTracker } from "@/lib/mouth";
-import {
+import type {
+  Detection as PhoneDetection,
   PhoneDetector,
-  type Detection as PhoneDetection,
 } from "@/lib/object-detection/phone-detector";
 import {
   drawDebugOverlay,
@@ -50,8 +50,11 @@ const CAMERA_ENABLED_KEY = "you-are-fish:camera-enabled";
 const BLUE_WASH = "rgba(20, 80, 140, 0.35)";
 const COUNTDOWN_SEC = 3;
 const SUCCESS_HOLD_MS = 1000;
-/** Throttle YOLO independently of every-frame face tracking. */
-const PHONE_INFER_INTERVAL_MS = 300;
+/**
+ * Floor gap between phone-infer *starts*. Actual gap is also at least the
+ * duration of the previous run so a slow machine cannot pin a core at 100%.
+ */
+const PHONE_INFER_MIN_INTERVAL_MS = 200;
 
 // MediaPipe's WASM binds console.error at init and writes INFO/WARNING logs to
 // stderr. Next.js treats those as overlay errors, so drop the known noise first.
@@ -155,8 +158,8 @@ type Session = {
   /** Ephemeral per-frame face crop buffer; never persisted. */
   faceCropCanvas: HTMLCanvasElement | null;
   phoneDetector: PhoneDetector | null;
-  /** Wall-clock when the last phone infer was *started*. */
-  lastPhoneInferMs: number;
+  /** Earliest wall-clock when the next phone infer may *start*. */
+  nextPhoneInferMs: number;
   /** Wall-clock of the most recent *successful* phone result. */
   lastPhoneResultMs: number;
   phoneInferenceInFlight: boolean;
@@ -187,7 +190,7 @@ function createSession(): Session {
     bubbleEmitter: createBubbleEmitter(),
     faceCropCanvas: null,
     phoneDetector: null,
-    lastPhoneInferMs: 0,
+    nextPhoneInferMs: 0,
     lastPhoneResultMs: 0,
     phoneInferenceInFlight: false,
     phoneCandidates: [],
@@ -330,6 +333,8 @@ async function loadVision(session: Session): Promise<void> {
 /** Soft-load: failure must not block Face Landmarker / fish. */
 async function loadPhoneDetector(session: Session): Promise<void> {
   try {
+    // Dynamic import keeps onnxruntime-web / worker off the camera startup path.
+    const { PhoneDetector } = await import("@/lib/object-detection/phone-detector");
     const detector = await PhoneDetector.create();
     if (session.mode === "stopped") {
       await detector.close().catch(() => {
@@ -348,21 +353,21 @@ async function loadPhoneDetector(session: Session): Promise<void> {
 }
 
 /**
- * Kick off async YOLO without awaiting. Preprocess inside detect() runs
- * synchronously until the first await, so pixels are read while this canvas
- * is still camera-only (caller must invoke before blue wash / overlays).
+ * Kick off async YOLO without awaiting. Letterbox snapshot inside detect()
+ * runs synchronously until the first await, so camera-only pixels are copied
+ * before blue wash / overlays (caller must invoke in that window).
  */
 function maybeStartPhoneInference(session: Session, canvas: HTMLCanvasElement, now: number): void {
   if (!session.phoneDetector || session.phoneInferenceInFlight) {
     return;
   }
-  if (now - session.lastPhoneInferMs < PHONE_INFER_INTERVAL_MS) {
+  if (now < session.nextPhoneInferMs) {
     return;
   }
 
-  session.lastPhoneInferMs = now;
   session.phoneInferenceInFlight = true;
   const detector = session.phoneDetector;
+  const startedAt = now;
 
   void detector
     .detect(canvas)
@@ -378,9 +383,14 @@ function maybeStartPhoneInference(session: Session, canvas: HTMLCanvasElement, n
       console.warn("[you-are-fish] Phone inference failed; keeping prior results.", caught);
     })
     .finally(() => {
-      if (session.phoneDetector === detector) {
-        session.phoneInferenceInFlight = false;
+      if (session.phoneDetector !== detector) {
+        return;
       }
+      session.phoneInferenceInFlight = false;
+      const elapsed = performance.now() - startedAt;
+      // Duty-cycle cap: wait at least as long as the run took (and a floor).
+      session.nextPhoneInferMs =
+        performance.now() + Math.max(PHONE_INFER_MIN_INTERVAL_MS, elapsed);
     });
 }
 

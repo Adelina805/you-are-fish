@@ -1,17 +1,17 @@
-import * as ort from "onnxruntime-web";
-
-import { CELL_PHONE_CLASS_ID, cocoLabel } from "@/lib/object-detection/coco-labels";
-import { nonMaxSuppression } from "@/lib/object-detection/nms";
+import type {
+  Detection,
+  LetterboxMeta,
+} from "@/lib/object-detection/phone-decode";
+import type {
+  WorkerInMessage,
+  WorkerOutMessage,
+  WorkerPhoneConfig,
+} from "@/lib/object-detection/phone-worker-messages";
 
 /** Served from Next `public/`. */
 export const DEFAULT_PHONE_MODEL_URL = "/models/yolov8n.onnx";
 
-export type Detection = {
-  box: { x: number; y: number; width: number; height: number };
-  classId: number;
-  className: string;
-  score: number;
-};
+export type { Detection };
 
 export type PhoneDetectorConfig = {
   /** Min class score to keep a proposal (after decode, before NMS). */
@@ -42,72 +42,68 @@ export const DEFAULT_PHONE_DETECTOR_CONFIG: PhoneDetectorConfig = {
   maxDetections: 20,
 };
 
-type LetterboxMeta = {
-  scale: number;
-  padX: number;
-  padY: number;
-  srcWidth: number;
-  srcHeight: number;
+type PendingRequest = {
+  resolve: (value: unknown) => void;
+  reject: (reason?: unknown) => void;
 };
 
-let ortWasmConfigured = false;
-
-function configureOrtWasm(): void {
-  if (ortWasmConfigured) {
-    return;
-  }
-  ortWasmConfigured = true;
-  // Avoid SharedArrayBuffer / COOP-COEP requirements in Next/Vercel.
-  ort.env.wasm.numThreads = 1;
-  ort.env.wasm.simd = true;
-}
-
 /**
- * Client-side YOLOv8n COCO detector focused on the cell-phone class.
- * Preprocess is synchronous so callers can snapshot camera-only pixels
- * before yielding to async `session.run`.
+ * Main-thread facade for YOLOv8n phone detection.
+ * Letterbox snapshot stays sync (camera-only pixels); ONNX runs in a worker.
  */
 export class PhoneDetector {
-  private readonly session: ort.InferenceSession;
+  private readonly worker: Worker;
   private readonly config: PhoneDetectorConfig;
   private readonly letterboxCanvas: HTMLCanvasElement;
-  private readonly floatBuffer: Float32Array;
-  private readonly inputName: string;
+  private nextRequestId = 1;
+  private readonly pending = new Map<number, PendingRequest>();
+  private closed = false;
 
-  private constructor(
-    session: ort.InferenceSession,
-    config: PhoneDetectorConfig,
-    inputName: string,
-  ) {
-    this.session = session;
+  private constructor(worker: Worker, config: PhoneDetectorConfig) {
+    this.worker = worker;
     this.config = config;
-    this.inputName = inputName;
     this.letterboxCanvas = document.createElement("canvas");
     this.letterboxCanvas.width = config.inputSize;
     this.letterboxCanvas.height = config.inputSize;
-    this.floatBuffer = new Float32Array(3 * config.inputSize * config.inputSize);
+
+    this.worker.onmessage = (event: MessageEvent<WorkerOutMessage>) => {
+      this.onWorkerMessage(event.data);
+    };
+    this.worker.onerror = (event) => {
+      const error = new Error(event.message || "Phone detector worker error");
+      for (const [, pending] of this.pending) {
+        pending.reject(error);
+      }
+      this.pending.clear();
+    };
   }
 
   static async create(
     overrides: Partial<PhoneDetectorConfig> = {},
   ): Promise<PhoneDetector> {
-    configureOrtWasm();
     const config: PhoneDetectorConfig = {
       ...DEFAULT_PHONE_DETECTOR_CONFIG,
       ...overrides,
     };
 
-    const session = await ort.InferenceSession.create(config.modelUrl, {
-      executionProviders: ["wasm"],
-      graphOptimizationLevel: "all",
-    });
+    const worker = new Worker(
+      new URL("./phone-detector.worker.ts", import.meta.url),
+      { type: "module" },
+    );
 
-    const inputName = session.inputNames[0];
-    if (!inputName) {
-      throw new Error("YOLOv8 ONNX model has no inputs");
+    const detector = new PhoneDetector(worker, config);
+    try {
+      await detector.postAndWait({
+        type: "init",
+        requestId: detector.allocRequestId(),
+        config: toWorkerConfig(config),
+      });
+    } catch (caught) {
+      worker.terminate();
+      throw caught;
     }
 
-    return new PhoneDetector(session, config, inputName);
+    return detector;
   }
 
   getConfig(): Readonly<PhoneDetectorConfig> {
@@ -115,45 +111,65 @@ export class PhoneDetector {
   }
 
   /**
-   * Runs detection on a canvas that must currently show only the camera frame.
-   * Pixel read + letterbox are sync; ONNX inference is async.
+   * Snapshot camera-only pixels into the letterbox canvas (sync), then run
+   * inference in the worker. Caller must invoke while the source is still
+   * camera-only (before blue wash / overlays).
    */
   async detect(source: HTMLCanvasElement): Promise<PhoneDetectResult> {
-    const { tensor, meta } = this.preprocess(source);
-    const feeds: Record<string, ort.Tensor> = { [this.inputName]: tensor };
-    const results = await this.session.run(feeds);
-    const output = results[this.session.outputNames[0]];
-    if (!output) {
-      throw new Error("YOLOv8 ONNX model returned no output");
+    if (this.closed) {
+      throw new Error("Phone detector is closed");
     }
 
-    const candidates = this.decodePhoneCandidates(
-      output.data as Float32Array,
-      output.dims,
-      meta,
-    );
-    const detections = nonMaxSuppression(candidates, {
-      iouThreshold: this.config.iouThreshold,
-      enabled: this.config.nmsEnabled,
-      maxDetections: this.config.maxDetections,
-    });
+    const meta = this.letterboxSnapshot(source);
+    const bitmap = await createImageBitmap(this.letterboxCanvas);
+    const requestId = this.allocRequestId();
 
-    return { candidates, detections };
+    try {
+      const result = await this.postAndWait<PhoneDetectResult>({
+        type: "detect",
+        requestId,
+        bitmap,
+        meta,
+      }, [bitmap]);
+      return result;
+    } catch (caught) {
+      // If postMessage failed before transfer, close the bitmap ourselves.
+      try {
+        bitmap.close();
+      } catch {
+        /* already transferred / closed */
+      }
+      throw caught;
+    }
   }
 
   async close(): Promise<void> {
-    await this.session.release();
+    if (this.closed) {
+      return;
+    }
+    this.closed = true;
+    try {
+      await this.postAndWait({
+        type: "close",
+        requestId: this.allocRequestId(),
+      });
+    } catch {
+      /* terminate regardless */
+    } finally {
+      this.worker.terminate();
+      for (const [, pending] of this.pending) {
+        pending.reject(new Error("Phone detector closed"));
+      }
+      this.pending.clear();
+    }
   }
 
   /**
-   * Letterbox `source` into a 640×640 RGB float tensor in [0, 1], CHW layout.
+   * Draw `source` into the reusable 640×640 letterbox canvas.
    * Must stay synchronous (no await) so the rAF loop can finish reading
    * camera-only pixels before drawing overlays.
    */
-  private preprocess(source: HTMLCanvasElement): {
-    tensor: ort.Tensor;
-    meta: LetterboxMeta;
-  } {
+  private letterboxSnapshot(source: HTMLCanvasElement): LetterboxMeta {
     const inputSize = this.config.inputSize;
     const srcWidth = source.width;
     const srcHeight = source.height;
@@ -167,7 +183,7 @@ export class PhoneDetector {
     const padX = (inputSize - drawWidth) / 2;
     const padY = (inputSize - drawHeight) / 2;
 
-    const ctx = this.letterboxCanvas.getContext("2d", { willReadFrequently: true });
+    const ctx = this.letterboxCanvas.getContext("2d");
     if (!ctx) {
       throw new Error("Could not get 2d context for letterbox canvas");
     }
@@ -176,91 +192,67 @@ export class PhoneDetector {
     ctx.fillRect(0, 0, inputSize, inputSize);
     ctx.drawImage(source, padX, padY, drawWidth, drawHeight);
 
-    const imageData = ctx.getImageData(0, 0, inputSize, inputSize);
-    const { data } = imageData;
-    const buf = this.floatBuffer;
-    const plane = inputSize * inputSize;
-    for (let i = 0; i < plane; i += 1) {
-      const px = i * 4;
-      buf[i] = data[px]! / 255;
-      buf[plane + i] = data[px + 1]! / 255;
-      buf[2 * plane + i] = data[px + 2]! / 255;
-    }
-
-    const tensor = new ort.Tensor("float32", buf, [1, 3, inputSize, inputSize]);
-    return {
-      tensor,
-      meta: { scale, padX, padY, srcWidth, srcHeight },
-    };
+    return { scale, padX, padY, srcWidth, srcHeight };
   }
 
-  /**
-   * Decode YOLOv8 raw output `[1, 84, N]` → phone-class boxes above score threshold.
-   * Channels 0–3 are cx, cy, w, h in letterbox pixels; 4–83 are COCO class scores.
-   */
-  private decodePhoneCandidates(
-    data: Float32Array,
-    dims: readonly number[],
-    meta: LetterboxMeta,
-  ): Detection[] {
-    const numPreds = dims.length === 3 ? dims[2]! : dims[1] === 84 ? dims[2]! : 0;
-    if (!numPreds) {
-      throw new Error(`Unexpected YOLO output shape: [${dims.join(", ")}]`);
-    }
+  private allocRequestId(): number {
+    const id = this.nextRequestId;
+    this.nextRequestId += 1;
+    return id;
+  }
 
-    const scoreThreshold = this.config.scoreThreshold;
-    const classChannel = 4 + CELL_PHONE_CLASS_ID;
-    const candidates: Detection[] = [];
-
-    for (let i = 0; i < numPreds; i += 1) {
-      const score = data[classChannel * numPreds + i]!;
-      if (score < scoreThreshold) {
-        continue;
-      }
-
-      const cx = data[0 * numPreds + i]!;
-      const cy = data[1 * numPreds + i]!;
-      const w = data[2 * numPreds + i]!;
-      const h = data[3 * numPreds + i]!;
-
-      const box = letterboxBoxToSource(cx, cy, w, h, meta);
-      if (box.width <= 1 || box.height <= 1) {
-        continue;
-      }
-
-      candidates.push({
-        box,
-        classId: CELL_PHONE_CLASS_ID,
-        className: cocoLabel(CELL_PHONE_CLASS_ID),
-        score,
+  private postAndWait<T = unknown>(
+    message: WorkerInMessage,
+    transfer?: Transferable[],
+  ): Promise<T> {
+    return new Promise<T>((resolve, reject) => {
+      this.pending.set(message.requestId, {
+        resolve: resolve as (value: unknown) => void,
+        reject,
       });
-    }
+      try {
+        if (transfer && transfer.length > 0) {
+          this.worker.postMessage(message, transfer);
+        } else {
+          this.worker.postMessage(message);
+        }
+      } catch (caught) {
+        this.pending.delete(message.requestId);
+        reject(caught);
+      }
+    });
+  }
 
-    return candidates;
+  private onWorkerMessage(message: WorkerOutMessage): void {
+    const pending = this.pending.get(message.requestId);
+    if (!pending) {
+      return;
+    }
+    this.pending.delete(message.requestId);
+
+    if (message.type === "error") {
+      pending.reject(new Error(message.message));
+      return;
+    }
+    if (message.type === "result") {
+      pending.resolve({
+        candidates: message.candidates,
+        detections: message.detections,
+      } satisfies PhoneDetectResult);
+      return;
+    }
+    // ready (init / close ack)
+    pending.resolve(undefined);
   }
 }
 
-function letterboxBoxToSource(
-  cx: number,
-  cy: number,
-  w: number,
-  h: number,
-  meta: LetterboxMeta,
-): Detection["box"] {
-  const x1 = (cx - w / 2 - meta.padX) / meta.scale;
-  const y1 = (cy - h / 2 - meta.padY) / meta.scale;
-  const x2 = (cx + w / 2 - meta.padX) / meta.scale;
-  const y2 = (cy + h / 2 - meta.padY) / meta.scale;
-
-  const left = Math.max(0, Math.min(meta.srcWidth, x1));
-  const top = Math.max(0, Math.min(meta.srcHeight, y1));
-  const right = Math.max(0, Math.min(meta.srcWidth, x2));
-  const bottom = Math.max(0, Math.min(meta.srcHeight, y2));
-
+function toWorkerConfig(config: PhoneDetectorConfig): WorkerPhoneConfig {
   return {
-    x: left,
-    y: top,
-    width: Math.max(0, right - left),
-    height: Math.max(0, bottom - top),
+    scoreThreshold: config.scoreThreshold,
+    iouThreshold: config.iouThreshold,
+    nmsEnabled: config.nmsEnabled,
+    inputSize: config.inputSize,
+    modelUrl: config.modelUrl,
+    maxDetections: config.maxDetections,
   };
 }
