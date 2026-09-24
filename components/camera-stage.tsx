@@ -510,6 +510,10 @@ export default function CameraStage() {
     session.lastTimestamp = timestamp;
 
     const result = landmarker.detectForVideo(canvas, timestamp);
+    if (phaseRef.current === "camera_loading") {
+      phaseRef.current = "calibration_ready";
+      setPhase("calibration_ready");
+    }
     const faceLandmarks = result.faceLandmarks[0];
     const faceDetected = Boolean(faceLandmarks);
     const matrix = result.facialTransformationMatrixes[0];
@@ -679,7 +683,8 @@ export default function CameraStage() {
 
         setCameraEnabledFlag(true);
         session.mode = "running";
-        setAppPhase("calibration_ready");
+        // Stay on camera_loading until the first detectForVideo completes
+        // (that call can freeze the main thread; the cover hides the hitch).
         session.frameId = requestAnimationFrame(loop);
       } catch (caught) {
         if (isCancelled()) {
@@ -793,6 +798,23 @@ export default function CameraStage() {
     <div className="fixed inset-0 overflow-hidden bg-black">
       <video ref={videoRef} className="hidden" playsInline muted autoPlay />
       <canvas ref={canvasRef} className="absolute inset-0 block h-full w-full" />
+
+      {phase === "camera_loading" ? (
+        <div
+          className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 bg-[#061018] px-6 text-center"
+          role="status"
+          aria-live="polite"
+        >
+          <h1 className="font-serif text-4xl tracking-wide text-[#d7ecf5] sm:text-5xl md:text-6xl">
+            You Are Fish
+          </h1>
+          <p className="max-w-md text-[#9ec3d4]">Getting the camera ready…</p>
+          <div
+            className="mt-2 h-8 w-8 animate-spin rounded-full border-2 border-[#9ec3d4]/30 border-t-[#9ec3d4]"
+            aria-hidden="true"
+          />
+        </div>
+      ) : null}
 
       {phase === "camera_idle" || phase === "camera_error" ? (
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 bg-[#061018] px-6 text-center">
