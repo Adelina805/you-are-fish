@@ -43,7 +43,7 @@ import {
   drawPoseSignalViz,
 } from "@/lib/overlay";
 import { PoseHistory } from "@/lib/pose-history";
-import { PoseSmoother } from "@/lib/smoothing";
+import { PhoneBoxSmoother, PoseSmoother } from "@/lib/smoothing";
 
 const MODEL_URL =
   "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task";
@@ -152,6 +152,7 @@ type Session = {
   faceOvalConnections: LandmarkConnection[];
   calibrator: NeutralPoseCalibrator;
   smoother: PoseSmoother;
+  phoneBoxSmoother: PhoneBoxSmoother;
   history: PoseHistory;
   mouth: MouthTracker;
   fish: FishState | null;
@@ -191,6 +192,7 @@ function createSession(): Session {
     faceOvalConnections: [],
     calibrator: new NeutralPoseCalibrator(),
     smoother: new PoseSmoother(),
+    phoneBoxSmoother: new PhoneBoxSmoother(),
     history: new PoseHistory(),
     mouth: new MouthTracker(),
     fish: null,
@@ -648,7 +650,10 @@ export default function CameraStage() {
           direction,
           session.calibrator.isComplete && !session.calibrator.isActive,
         );
-        drawPhoneDetections(ctx, session.phoneDetections);
+        drawPhoneDetections(
+          ctx,
+          session.phoneBoxSmoother.update(session.phoneDetections),
+        );
       }
 
       let phoneStats = null;
