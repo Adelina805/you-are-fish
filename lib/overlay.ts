@@ -373,43 +373,44 @@ export function drawDirectionLabel(
 
   const space = beginScaledUi(ctx, width, height);
   const cx = space.width / 2;
-  const cy = space.height / 2;
+  const topY = 48;
+  const labelFont = "bold 42px ui-monospace, SFMono-Regular, Menlo, monospace";
   ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
+  ctx.textBaseline = "top";
 
   if (!direction) {
-    ctx.font = "bold 72px ui-sans-serif, system-ui, sans-serif";
+    ctx.font = labelFont;
     ctx.fillStyle = "#000000";
-    ctx.fillText("—", cx + 2, cy + 2);
+    ctx.fillText("—", cx + 2, topY + 2);
     ctx.fillStyle = "#787878";
-    ctx.fillText("—", cx, cy);
+    ctx.fillText("—", cx, topY);
   } else if (direction.magnitude === 0) {
-    ctx.font = "bold 72px ui-sans-serif, system-ui, sans-serif";
+    ctx.font = labelFont;
     ctx.fillStyle = "#000000";
-    ctx.fillText("CENTER", cx + 2, cy + 2);
+    ctx.fillText("CENTER", cx + 2, topY + 2);
     ctx.fillStyle = "#ffffff";
-    ctx.fillText("CENTER", cx, cy);
+    ctx.fillText("CENTER", cx, topY);
   } else {
-    const arrowLen = 110;
-    drawLookArrow(ctx, cx, cy - 28, direction.x, direction.y, arrowLen);
-
     const coords = `${formatSigned(direction.x)}, ${formatSigned(direction.y)}`;
     const angle =
       direction.angleDeg === null
         ? ""
         : `${direction.angleDeg >= 0 ? "+" : ""}${direction.angleDeg.toFixed(0)}°`;
 
-    ctx.font = "bold 36px ui-monospace, SFMono-Regular, Menlo, monospace";
+    ctx.font = labelFont;
     ctx.fillStyle = "#000000";
-    ctx.fillText(coords, cx + 2, cy + 72 + 2);
+    ctx.fillText(coords, cx + 2, topY + 2);
     ctx.fillStyle = "#ffffff";
-    ctx.fillText(coords, cx, cy + 72);
+    ctx.fillText(coords, cx, topY);
 
     ctx.font = "22px ui-sans-serif, system-ui, sans-serif";
     ctx.fillStyle = "#000000";
-    ctx.fillText(angle, cx + 1, cy + 108 + 1);
+    ctx.fillText(angle, cx + 1, topY + 48 + 1);
     ctx.fillStyle = "#c8c8c8";
-    ctx.fillText(angle, cx, cy + 108);
+    ctx.fillText(angle, cx, topY + 48);
+
+    const arrowLen = 110;
+    drawLookArrow(ctx, cx, space.height / 2, direction.x, direction.y, arrowLen);
   }
 
   ctx.textAlign = "start";
