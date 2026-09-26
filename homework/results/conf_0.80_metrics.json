@@ -1,0 +1,370 @@
+{
+  "tp": 5,
+  "fp": 0,
+  "tn": 9,
+  "fn": 26,
+  "detection_rate_on_expected": 0.161,
+  "false_positive_rate_on_negatives": 0.0,
+  "per_image": [
+    {
+      "image": "coco128_nophone_000000000009.jpg",
+      "expected_phone": false,
+      "phoneCount": 0,
+      "bestScore": 0.00016891956329345703,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "label": "TN"
+    },
+    {
+      "image": "coco128_nophone_000000000030.jpg",
+      "expected_phone": false,
+      "phoneCount": 0,
+      "bestScore": 9.119510650634766e-06,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "label": "TN"
+    },
+    {
+      "image": "coco128_nophone_000000000036.jpg",
+      "expected_phone": false,
+      "phoneCount": 0,
+      "bestScore": 0.019847095012664795,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "label": "TN"
+    },
+    {
+      "image": "coco128_nophone_000000000049.jpg",
+      "expected_phone": false,
+      "phoneCount": 0,
+      "bestScore": 8.934736251831055e-05,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "label": "TN"
+    },
+    {
+      "image": "coco128_nophone_000000000109.jpg",
+      "expected_phone": false,
+      "phoneCount": 0,
+      "bestScore": 4.571676254272461e-05,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "label": "TN"
+    },
+    {
+      "image": "coco128_nophone_000000000113.jpg",
+      "expected_phone": false,
+      "phoneCount": 0,
+      "bestScore": 0.0027652084827423096,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "label": "TN"
+    },
+    {
+      "image": "coco128_nophone_000000000133.jpg",
+      "expected_phone": false,
+      "phoneCount": 0,
+      "bestScore": 0.013353407382965088,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "label": "TN"
+    },
+    {
+      "image": "coco128_nophone_000000000142.jpg",
+      "expected_phone": false,
+      "phoneCount": 0,
+      "bestScore": 0.0012224912643432617,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "label": "TN"
+    },
+    {
+      "image": "coco128_nophone_000000000257.jpg",
+      "expected_phone": false,
+      "phoneCount": 0,
+      "bestScore": 0.0002046525478363037,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "label": "TN"
+    },
+    {
+      "image": "coco128_phone_000000000328.jpg",
+      "expected_phone": true,
+      "phoneCount": 0,
+      "bestScore": 0.07413148880004883,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "label": "FN"
+    },
+    {
+      "image": "coco128_phone_000000000328_dark.jpg",
+      "expected_phone": true,
+      "phoneCount": 0,
+      "bestScore": 0.1685028374195099,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "label": "FN"
+    },
+    {
+      "image": "coco128_phone_000000000328_scale_small.jpg",
+      "expected_phone": true,
+      "phoneCount": 0,
+      "bestScore": 0.5822184681892395,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "label": "FN"
+    },
+    {
+      "image": "coco128_phone_000000000387.jpg",
+      "expected_phone": true,
+      "phoneCount": 0,
+      "bestScore": 0.025275826454162598,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "label": "FN"
+    },
+    {
+      "image": "coco128_phone_000000000387_bright.jpg",
+      "expected_phone": true,
+      "phoneCount": 0,
+      "bestScore": 0.02318742871284485,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "label": "FN"
+    },
+    {
+      "image": "coco128_phone_000000000395.jpg",
+      "expected_phone": true,
+      "phoneCount": 0,
+      "bestScore": 0.19852402806282043,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "label": "FN"
+    },
+    {
+      "image": "coco128_phone_000000000395_bright.jpg",
+      "expected_phone": true,
+      "phoneCount": 0,
+      "bestScore": 0.018808722496032715,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "label": "FN"
+    },
+    {
+      "image": "coco128_phone_000000000395_crop.jpg",
+      "expected_phone": true,
+      "phoneCount": 0,
+      "bestScore": 0.28562992811203003,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "label": "FN"
+    },
+    {
+      "image": "coco128_phone_000000000536.jpg",
+      "expected_phone": true,
+      "phoneCount": 0,
+      "bestScore": 0.050459861755371094,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "label": "FN"
+    },
+    {
+      "image": "coco128_phone_000000000536_crop.jpg",
+      "expected_phone": true,
+      "phoneCount": 0,
+      "bestScore": 0.03533655405044556,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "label": "FN"
+    },
+    {
+      "image": "coco128_phone_000000000536_scale_small.jpg",
+      "expected_phone": true,
+      "phoneCount": 0,
+      "bestScore": 0.0054395198822021484,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "label": "FN"
+    },
+    {
+      "image": "coco128_phone_000000000560.jpg",
+      "expected_phone": true,
+      "phoneCount": 0,
+      "bestScore": 0.00041982531547546387,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "label": "FN"
+    },
+    {
+      "image": "coco128_phone_000000000560_dark.jpg",
+      "expected_phone": true,
+      "phoneCount": 0,
+      "bestScore": 0.0003139376640319824,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "label": "FN"
+    },
+    {
+      "image": "commons_01.jpg",
+      "expected_phone": true,
+      "phoneCount": 5,
+      "bestScore": 0.9375940561294556,
+      "beforeNms": 25,
+      "afterNms": 5,
+      "label": "TP"
+    },
+    {
+      "image": "commons_02.jpg",
+      "expected_phone": true,
+      "phoneCount": 0,
+      "bestScore": 0.5030459761619568,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "label": "FN"
+    },
+    {
+      "image": "commons_03.jpg",
+      "expected_phone": true,
+      "phoneCount": 0,
+      "bestScore": 0.604644238948822,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "label": "FN"
+    },
+    {
+      "image": "commons_04.jpg",
+      "expected_phone": true,
+      "phoneCount": 0,
+      "bestScore": 0.06860077381134033,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "label": "FN"
+    },
+    {
+      "image": "commons_05.jpg",
+      "expected_phone": true,
+      "phoneCount": 0,
+      "bestScore": 0.0003275871276855469,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "label": "FN"
+    },
+    {
+      "image": "commons_06.png",
+      "expected_phone": true,
+      "phoneCount": 1,
+      "bestScore": 0.8717578649520874,
+      "beforeNms": 2,
+      "afterNms": 1,
+      "label": "TP"
+    },
+    {
+      "image": "commons_07.png",
+      "expected_phone": true,
+      "phoneCount": 0,
+      "bestScore": 0.5682805776596069,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "label": "FN"
+    },
+    {
+      "image": "commons_08.jpg",
+      "expected_phone": true,
+      "phoneCount": 1,
+      "bestScore": 0.9180644154548645,
+      "beforeNms": 9,
+      "afterNms": 1,
+      "label": "TP"
+    },
+    {
+      "image": "commons_09.png",
+      "expected_phone": true,
+      "phoneCount": 0,
+      "bestScore": 0.25737500190734863,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "label": "FN"
+    },
+    {
+      "image": "commons_10.jpg",
+      "expected_phone": true,
+      "phoneCount": 0,
+      "bestScore": 0.02064335346221924,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "label": "FN"
+    },
+    {
+      "image": "commons_11.jpg",
+      "expected_phone": true,
+      "phoneCount": 0,
+      "bestScore": 0.0015014111995697021,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "label": "FN"
+    },
+    {
+      "image": "commons_12.jpg",
+      "expected_phone": true,
+      "phoneCount": 0,
+      "bestScore": 0.7945516109466553,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "label": "FN"
+    },
+    {
+      "image": "commons_13.jpg",
+      "expected_phone": true,
+      "phoneCount": 0,
+      "bestScore": 0.032789647579193115,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "label": "FN"
+    },
+    {
+      "image": "commons_14.jpg",
+      "expected_phone": true,
+      "phoneCount": 0,
+      "bestScore": 0.2623389959335327,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "label": "FN"
+    },
+    {
+      "image": "commons_15.jpg",
+      "expected_phone": true,
+      "phoneCount": 0,
+      "bestScore": 0.7333382368087769,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "label": "FN"
+    },
+    {
+      "image": "commons_16.jpg",
+      "expected_phone": true,
+      "phoneCount": 0,
+      "bestScore": 7.927417755126953e-06,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "label": "FN"
+    },
+    {
+      "image": "commons_17.jpg",
+      "expected_phone": true,
+      "phoneCount": 5,
+      "bestScore": 0.9282710552215576,
+      "beforeNms": 23,
+      "afterNms": 5,
+      "label": "TP"
+    },
+    {
+      "image": "commons_18.jpg",
+      "expected_phone": true,
+      "phoneCount": 1,
+      "bestScore": 0.8111895322799683,
+      "beforeNms": 1,
+      "afterNms": 1,
+      "label": "TP"
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+[
+  {
+    "tag": "nms_on_iou0.45",
+    "nmsEnabled": true,
+    "iouThreshold": 0.45,
+    "scoreThreshold": 0.2,
+    "meanBeforeNms": 9.95,
+    "meanAfterNms": 1.1,
+    "totalPhonesDetected": 44,
+    "imagesWithPhones": 14,
+    "tp": 14,
+    "fp": 0,
+    "tn": 9,
+    "fn": 17
+  },
+  {
+    "tag": "nms_off",
+    "nmsEnabled": false,
+    "iouThreshold": 0.45,
+    "scoreThreshold": 0.2,
+    "meanBeforeNms": 9.95,
+    "meanAfterNms": 3.58,
+    "totalPhonesDetected": 143,
+    "imagesWithPhones": 14,
+    "tp": 14,
+    "fp": 0,
+    "tn": 9,
+    "fn": 17
+  },
+  {
+    "tag": "nms_on_iou0.20",
+    "nmsEnabled": true,
+    "iouThreshold": 0.2,
+    "scoreThreshold": 0.2,
+    "meanBeforeNms": 9.95,
+    "meanAfterNms": 1.07,
+    "totalPhonesDetected": 43,
+    "imagesWithPhones": 14,
+    "tp": 14,
+    "fp": 0,
+    "tn": 9,
+    "fn": 17
+  },
+  {
+    "tag": "nms_on_iou0.80",
+    "nmsEnabled": true,
+    "iouThreshold": 0.8,
+    "scoreThreshold": 0.2,
+    "meanBeforeNms": 9.95,
+    "meanAfterNms": 1.12,
+    "totalPhonesDetected": 45,
+    "imagesWithPhones": 14,
+    "tp": 14,
+    "fp": 0,
+    "tn": 9,
+    "fn": 17
+  }
+]

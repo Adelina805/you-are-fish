@@ -1,0 +1,5424 @@
+{
+  "tag": "nms_on_iou0.45",
+  "model": "public/models/yolov8n.onnx",
+  "imagesDir": "homework/test-images",
+  "scoreThreshold": 0.2,
+  "iouThreshold": 0.45,
+  "nmsEnabled": true,
+  "imageCount": 40,
+  "imagesWithPhones": 14,
+  "totalPhonesDetected": 44,
+  "meanInferMs": 99.68,
+  "results": [
+    {
+      "image": "coco128_nophone_000000000009.jpg",
+      "scoreThreshold": 0.2,
+      "iouThreshold": 0.45,
+      "nmsEnabled": true,
+      "bestScore": 0.00016891956329345703,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "phoneCount": 0,
+      "inferMs": 77.92,
+      "detections": [],
+      "candidates": []
+    },
+    {
+      "image": "coco128_nophone_000000000030.jpg",
+      "scoreThreshold": 0.2,
+      "iouThreshold": 0.45,
+      "nmsEnabled": true,
+      "bestScore": 9.119510650634766e-06,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "phoneCount": 0,
+      "inferMs": 90.49,
+      "detections": [],
+      "candidates": []
+    },
+    {
+      "image": "coco128_nophone_000000000036.jpg",
+      "scoreThreshold": 0.2,
+      "iouThreshold": 0.45,
+      "nmsEnabled": true,
+      "bestScore": 0.019847095012664795,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "phoneCount": 0,
+      "inferMs": 83.85,
+      "detections": [],
+      "candidates": []
+    },
+    {
+      "image": "coco128_nophone_000000000049.jpg",
+      "scoreThreshold": 0.2,
+      "iouThreshold": 0.45,
+      "nmsEnabled": true,
+      "bestScore": 8.934736251831055e-05,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "phoneCount": 0,
+      "inferMs": 92.41,
+      "detections": [],
+      "candidates": []
+    },
+    {
+      "image": "coco128_nophone_000000000109.jpg",
+      "scoreThreshold": 0.2,
+      "iouThreshold": 0.45,
+      "nmsEnabled": true,
+      "bestScore": 4.571676254272461e-05,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "phoneCount": 0,
+      "inferMs": 83.66,
+      "detections": [],
+      "candidates": []
+    },
+    {
+      "image": "coco128_nophone_000000000113.jpg",
+      "scoreThreshold": 0.2,
+      "iouThreshold": 0.45,
+      "nmsEnabled": true,
+      "bestScore": 0.0027652084827423096,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "phoneCount": 0,
+      "inferMs": 90.38,
+      "detections": [],
+      "candidates": []
+    },
+    {
+      "image": "coco128_nophone_000000000133.jpg",
+      "scoreThreshold": 0.2,
+      "iouThreshold": 0.45,
+      "nmsEnabled": true,
+      "bestScore": 0.013353407382965088,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "phoneCount": 0,
+      "inferMs": 105.82,
+      "detections": [],
+      "candidates": []
+    },
+    {
+      "image": "coco128_nophone_000000000142.jpg",
+      "scoreThreshold": 0.2,
+      "iouThreshold": 0.45,
+      "nmsEnabled": true,
+      "bestScore": 0.0012224912643432617,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "phoneCount": 0,
+      "inferMs": 115.73,
+      "detections": [],
+      "candidates": []
+    },
+    {
+      "image": "coco128_nophone_000000000257.jpg",
+      "scoreThreshold": 0.2,
+      "iouThreshold": 0.45,
+      "nmsEnabled": true,
+      "bestScore": 0.0002046525478363037,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "phoneCount": 0,
+      "inferMs": 131.27,
+      "detections": [],
+      "candidates": []
+    },
+    {
+      "image": "coco128_phone_000000000328.jpg",
+      "scoreThreshold": 0.2,
+      "iouThreshold": 0.45,
+      "nmsEnabled": true,
+      "bestScore": 0.07413148880004883,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "phoneCount": 0,
+      "inferMs": 114.09,
+      "detections": [],
+      "candidates": []
+    },
+    {
+      "image": "coco128_phone_000000000328_dark.jpg",
+      "scoreThreshold": 0.2,
+      "iouThreshold": 0.45,
+      "nmsEnabled": true,
+      "bestScore": 0.1685028374195099,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "phoneCount": 0,
+      "inferMs": 102.63,
+      "detections": [],
+      "candidates": []
+    },
+    {
+      "image": "coco128_phone_000000000328_scale_small.jpg",
+      "scoreThreshold": 0.2,
+      "iouThreshold": 0.45,
+      "nmsEnabled": true,
+      "bestScore": 0.5822184681892395,
+      "beforeNms": 7,
+      "afterNms": 1,
+      "phoneCount": 1,
+      "inferMs": 84.39,
+      "detections": [
+        {
+          "box": {
+            "x": 50.7236014008522,
+            "y": 39.484646272659305,
+            "width": 8.965639472007751,
+            "height": 11.921417284011838
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.5822184681892395
+        }
+      ],
+      "candidates": [
+        {
+          "box": {
+            "x": 50.81309148073197,
+            "y": 39.44293044805527,
+            "width": 8.988837218284601,
+            "height": 12.223368859291078
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.4181046783924103
+        },
+        {
+          "box": {
+            "x": 50.716750752925876,
+            "y": 38.99754438400269,
+            "width": 9.174063706398009,
+            "height": 12.598651313781737
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.23378372192382812
+        },
+        {
+          "box": {
+            "x": 50.7236014008522,
+            "y": 39.484646272659305,
+            "width": 8.965639472007751,
+            "height": 11.921417284011838
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.5822184681892395
+        },
+        {
+          "box": {
+            "x": 50.530318164825445,
+            "y": 39.46855562925339,
+            "width": 9.063239622116086,
+            "height": 11.90652258396149
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.3958190977573395
+        },
+        {
+          "box": {
+            "x": 50.778127276897436,
+            "y": 39.436310863494874,
+            "width": 9.032317757606506,
+            "height": 12.012562894821166
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.2544816732406616
+        },
+        {
+          "box": {
+            "x": 50.75335525274277,
+            "y": 39.55113666057587,
+            "width": 8.892379689216611,
+            "height": 11.795932102203366
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.5195786952972412
+        },
+        {
+          "box": {
+            "x": 50.647182905673986,
+            "y": 39.63370245695114,
+            "width": 9.038259387016296,
+            "height": 11.699469494819645
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.4209817051887512
+        }
+      ]
+    },
+    {
+      "image": "coco128_phone_000000000387.jpg",
+      "scoreThreshold": 0.2,
+      "iouThreshold": 0.45,
+      "nmsEnabled": true,
+      "bestScore": 0.025275826454162598,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "phoneCount": 0,
+      "inferMs": 90.75,
+      "detections": [],
+      "candidates": []
+    },
+    {
+      "image": "coco128_phone_000000000387_bright.jpg",
+      "scoreThreshold": 0.2,
+      "iouThreshold": 0.45,
+      "nmsEnabled": true,
+      "bestScore": 0.02318742871284485,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "phoneCount": 0,
+      "inferMs": 99.87,
+      "detections": [],
+      "candidates": []
+    },
+    {
+      "image": "coco128_phone_000000000395.jpg",
+      "scoreThreshold": 0.2,
+      "iouThreshold": 0.45,
+      "nmsEnabled": true,
+      "bestScore": 0.19852402806282043,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "phoneCount": 0,
+      "inferMs": 105.42,
+      "detections": [],
+      "candidates": []
+    },
+    {
+      "image": "coco128_phone_000000000395_bright.jpg",
+      "scoreThreshold": 0.2,
+      "iouThreshold": 0.45,
+      "nmsEnabled": true,
+      "bestScore": 0.018808722496032715,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "phoneCount": 0,
+      "inferMs": 106.89,
+      "detections": [],
+      "candidates": []
+    },
+    {
+      "image": "coco128_phone_000000000395_crop.jpg",
+      "scoreThreshold": 0.2,
+      "iouThreshold": 0.45,
+      "nmsEnabled": true,
+      "bestScore": 0.28562992811203003,
+      "beforeNms": 5,
+      "afterNms": 1,
+      "phoneCount": 1,
+      "inferMs": 102.98,
+      "detections": [
+        {
+          "box": {
+            "x": 195.1444076538086,
+            "y": 200.8588455200195,
+            "width": 22.285903930664062,
+            "height": 26.31744079589845
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.28562992811203003
+        }
+      ],
+      "candidates": [
+        {
+          "box": {
+            "x": 195.09548797607422,
+            "y": 200.80711669921874,
+            "width": 22.698623657226562,
+            "height": 26.728558349609386
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.20986884832382202
+        },
+        {
+          "box": {
+            "x": 195.15247192382813,
+            "y": 200.95860748291014,
+            "width": 21.979718017578108,
+            "height": 26.42681579589845
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.26938098669052124
+        },
+        {
+          "box": {
+            "x": 195.1444076538086,
+            "y": 200.8588455200195,
+            "width": 22.285903930664062,
+            "height": 26.31744079589845
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.28562992811203003
+        },
+        {
+          "box": {
+            "x": 195.4867919921875,
+            "y": 200.65652313232422,
+            "width": 21.957501220703108,
+            "height": 26.28868713378904
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.26019996404647827
+        },
+        {
+          "box": {
+            "x": 195.99723358154296,
+            "y": 200.7099609375,
+            "width": 21.677334594726574,
+            "height": 26.120587158203108
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.21760547161102295
+        }
+      ]
+    },
+    {
+      "image": "coco128_phone_000000000536.jpg",
+      "scoreThreshold": 0.2,
+      "iouThreshold": 0.45,
+      "nmsEnabled": true,
+      "bestScore": 0.050459861755371094,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "phoneCount": 0,
+      "inferMs": 102.4,
+      "detections": [],
+      "candidates": []
+    },
+    {
+      "image": "coco128_phone_000000000536_crop.jpg",
+      "scoreThreshold": 0.2,
+      "iouThreshold": 0.45,
+      "nmsEnabled": true,
+      "bestScore": 0.03533655405044556,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "phoneCount": 0,
+      "inferMs": 95.54,
+      "detections": [],
+      "candidates": []
+    },
+    {
+      "image": "coco128_phone_000000000536_scale_small.jpg",
+      "scoreThreshold": 0.2,
+      "iouThreshold": 0.45,
+      "nmsEnabled": true,
+      "bestScore": 0.0054395198822021484,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "phoneCount": 0,
+      "inferMs": 116.08,
+      "detections": [],
+      "candidates": []
+    },
+    {
+      "image": "coco128_phone_000000000560.jpg",
+      "scoreThreshold": 0.2,
+      "iouThreshold": 0.45,
+      "nmsEnabled": true,
+      "bestScore": 0.00041982531547546387,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "phoneCount": 0,
+      "inferMs": 202.06,
+      "detections": [],
+      "candidates": []
+    },
+    {
+      "image": "coco128_phone_000000000560_dark.jpg",
+      "scoreThreshold": 0.2,
+      "iouThreshold": 0.45,
+      "nmsEnabled": true,
+      "bestScore": 0.0003139376640319824,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "phoneCount": 0,
+      "inferMs": 109.12,
+      "detections": [],
+      "candidates": []
+    },
+    {
+      "image": "commons_01.jpg",
+      "scoreThreshold": 0.2,
+      "iouThreshold": 0.45,
+      "nmsEnabled": true,
+      "bestScore": 0.9375940561294556,
+      "beforeNms": 54,
+      "afterNms": 5,
+      "phoneCount": 5,
+      "inferMs": 106.09,
+      "detections": [
+        {
+          "box": {
+            "x": 96.00897216796875,
+            "y": 293.0959014892578,
+            "width": 354.6812744140625,
+            "height": 320.5500183105469
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.9375940561294556
+        },
+        {
+          "box": {
+            "x": 624.3120422363281,
+            "y": 189.82284545898438,
+            "width": 253.60491943359375,
+            "height": 305.85797119140625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.9139551520347595
+        },
+        {
+          "box": {
+            "x": 530.8936767578125,
+            "y": 500.7696533203125,
+            "width": 195.3726806640625,
+            "height": 322.4578857421875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8856180906295776
+        },
+        {
+          "box": {
+            "x": 810.347900390625,
+            "y": 255.27198791503906,
+            "width": 432.02001953125,
+            "height": 371.9230651855469
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8750399351119995
+        },
+        {
+          "box": {
+            "x": 364.69769287109375,
+            "y": 205.60084533691406,
+            "width": 259.33648681640625,
+            "height": 301.3802185058594
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8455854058265686
+        }
+      ],
+      "candidates": [
+        {
+          "box": {
+            "x": 621.6575012207031,
+            "y": 189.55177307128906,
+            "width": 257.15863037109375,
+            "height": 309.3001403808594
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.5021915435791016
+        },
+        {
+          "box": {
+            "x": 364.40667724609375,
+            "y": 204.315673828125,
+            "width": 260.32562255859375,
+            "height": 304.7568359375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.6976304650306702
+        },
+        {
+          "box": {
+            "x": 363.2315216064453,
+            "y": 203.988525390625,
+            "width": 261.0033874511719,
+            "height": 304.2939453125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.39069628715515137
+        },
+        {
+          "box": {
+            "x": 623.8081359863281,
+            "y": 188.67556762695312,
+            "width": 253.56805419921875,
+            "height": 306.20379638671875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8376984596252441
+        },
+        {
+          "box": {
+            "x": 622.7427368164062,
+            "y": 189.38034057617188,
+            "width": 255.069580078125,
+            "height": 305.82379150390625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8542447090148926
+        },
+        {
+          "box": {
+            "x": 622.6124267578125,
+            "y": 189.59521484375,
+            "width": 254.2342529296875,
+            "height": 304.8333740234375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.826410174369812
+        },
+        {
+          "box": {
+            "x": 364.6363983154297,
+            "y": 203.32131958007812,
+            "width": 259.2600402832031,
+            "height": 306.80487060546875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.653718888759613
+        },
+        {
+          "box": {
+            "x": 364.48577880859375,
+            "y": 204.4871826171875,
+            "width": 259.99444580078125,
+            "height": 304.5361328125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7831217050552368
+        },
+        {
+          "box": {
+            "x": 363.56573486328125,
+            "y": 204.7056121826172,
+            "width": 260.87652587890625,
+            "height": 304.6263732910156
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7823690176010132
+        },
+        {
+          "box": {
+            "x": 623.55517578125,
+            "y": 187.66754150390625,
+            "width": 253.262451171875,
+            "height": 308.2763671875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8710126280784607
+        },
+        {
+          "box": {
+            "x": 622.6861267089844,
+            "y": 188.29550170898438,
+            "width": 254.70489501953125,
+            "height": 308.13116455078125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8694000244140625
+        },
+        {
+          "box": {
+            "x": 623.2726745605469,
+            "y": 189.45602416992188,
+            "width": 253.95806884765625,
+            "height": 305.77667236328125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8475354909896851
+        },
+        {
+          "box": {
+            "x": 363.84649658203125,
+            "y": 200.15203857421875,
+            "width": 260.51544189453125,
+            "height": 308.501708984375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7268813848495483
+        },
+        {
+          "box": {
+            "x": 364.65447998046875,
+            "y": 200.32786560058594,
+            "width": 259.39556884765625,
+            "height": 308.2777404785156
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.5772973299026489
+        },
+        {
+          "box": {
+            "x": 622.131591796875,
+            "y": 189.0687255859375,
+            "width": 254.3253173828125,
+            "height": 307.185302734375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7704387903213501
+        },
+        {
+          "box": {
+            "x": 623.21142578125,
+            "y": 192.64395141601562,
+            "width": 252.69580078125,
+            "height": 302.94110107421875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.4532112777233124
+        },
+        {
+          "box": {
+            "x": 530.9212341308594,
+            "y": 499.1291198730469,
+            "width": 194.90826416015625,
+            "height": 324.75445556640625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.6857556700706482
+        },
+        {
+          "box": {
+            "x": 530.6836242675781,
+            "y": 499.5981140136719,
+            "width": 194.50775146484375,
+            "height": 324.92828369140625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7680806517601013
+        },
+        {
+          "box": {
+            "x": 528.5593566894531,
+            "y": 499.9170837402344,
+            "width": 196.89251708984375,
+            "height": 324.73272705078125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7527172565460205
+        },
+        {
+          "box": {
+            "x": 531.3481140136719,
+            "y": 499.6309814453125,
+            "width": 194.25689697265625,
+            "height": 326.6927490234375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7966275215148926
+        },
+        {
+          "box": {
+            "x": 530.8005065917969,
+            "y": 500.1009521484375,
+            "width": 194.52325439453125,
+            "height": 325.5140380859375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.881830632686615
+        },
+        {
+          "box": {
+            "x": 529.1084289550781,
+            "y": 500.0331726074219,
+            "width": 196.19989013671875,
+            "height": 325.08819580078125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8727906346321106
+        },
+        {
+          "box": {
+            "x": 531.1427001953125,
+            "y": 497.141357421875,
+            "width": 194.0494384765625,
+            "height": 328.5262451171875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.744995653629303
+        },
+        {
+          "box": {
+            "x": 529.8593139648438,
+            "y": 494.3057861328125,
+            "width": 195.66748046875,
+            "height": 330.817138671875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.37248849868774414
+        },
+        {
+          "box": {
+            "x": 96.11331176757812,
+            "y": 295.5407409667969,
+            "width": 356.83685302734375,
+            "height": 321.32769775390625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.6367367506027222
+        },
+        {
+          "box": {
+            "x": 364.69769287109375,
+            "y": 205.60084533691406,
+            "width": 259.33648681640625,
+            "height": 301.3802185058594
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8455854058265686
+        },
+        {
+          "box": {
+            "x": 364.2717742919922,
+            "y": 205.05892944335938,
+            "width": 259.2038879394531,
+            "height": 301.61920166015625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7557595372200012
+        },
+        {
+          "box": {
+            "x": 624.3120422363281,
+            "y": 189.82284545898438,
+            "width": 253.60491943359375,
+            "height": 305.85797119140625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.9139551520347595
+        },
+        {
+          "box": {
+            "x": 624.1359252929688,
+            "y": 190.19300842285156,
+            "width": 253.757568359375,
+            "height": 306.0673522949219
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8173551559448242
+        },
+        {
+          "box": {
+            "x": 812.9072875976562,
+            "y": 254.9713134765625,
+            "width": 430.1854248046875,
+            "height": 372.923583984375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.772098183631897
+        },
+        {
+          "box": {
+            "x": 811.3008117675781,
+            "y": 256.1119384765625,
+            "width": 431.91448974609375,
+            "height": 371.8819580078125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7322553992271423
+        },
+        {
+          "box": {
+            "x": 97.26423645019531,
+            "y": 294.3646545410156,
+            "width": 355.6131286621094,
+            "height": 320.50408935546875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.9172012805938721
+        },
+        {
+          "box": {
+            "x": 96.67660522460938,
+            "y": 295.0632019042969,
+            "width": 354.88616943359375,
+            "height": 317.35992431640625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.9059865474700928
+        },
+        {
+          "box": {
+            "x": 96.00897216796875,
+            "y": 293.0959014892578,
+            "width": 354.6812744140625,
+            "height": 320.5500183105469
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.9375940561294556
+        },
+        {
+          "box": {
+            "x": 362.71258544921875,
+            "y": 204.77096557617188,
+            "width": 261.09185791015625,
+            "height": 303.71221923828125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7518796920776367
+        },
+        {
+          "box": {
+            "x": 362.6820068359375,
+            "y": 204.30264282226562,
+            "width": 261.66473388671875,
+            "height": 304.81707763671875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8443560600280762
+        },
+        {
+          "box": {
+            "x": 624.2740478515625,
+            "y": 189.366943359375,
+            "width": 253.3984375,
+            "height": 306.276123046875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.5742471814155579
+        },
+        {
+          "box": {
+            "x": 811.574951171875,
+            "y": 255.83395385742188,
+            "width": 431.3798828125,
+            "height": 372.44903564453125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.843315601348877
+        },
+        {
+          "box": {
+            "x": 810.956298828125,
+            "y": 256.4049377441406,
+            "width": 432.320556640625,
+            "height": 371.78216552734375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7824435830116272
+        },
+        {
+          "box": {
+            "x": 809.974365234375,
+            "y": 256.5454406738281,
+            "width": 431.81884765625,
+            "height": 372.65057373046875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.621900200843811
+        },
+        {
+          "box": {
+            "x": 96.416748046875,
+            "y": 294.3927917480469,
+            "width": 355.71392822265625,
+            "height": 318.73272705078125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.9018547534942627
+        },
+        {
+          "box": {
+            "x": 96.7841796875,
+            "y": 294.08164978027344,
+            "width": 354.89703369140625,
+            "height": 317.4634094238281
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.9094188213348389
+        },
+        {
+          "box": {
+            "x": 95.91729736328125,
+            "y": 292.4637145996094,
+            "width": 353.983154296875,
+            "height": 319.61700439453125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.9169630408287048
+        },
+        {
+          "box": {
+            "x": 810.347900390625,
+            "y": 255.27198791503906,
+            "width": 432.02001953125,
+            "height": 371.9230651855469
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8750399351119995
+        },
+        {
+          "box": {
+            "x": 810.3863830566406,
+            "y": 254.7498779296875,
+            "width": 432.27264404296875,
+            "height": 372.4967041015625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7960875630378723
+        },
+        {
+          "box": {
+            "x": 809.9649353027344,
+            "y": 257.7269287109375,
+            "width": 431.56256103515625,
+            "height": 369.947265625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.6021072864532471
+        },
+        {
+          "box": {
+            "x": 96.36567687988281,
+            "y": 293.3388977050781,
+            "width": 355.4082946777344,
+            "height": 319.02581787109375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.909388542175293
+        },
+        {
+          "box": {
+            "x": 95.13043212890625,
+            "y": 293.8964080810547,
+            "width": 356.24468994140625,
+            "height": 318.5304260253906
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.9037075042724609
+        },
+        {
+          "box": {
+            "x": 95.14402770996094,
+            "y": 293.50970458984375,
+            "width": 355.0851135253906,
+            "height": 318.6011962890625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8892816305160522
+        },
+        {
+          "box": {
+            "x": 810.7991943359375,
+            "y": 255.21932983398438,
+            "width": 431.664306640625,
+            "height": 371.97296142578125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7990918159484863
+        },
+        {
+          "box": {
+            "x": 811.1002502441406,
+            "y": 255.1511993408203,
+            "width": 431.38616943359375,
+            "height": 370.5302429199219
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7208850979804993
+        },
+        {
+          "box": {
+            "x": 529.5436706542969,
+            "y": 501.0625915527344,
+            "width": 196.95050048828125,
+            "height": 322.80133056640625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.87717604637146
+        },
+        {
+          "box": {
+            "x": 530.8936767578125,
+            "y": 500.7696533203125,
+            "width": 195.3726806640625,
+            "height": 322.4578857421875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8856180906295776
+        },
+        {
+          "box": {
+            "x": 530.1119079589844,
+            "y": 502.0126647949219,
+            "width": 195.32940673828125,
+            "height": 323.78521728515625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7469286918640137
+        }
+      ]
+    },
+    {
+      "image": "commons_02.jpg",
+      "scoreThreshold": 0.2,
+      "iouThreshold": 0.45,
+      "nmsEnabled": true,
+      "bestScore": 0.5030459761619568,
+      "beforeNms": 9,
+      "afterNms": 1,
+      "phoneCount": 1,
+      "inferMs": 79.37,
+      "detections": [
+        {
+          "box": {
+            "x": 60.49456043243408,
+            "y": 314.60407733917236,
+            "width": 1181.2703853607177,
+            "height": 1141.3745738983155
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.5030459761619568
+        }
+      ],
+      "candidates": [
+        {
+          "box": {
+            "x": 67.80148859024048,
+            "y": 313.11143560409545,
+            "width": 1164.4544388771055,
+            "height": 1152.9951699256897
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.4211423695087433
+        },
+        {
+          "box": {
+            "x": 60.49456043243408,
+            "y": 314.60407733917236,
+            "width": 1181.2703853607177,
+            "height": 1141.3745738983155
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.5030459761619568
+        },
+        {
+          "box": {
+            "x": 63.586147212982176,
+            "y": 313.3634379386902,
+            "width": 1172.553676700592,
+            "height": 1145.4647280693055
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.2835715413093567
+        },
+        {
+          "box": {
+            "x": 65.00602083206176,
+            "y": 292.0695662498474,
+            "width": 1167.5009322166443,
+            "height": 1145.227051448822
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.35648804903030396
+        },
+        {
+          "box": {
+            "x": 63.457215785980225,
+            "y": 290.83250827789306,
+            "width": 1175.6613799095153,
+            "height": 1146.4510860443115
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.4350985288619995
+        },
+        {
+          "box": {
+            "x": 73.71788642406463,
+            "y": 291.5492823600769,
+            "width": 1162.0315210819244,
+            "height": 1148.6378737449645
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.37146100401878357
+        },
+        {
+          "box": {
+            "x": 66.69454228878021,
+            "y": 298.29128086566925,
+            "width": 1167.9955763339997,
+            "height": 1136.9060092449188
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.22724750638008118
+        },
+        {
+          "box": {
+            "x": 65.0328815460205,
+            "y": 285.51860439777374,
+            "width": 1169.887465953827,
+            "height": 1148.7504445552825
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.24900683760643005
+        },
+        {
+          "box": {
+            "x": 83.11600255966187,
+            "y": 277.7674977064133,
+            "width": 1151.7896936416626,
+            "height": 1157.8373426914216
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.31588003039360046
+        }
+      ]
+    },
+    {
+      "image": "commons_03.jpg",
+      "scoreThreshold": 0.2,
+      "iouThreshold": 0.45,
+      "nmsEnabled": true,
+      "bestScore": 0.604644238948822,
+      "beforeNms": 12,
+      "afterNms": 2,
+      "phoneCount": 2,
+      "inferMs": 118.9,
+      "detections": [
+        {
+          "box": {
+            "x": 639.6785888671875,
+            "y": 59.3397216796875,
+            "width": 396.278076171875,
+            "height": 843.2845458984375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.604644238948822
+        },
+        {
+          "box": {
+            "x": 1022.303955078125,
+            "y": 407.342529296875,
+            "width": 220.962646484375,
+            "height": 138.0738525390625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.3582039475440979
+        }
+      ],
+      "candidates": [
+        {
+          "box": {
+            "x": 1021.7710571289062,
+            "y": 406.9512634277344,
+            "width": 221.9759521484375,
+            "height": 139.05767822265625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.2709123194217682
+        },
+        {
+          "box": {
+            "x": 1021.7416381835938,
+            "y": 407.23419189453125,
+            "width": 221.4874267578125,
+            "height": 138.4305419921875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.3459213376045227
+        },
+        {
+          "box": {
+            "x": 1021.1570129394531,
+            "y": 406.73382568359375,
+            "width": 222.13323974609375,
+            "height": 139.323974609375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.26512041687965393
+        },
+        {
+          "box": {
+            "x": 1020.5372924804688,
+            "y": 406.00811767578125,
+            "width": 221.5699462890625,
+            "height": 139.9425048828125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.22482654452323914
+        },
+        {
+          "box": {
+            "x": 1022.303955078125,
+            "y": 407.342529296875,
+            "width": 220.962646484375,
+            "height": 138.0738525390625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.3582039475440979
+        },
+        {
+          "box": {
+            "x": 1021.9403686523438,
+            "y": 406.71832275390625,
+            "width": 221.3458251953125,
+            "height": 139.0899658203125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.2882643938064575
+        },
+        {
+          "box": {
+            "x": 1020.8106079101562,
+            "y": 406.40802001953125,
+            "width": 221.8983154296875,
+            "height": 140.160888671875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.24999740719795227
+        },
+        {
+          "box": {
+            "x": 637.306884765625,
+            "y": 56.876190185546875,
+            "width": 396.1080322265625,
+            "height": 830.6777954101562
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.25430309772491455
+        },
+        {
+          "box": {
+            "x": 639.5740966796875,
+            "y": 56.032958984375,
+            "width": 396.4571533203125,
+            "height": 843.4271240234375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.3768508732318878
+        },
+        {
+          "box": {
+            "x": 638.01171875,
+            "y": 54.4002685546875,
+            "width": 400.071533203125,
+            "height": 852.808349609375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.23997411131858826
+        },
+        {
+          "box": {
+            "x": 637.5217590332031,
+            "y": 61.7525634765625,
+            "width": 396.16473388671875,
+            "height": 836.2298583984375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.47495555877685547
+        },
+        {
+          "box": {
+            "x": 639.6785888671875,
+            "y": 59.3397216796875,
+            "width": 396.278076171875,
+            "height": 843.2845458984375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.604644238948822
+        }
+      ]
+    },
+    {
+      "image": "commons_04.jpg",
+      "scoreThreshold": 0.2,
+      "iouThreshold": 0.45,
+      "nmsEnabled": true,
+      "bestScore": 0.06860077381134033,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "phoneCount": 0,
+      "inferMs": 99.33,
+      "detections": [],
+      "candidates": []
+    },
+    {
+      "image": "commons_05.jpg",
+      "scoreThreshold": 0.2,
+      "iouThreshold": 0.45,
+      "nmsEnabled": true,
+      "bestScore": 0.0003275871276855469,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "phoneCount": 0,
+      "inferMs": 78.22,
+      "detections": [],
+      "candidates": []
+    },
+    {
+      "image": "commons_06.png",
+      "scoreThreshold": 0.2,
+      "iouThreshold": 0.45,
+      "nmsEnabled": true,
+      "bestScore": 0.8717578649520874,
+      "beforeNms": 10,
+      "afterNms": 1,
+      "phoneCount": 1,
+      "inferMs": 73.05,
+      "detections": [
+        {
+          "box": {
+            "x": 25.74529266357422,
+            "y": 3.1844558715820312,
+            "width": 1154.5851516723633,
+            "height": 2119.8431854248047
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8717578649520874
+        }
+      ],
+      "candidates": [
+        {
+          "box": {
+            "x": 31.026763916015625,
+            "y": 17.37432861328125,
+            "width": 1135.2664489746094,
+            "height": 2111.4654235839844
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.6219260096549988
+        },
+        {
+          "box": {
+            "x": 34.05626106262207,
+            "y": 22.922561645507812,
+            "width": 1132.223201751709,
+            "height": 2100.006820678711
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7516682744026184
+        },
+        {
+          "box": {
+            "x": 53.38737487792969,
+            "y": 29.293739318847656,
+            "width": 1103.8917617797852,
+            "height": 2077.1695404052734
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7432107925415039
+        },
+        {
+          "box": {
+            "x": 20.360309600830078,
+            "y": 3.9425125122070312,
+            "width": 1137.3515167236328,
+            "height": 2116.391555786133
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7807994484901428
+        },
+        {
+          "box": {
+            "x": 25.74529266357422,
+            "y": 3.1844558715820312,
+            "width": 1154.5851516723633,
+            "height": 2119.8431854248047
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8717578649520874
+        },
+        {
+          "box": {
+            "x": 31.199798583984375,
+            "y": 3.974853515625,
+            "width": 1138.982162475586,
+            "height": 2105.5898666381836
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8509309887886047
+        },
+        {
+          "box": {
+            "x": 26.70285415649414,
+            "y": 8.959281921386719,
+            "width": 1156.555892944336,
+            "height": 2075.865188598633
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.6863369941711426
+        },
+        {
+          "box": {
+            "x": 15.156806945800781,
+            "y": 13.721237182617188,
+            "width": 1132.0173110961914,
+            "height": 2125.6493225097656
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.6684969663619995
+        },
+        {
+          "box": {
+            "x": 19.23094940185547,
+            "y": 21.868080139160156,
+            "width": 1162.6912078857422,
+            "height": 2117.441505432129
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7724699974060059
+        },
+        {
+          "box": {
+            "x": 25.173248291015625,
+            "y": 16.862022399902344,
+            "width": 1150.9703750610352,
+            "height": 2116.2387084960938
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7691649198532104
+        }
+      ]
+    },
+    {
+      "image": "commons_07.png",
+      "scoreThreshold": 0.2,
+      "iouThreshold": 0.45,
+      "nmsEnabled": true,
+      "bestScore": 0.5682805776596069,
+      "beforeNms": 6,
+      "afterNms": 1,
+      "phoneCount": 1,
+      "inferMs": 68.97,
+      "detections": [
+        {
+          "box": {
+            "x": 645.7740493774414,
+            "y": 9.44821147918701,
+            "width": 618.4685115814208,
+            "height": 1251.8922389984132
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.5682805776596069
+        }
+      ],
+      "candidates": [
+        {
+          "box": {
+            "x": 649.067028427124,
+            "y": 15.364545822143555,
+            "width": 624.2089122772217,
+            "height": 1249.1731533050536
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.30754321813583374
+        },
+        {
+          "box": {
+            "x": 647.185828256607,
+            "y": 4.860243415832519,
+            "width": 623.8542941093444,
+            "height": 1257.9398817062379
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.2700788676738739
+        },
+        {
+          "box": {
+            "x": 645.7740493774414,
+            "y": 9.44821147918701,
+            "width": 618.4685115814208,
+            "height": 1251.8922389984132
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.5682805776596069
+        },
+        {
+          "box": {
+            "x": 645.7618232727051,
+            "y": 10.255867958068848,
+            "width": 615.8099451065062,
+            "height": 1252.5515928268433
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.4075012505054474
+        },
+        {
+          "box": {
+            "x": 643.6504972457885,
+            "y": 33.220527267456056,
+            "width": 611.6709196090699,
+            "height": 1228.4785148620606
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.4973306953907013
+        },
+        {
+          "box": {
+            "x": 645.4669601917267,
+            "y": 47.29399642944336,
+            "width": 600.1544791221618,
+            "height": 1213.434048461914
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.2628193199634552
+        }
+      ]
+    },
+    {
+      "image": "commons_08.jpg",
+      "scoreThreshold": 0.2,
+      "iouThreshold": 0.45,
+      "nmsEnabled": true,
+      "bestScore": 0.9180644154548645,
+      "beforeNms": 10,
+      "afterNms": 1,
+      "phoneCount": 1,
+      "inferMs": 69.15,
+      "detections": [
+        {
+          "box": {
+            "x": 385.90533447265625,
+            "y": 160.23162841796875,
+            "width": 587.1378173828125,
+            "height": 595.649169921875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.9180644154548645
+        }
+      ],
+      "candidates": [
+        {
+          "box": {
+            "x": 385.6474609375,
+            "y": 159.79180908203125,
+            "width": 583.0220947265625,
+            "height": 594.282470703125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.9150169491767883
+        },
+        {
+          "box": {
+            "x": 386.1539306640625,
+            "y": 159.5936279296875,
+            "width": 590.8123779296875,
+            "height": 595.471923828125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8395898342132568
+        },
+        {
+          "box": {
+            "x": 385.591552734375,
+            "y": 156.78634643554688,
+            "width": 584.5999755859375,
+            "height": 596.2432250976562
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.9118517637252808
+        },
+        {
+          "box": {
+            "x": 386.523193359375,
+            "y": 158.92868041992188,
+            "width": 587.1326904296875,
+            "height": 594.9373168945312
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8732271194458008
+        },
+        {
+          "box": {
+            "x": 391.5865173339844,
+            "y": 160.6500244140625,
+            "width": 583.1033325195312,
+            "height": 593.8975830078125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8152803182601929
+        },
+        {
+          "box": {
+            "x": 384.3551025390625,
+            "y": 158.35003662109375,
+            "width": 587.087158203125,
+            "height": 597.0975341796875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.9088703393936157
+        },
+        {
+          "box": {
+            "x": 385.90533447265625,
+            "y": 160.23162841796875,
+            "width": 587.1378173828125,
+            "height": 595.649169921875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.9180644154548645
+        },
+        {
+          "box": {
+            "x": 399.503173828125,
+            "y": 160.821044921875,
+            "width": 571.1708984375,
+            "height": 591.908935546875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8748273253440857
+        },
+        {
+          "box": {
+            "x": 394.7119140625,
+            "y": 155.884521484375,
+            "width": 570.8499755859375,
+            "height": 597.4805908203125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.47164008021354675
+        },
+        {
+          "box": {
+            "x": 391.3762512207031,
+            "y": 160.4122314453125,
+            "width": 580.6227416992188,
+            "height": 593.3778076171875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8068356513977051
+        }
+      ]
+    },
+    {
+      "image": "commons_09.png",
+      "scoreThreshold": 0.2,
+      "iouThreshold": 0.45,
+      "nmsEnabled": true,
+      "bestScore": 0.25737500190734863,
+      "beforeNms": 2,
+      "afterNms": 2,
+      "phoneCount": 2,
+      "inferMs": 71.22,
+      "detections": [
+        {
+          "box": {
+            "x": 849.1173400878906,
+            "y": 33.93638610839844,
+            "width": 404.21624755859375,
+            "height": 474.1053771972656
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.25737500190734863
+        },
+        {
+          "box": {
+            "x": 1130.0673217773438,
+            "y": 39.24440002441406,
+            "width": 149.2960205078125,
+            "height": 326.1623229980469
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.25546425580978394
+        }
+      ],
+      "candidates": [
+        {
+          "box": {
+            "x": 1130.0673217773438,
+            "y": 39.24440002441406,
+            "width": 149.2960205078125,
+            "height": 326.1623229980469
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.25546425580978394
+        },
+        {
+          "box": {
+            "x": 849.1173400878906,
+            "y": 33.93638610839844,
+            "width": 404.21624755859375,
+            "height": 474.1053771972656
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.25737500190734863
+        }
+      ]
+    },
+    {
+      "image": "commons_10.jpg",
+      "scoreThreshold": 0.2,
+      "iouThreshold": 0.45,
+      "nmsEnabled": true,
+      "bestScore": 0.02064335346221924,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "phoneCount": 0,
+      "inferMs": 250.47,
+      "detections": [],
+      "candidates": []
+    },
+    {
+      "image": "commons_11.jpg",
+      "scoreThreshold": 0.2,
+      "iouThreshold": 0.45,
+      "nmsEnabled": true,
+      "bestScore": 0.0015014111995697021,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "phoneCount": 0,
+      "inferMs": 88.2,
+      "detections": [],
+      "candidates": []
+    },
+    {
+      "image": "commons_12.jpg",
+      "scoreThreshold": 0.2,
+      "iouThreshold": 0.45,
+      "nmsEnabled": true,
+      "bestScore": 0.7945516109466553,
+      "beforeNms": 10,
+      "afterNms": 1,
+      "phoneCount": 1,
+      "inferMs": 83.11,
+      "detections": [
+        {
+          "box": {
+            "x": 274.1500244140625,
+            "y": 63.02294921875,
+            "width": 885.0911865234375,
+            "height": 783.2611083984375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7945516109466553
+        }
+      ],
+      "candidates": [
+        {
+          "box": {
+            "x": 274.1702575683594,
+            "y": 17.298248291015625,
+            "width": 879.4983520507812,
+            "height": 811.9808959960938
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.639363169670105
+        },
+        {
+          "box": {
+            "x": 278.104736328125,
+            "y": 65.3929443359375,
+            "width": 871.749755859375,
+            "height": 760.8238525390625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.5795135498046875
+        },
+        {
+          "box": {
+            "x": 277.000732421875,
+            "y": 32.96435546875,
+            "width": 876.899658203125,
+            "height": 812.07568359375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7310997843742371
+        },
+        {
+          "box": {
+            "x": 277.083984375,
+            "y": 60.237457275390625,
+            "width": 892.4808349609375,
+            "height": 784.6115112304688
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.573722243309021
+        },
+        {
+          "box": {
+            "x": 285.5380859375,
+            "y": 65.7496337890625,
+            "width": 831.976806640625,
+            "height": 776.3746337890625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.41550299525260925
+        },
+        {
+          "box": {
+            "x": 275.174072265625,
+            "y": 18.697509765625,
+            "width": 885.533203125,
+            "height": 828.2838134765625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7857638597488403
+        },
+        {
+          "box": {
+            "x": 273.50048828125,
+            "y": 38.682373046875,
+            "width": 923.6741943359375,
+            "height": 807.821044921875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.6484671831130981
+        },
+        {
+          "box": {
+            "x": 282.0483703613281,
+            "y": 43.187255859375,
+            "width": 847.7167358398438,
+            "height": 803.523193359375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.5109652280807495
+        },
+        {
+          "box": {
+            "x": 274.1500244140625,
+            "y": 63.02294921875,
+            "width": 885.0911865234375,
+            "height": 783.2611083984375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7945516109466553
+        },
+        {
+          "box": {
+            "x": 272.7152099609375,
+            "y": 68.14065551757812,
+            "width": 939.2081298828125,
+            "height": 778.6486206054688
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.6433334350585938
+        }
+      ]
+    },
+    {
+      "image": "commons_13.jpg",
+      "scoreThreshold": 0.2,
+      "iouThreshold": 0.45,
+      "nmsEnabled": true,
+      "bestScore": 0.032789647579193115,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "phoneCount": 0,
+      "inferMs": 81.54,
+      "detections": [],
+      "candidates": []
+    },
+    {
+      "image": "commons_14.jpg",
+      "scoreThreshold": 0.2,
+      "iouThreshold": 0.45,
+      "nmsEnabled": true,
+      "bestScore": 0.2623389959335327,
+      "beforeNms": 4,
+      "afterNms": 1,
+      "phoneCount": 1,
+      "inferMs": 80.48,
+      "detections": [
+        {
+          "box": {
+            "x": 759.1156311035156,
+            "y": 401.6531066894531,
+            "width": 145.43548583984375,
+            "height": 235.20159912109375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.2623389959335327
+        }
+      ],
+      "candidates": [
+        {
+          "box": {
+            "x": 761.5173645019531,
+            "y": 401.6830139160156,
+            "width": 143.13983154296875,
+            "height": 226.43695068359375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.21045160293579102
+        },
+        {
+          "box": {
+            "x": 757.2667236328125,
+            "y": 399.782958984375,
+            "width": 147.5611572265625,
+            "height": 239.5933837890625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.2167518436908722
+        },
+        {
+          "box": {
+            "x": 760.9722900390625,
+            "y": 400.439453125,
+            "width": 143.50146484375,
+            "height": 233.9923095703125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.22396361827850342
+        },
+        {
+          "box": {
+            "x": 759.1156311035156,
+            "y": 401.6531066894531,
+            "width": 145.43548583984375,
+            "height": 235.20159912109375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.2623389959335327
+        }
+      ]
+    },
+    {
+      "image": "commons_15.jpg",
+      "scoreThreshold": 0.2,
+      "iouThreshold": 0.45,
+      "nmsEnabled": true,
+      "bestScore": 0.7333382368087769,
+      "beforeNms": 8,
+      "afterNms": 1,
+      "phoneCount": 1,
+      "inferMs": 81.28,
+      "detections": [
+        {
+          "box": {
+            "x": 504.1897888183594,
+            "y": 289.52142333984375,
+            "width": 620.5476684570312,
+            "height": 326.9122314453125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7333382368087769
+        }
+      ],
+      "candidates": [
+        {
+          "box": {
+            "x": 505.8134765625,
+            "y": 288.17572021484375,
+            "width": 615.064453125,
+            "height": 245.915771484375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.570000171661377
+        },
+        {
+          "box": {
+            "x": 508.7874755859375,
+            "y": 290.7824249267578,
+            "width": 615.5751953125,
+            "height": 250.16195678710938
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.3310844898223877
+        },
+        {
+          "box": {
+            "x": 494.4506530761719,
+            "y": 289.0107421875,
+            "width": 631.4011840820312,
+            "height": 250.259765625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.24196121096611023
+        },
+        {
+          "box": {
+            "x": 506.4234619140625,
+            "y": 287.7545166015625,
+            "width": 616.00732421875,
+            "height": 259.1944580078125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.592197060585022
+        },
+        {
+          "box": {
+            "x": 503.7530822753906,
+            "y": 288.3138427734375,
+            "width": 620.4035034179688,
+            "height": 280.9447021484375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.6722592115402222
+        },
+        {
+          "box": {
+            "x": 492.5509033203125,
+            "y": 288.57244873046875,
+            "width": 635.064697265625,
+            "height": 359.695556640625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.5475685000419617
+        },
+        {
+          "box": {
+            "x": 504.1897888183594,
+            "y": 289.52142333984375,
+            "width": 620.5476684570312,
+            "height": 326.9122314453125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7333382368087769
+        },
+        {
+          "box": {
+            "x": 501.71875,
+            "y": 291.1537170410156,
+            "width": 630.5462646484375,
+            "height": 326.31341552734375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.5994608402252197
+        }
+      ]
+    },
+    {
+      "image": "commons_16.jpg",
+      "scoreThreshold": 0.2,
+      "iouThreshold": 0.45,
+      "nmsEnabled": true,
+      "bestScore": 7.927417755126953e-06,
+      "beforeNms": 0,
+      "afterNms": 0,
+      "phoneCount": 0,
+      "inferMs": 89.55,
+      "detections": [],
+      "candidates": []
+    },
+    {
+      "image": "commons_17.jpg",
+      "scoreThreshold": 0.2,
+      "iouThreshold": 0.45,
+      "nmsEnabled": true,
+      "bestScore": 0.9282710552215576,
+      "beforeNms": 57,
+      "afterNms": 6,
+      "phoneCount": 6,
+      "inferMs": 83.03,
+      "detections": [
+        {
+          "box": {
+            "x": 546.9632387161255,
+            "y": 214.27664756774902,
+            "width": 212.6136302947998,
+            "height": 421.9430923461914
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.9282710552215576
+        },
+        {
+          "box": {
+            "x": 283.71076583862305,
+            "y": 237.4603033065796,
+            "width": 234.42707061767578,
+            "height": 411.91678047180176
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.9065642952919006
+        },
+        {
+          "box": {
+            "x": 516.5745973587036,
+            "y": 116.12834930419922,
+            "width": 103.43241691589355,
+            "height": 327.6627540588379
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8729816675186157
+        },
+        {
+          "box": {
+            "x": 239.25671577453613,
+            "y": 90.69415330886841,
+            "width": 116.63737297058105,
+            "height": 365.6381368637085
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8684624433517456
+        },
+        {
+          "box": {
+            "x": 773.4847545623779,
+            "y": 112.1347188949585,
+            "width": 123.8896369934082,
+            "height": 334.95030403137207
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8230798244476318
+        },
+        {
+          "box": {
+            "x": 25.484514236450195,
+            "y": 480.77497482299805,
+            "width": 286.6118907928467,
+            "height": 179.93078231811523
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.4269484281539917
+        }
+      ],
+      "candidates": [
+        {
+          "box": {
+            "x": 514.5082235336304,
+            "y": 124.22914505004883,
+            "width": 104.41765785217285,
+            "height": 323.5907554626465
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.6186408996582031
+        },
+        {
+          "box": {
+            "x": 239.72374200820923,
+            "y": 138.44428062438965,
+            "width": 116.57941341400146,
+            "height": 313.6484146118164
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.2510395646095276
+        },
+        {
+          "box": {
+            "x": 514.8608684539795,
+            "y": 129.2173147201538,
+            "width": 102.98299789428711,
+            "height": 312.35432624816895
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.2850847840309143
+        },
+        {
+          "box": {
+            "x": 774.8354434967041,
+            "y": 129.6682357788086,
+            "width": 120.75262069702148,
+            "height": 322.21851348876953
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.29722169041633606
+        },
+        {
+          "box": {
+            "x": 238.18683624267578,
+            "y": 93.59321594238281,
+            "width": 118.58835220336914,
+            "height": 360.2555274963379
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.6518785357475281
+        },
+        {
+          "box": {
+            "x": 239.25167322158813,
+            "y": 93.27690601348877,
+            "width": 117.62006282806396,
+            "height": 360.44230461120605
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.6095055341720581
+        },
+        {
+          "box": {
+            "x": 515.4672622680664,
+            "y": 77.86624431610107,
+            "width": 105.50251007080078,
+            "height": 364.95442390441895
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.2968158721923828
+        },
+        {
+          "box": {
+            "x": 514.463996887207,
+            "y": 76.89590454101562,
+            "width": 106.58493041992188,
+            "height": 366.43238067626953
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.295644611120224
+        },
+        {
+          "box": {
+            "x": 774.2454767227173,
+            "y": 111.90948486328125,
+            "width": 122.41721153259277,
+            "height": 335.33458709716797
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.49959588050842285
+        },
+        {
+          "box": {
+            "x": 773.628044128418,
+            "y": 113.57145309448242,
+            "width": 124.08370971679688,
+            "height": 331.88323974609375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.49179771542549133
+        },
+        {
+          "box": {
+            "x": 238.99238109588623,
+            "y": 92.0508623123169,
+            "width": 117.02947616577148,
+            "height": 363.3635997772217
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7575626969337463
+        },
+        {
+          "box": {
+            "x": 238.95057439804077,
+            "y": 91.86666011810303,
+            "width": 117.86072254180908,
+            "height": 362.92595863342285
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7559618949890137
+        },
+        {
+          "box": {
+            "x": 516.0796403884888,
+            "y": 106.78548812866211,
+            "width": 103.36928367614746,
+            "height": 336.4208221435547
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.6587128043174744
+        },
+        {
+          "box": {
+            "x": 514.5142555236816,
+            "y": 107.86817073822021,
+            "width": 105.77621459960938,
+            "height": 334.9762439727783
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.6722652912139893
+        },
+        {
+          "box": {
+            "x": 773.5678672790527,
+            "y": 112.74484395980835,
+            "width": 122.9278564453125,
+            "height": 335.2374315261841
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.6660317182540894
+        },
+        {
+          "box": {
+            "x": 773.7971305847168,
+            "y": 113.02776336669922,
+            "width": 123.6572265625,
+            "height": 334.4418525695801
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.6992495656013489
+        },
+        {
+          "box": {
+            "x": 238.52739334106445,
+            "y": 93.4948205947876,
+            "width": 116.67780876159668,
+            "height": 361.0570430755615
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8424736261367798
+        },
+        {
+          "box": {
+            "x": 238.85364532470703,
+            "y": 93.27399730682373,
+            "width": 116.74675941467285,
+            "height": 361.9112491607666
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8109729886054993
+        },
+        {
+          "box": {
+            "x": 516.5745973587036,
+            "y": 116.12834930419922,
+            "width": 103.43241691589355,
+            "height": 327.6627540588379
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8729816675186157
+        },
+        {
+          "box": {
+            "x": 514.6386623382568,
+            "y": 115.3331995010376,
+            "width": 105.58881759643555,
+            "height": 328.1489849090576
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7260805368423462
+        },
+        {
+          "box": {
+            "x": 773.3982086181641,
+            "y": 112.21575736999512,
+            "width": 122.66387939453125,
+            "height": 335.54983139038086
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7746102809906006
+        },
+        {
+          "box": {
+            "x": 773.4847545623779,
+            "y": 112.1347188949585,
+            "width": 123.8896369934082,
+            "height": 334.95030403137207
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8230798244476318
+        },
+        {
+          "box": {
+            "x": 238.90526294708252,
+            "y": 92.31901168823242,
+            "width": 116.39618873596191,
+            "height": 362.1440887451172
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8221004009246826
+        },
+        {
+          "box": {
+            "x": 239.10316228866577,
+            "y": 91.20664596557617,
+            "width": 116.83800220489502,
+            "height": 361.9180679321289
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.756008505821228
+        },
+        {
+          "box": {
+            "x": 516.8869256973267,
+            "y": 111.25086545944214,
+            "width": 104.51064109802246,
+            "height": 330.52217960357666
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.44707435369491577
+        },
+        {
+          "box": {
+            "x": 514.9025201797485,
+            "y": 105.73289394378662,
+            "width": 105.78150749206543,
+            "height": 334.47957038879395
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7218050360679626
+        },
+        {
+          "box": {
+            "x": 772.3328590393066,
+            "y": 112.46049404144287,
+            "width": 123.83384704589844,
+            "height": 333.67676734924316
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7822637557983398
+        },
+        {
+          "box": {
+            "x": 772.9240894317627,
+            "y": 112.8832221031189,
+            "width": 123.66666793823242,
+            "height": 332.14266300201416
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7691550254821777
+        },
+        {
+          "box": {
+            "x": 237.9441261291504,
+            "y": 91.96339845657349,
+            "width": 117.40293502807617,
+            "height": 361.84680461883545
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7840945720672607
+        },
+        {
+          "box": {
+            "x": 239.25671577453613,
+            "y": 90.69415330886841,
+            "width": 116.63737297058105,
+            "height": 365.6381368637085
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8684624433517456
+        },
+        {
+          "box": {
+            "x": 285.06200313568115,
+            "y": 238.4399175643921,
+            "width": 232.71355628967285,
+            "height": 408.5958957672119
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7543207406997681
+        },
+        {
+          "box": {
+            "x": 522.0329999923706,
+            "y": 120.97928524017334,
+            "width": 100.86560249328613,
+            "height": 320.8338260650635
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.6017414331436157
+        },
+        {
+          "box": {
+            "x": 544.8525428771973,
+            "y": 211.74907684326172,
+            "width": 213.7838363647461,
+            "height": 425.11425018310547
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8443267941474915
+        },
+        {
+          "box": {
+            "x": 548.4534978866577,
+            "y": 213.1749153137207,
+            "width": 209.14483070373535,
+            "height": 422.59883880615234
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.855998158454895
+        },
+        {
+          "box": {
+            "x": 548.4869241714478,
+            "y": 214.1228199005127,
+            "width": 210.1144313812256,
+            "height": 423.5471725463867
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8098363280296326
+        },
+        {
+          "box": {
+            "x": 286.74254417419434,
+            "y": 239.73407745361328,
+            "width": 231.22186660766602,
+            "height": 409.4297409057617
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8356493711471558
+        },
+        {
+          "box": {
+            "x": 283.5605978965759,
+            "y": 239.41574096679688,
+            "width": 234.76850986480713,
+            "height": 410.4555130004883
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7773562669754028
+        },
+        {
+          "box": {
+            "x": 283.3625793457031,
+            "y": 239.03512954711914,
+            "width": 234.7966194152832,
+            "height": 411.4315986633301
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8130926489830017
+        },
+        {
+          "box": {
+            "x": 546.9093084335327,
+            "y": 214.15565013885498,
+            "width": 212.583589553833,
+            "height": 421.86760902404785
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8782025575637817
+        },
+        {
+          "box": {
+            "x": 547.3176956176758,
+            "y": 213.38024139404297,
+            "width": 211.29980087280273,
+            "height": 422.0491409301758
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8624238967895508
+        },
+        {
+          "box": {
+            "x": 547.2227096557617,
+            "y": 213.9286994934082,
+            "width": 212.50572204589844,
+            "height": 423.38104248046875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8387351036071777
+        },
+        {
+          "box": {
+            "x": 286.5288257598877,
+            "y": 238.751482963562,
+            "width": 231.7652702331543,
+            "height": 411.33713722229004
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8721045255661011
+        },
+        {
+          "box": {
+            "x": 283.6498022079468,
+            "y": 237.91494369506836,
+            "width": 234.7750186920166,
+            "height": 412.7873420715332
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.863304078578949
+        },
+        {
+          "box": {
+            "x": 283.71076583862305,
+            "y": 237.4603033065796,
+            "width": 234.42707061767578,
+            "height": 411.91678047180176
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.9065642952919006
+        },
+        {
+          "box": {
+            "x": 546.8018770217896,
+            "y": 214.3742561340332,
+            "width": 212.89172172546387,
+            "height": 421.6133117675781
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.9060289859771729
+        },
+        {
+          "box": {
+            "x": 546.9632387161255,
+            "y": 214.27664756774902,
+            "width": 212.6136302947998,
+            "height": 421.9430923461914
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.9282710552215576
+        },
+        {
+          "box": {
+            "x": 546.3893413543701,
+            "y": 212.83917427062988,
+            "width": 214.5050048828125,
+            "height": 423.1320381164551
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.9064193964004517
+        },
+        {
+          "box": {
+            "x": 25.71403980255127,
+            "y": 478.9283752441406,
+            "width": 286.4698886871338,
+            "height": 182.3319435119629
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.2580876350402832
+        },
+        {
+          "box": {
+            "x": 25.458812713623047,
+            "y": 478.8719415664673,
+            "width": 286.58857345581055,
+            "height": 182.08270072937012
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.2222972810268402
+        },
+        {
+          "box": {
+            "x": 283.97655487060547,
+            "y": 237.63434886932373,
+            "width": 234.32254791259766,
+            "height": 413.04383277893066
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8282189965248108
+        },
+        {
+          "box": {
+            "x": 282.8126907348633,
+            "y": 236.86811923980713,
+            "width": 235.09178161621094,
+            "height": 414.3432140350342
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8731776475906372
+        },
+        {
+          "box": {
+            "x": 280.81250190734863,
+            "y": 237.61918544769287,
+            "width": 237.9310131072998,
+            "height": 413.48233222961426
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7986892461776733
+        },
+        {
+          "box": {
+            "x": 546.3056802749634,
+            "y": 211.82270050048828,
+            "width": 213.89155387878418,
+            "height": 424.0038871765137
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8694842457771301
+        },
+        {
+          "box": {
+            "x": 25.668001174926758,
+            "y": 480.1456689834595,
+            "width": 286.5516662597656,
+            "height": 180.2934169769287
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.3174493908882141
+        },
+        {
+          "box": {
+            "x": 25.484514236450195,
+            "y": 480.77497482299805,
+            "width": 286.6118907928467,
+            "height": 179.93078231811523
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.4269484281539917
+        },
+        {
+          "box": {
+            "x": 26.1289119720459,
+            "y": 480.478572845459,
+            "width": 285.6381893157959,
+            "height": 179.11596298217773
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.2788461446762085
+        },
+        {
+          "box": {
+            "x": 25.32789707183838,
+            "y": 479.8590898513794,
+            "width": 286.01841926574707,
+            "height": 180.28063774108887
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.36730796098709106
+        }
+      ]
+    },
+    {
+      "image": "commons_18.jpg",
+      "scoreThreshold": 0.2,
+      "iouThreshold": 0.45,
+      "nmsEnabled": true,
+      "bestScore": 0.8111895322799683,
+      "beforeNms": 204,
+      "afterNms": 20,
+      "phoneCount": 20,
+      "inferMs": 81.47,
+      "detections": [
+        {
+          "box": {
+            "x": 254.6543960571289,
+            "y": 482.2650146484375,
+            "width": 100.50108337402344,
+            "height": 143.7913818359375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8111895322799683
+        },
+        {
+          "box": {
+            "x": 985.1171875,
+            "y": 307.7846984863281,
+            "width": 95.185302734375,
+            "height": 95.65277099609375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.779631495475769
+        },
+        {
+          "box": {
+            "x": 648.3446655273438,
+            "y": 182.33172607421875,
+            "width": 102.7294921875,
+            "height": 113.3489990234375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7448258399963379
+        },
+        {
+          "box": {
+            "x": 481.15345764160156,
+            "y": 189.16122436523438,
+            "width": 83.08602905273438,
+            "height": 94.94390869140625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7241740226745605
+        },
+        {
+          "box": {
+            "x": 552.0242004394531,
+            "y": 192.61544799804688,
+            "width": 99.69598388671875,
+            "height": 99.3385009765625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7204850316047668
+        },
+        {
+          "box": {
+            "x": 339.29144287109375,
+            "y": 485.0392761230469,
+            "width": 103.4232177734375,
+            "height": 138.63922119140625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7192588448524475
+        },
+        {
+          "box": {
+            "x": 903.162841796875,
+            "y": 293.9285430908203,
+            "width": 83.2716064453125,
+            "height": 99.75534057617188
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7181509733200073
+        },
+        {
+          "box": {
+            "x": 826.6584167480469,
+            "y": 288.94386291503906,
+            "width": 79.13458251953125,
+            "height": 108.19088745117188
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7069987058639526
+        },
+        {
+          "box": {
+            "x": 835.3976745605469,
+            "y": 190.1000213623047,
+            "width": 104.85723876953125,
+            "height": 100.45913696289062
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.6063117980957031
+        },
+        {
+          "box": {
+            "x": 744.1669006347656,
+            "y": 189.0421905517578,
+            "width": 91.75848388671875,
+            "height": 122.29696655273438
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.5552067756652832
+        },
+        {
+          "box": {
+            "x": 616.919921875,
+            "y": 509.6377258300781,
+            "width": 107.7188720703125,
+            "height": 126.15203857421875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.5335206389427185
+        },
+        {
+          "box": {
+            "x": 157.18072509765625,
+            "y": 456.3177795410156,
+            "width": 122.55947875976562,
+            "height": 144.78607177734375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.5313176512718201
+        },
+        {
+          "box": {
+            "x": 869.3711853027344,
+            "y": 392.5993957519531,
+            "width": 107.93341064453125,
+            "height": 112.77313232421875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.5232295393943787
+        },
+        {
+          "box": {
+            "x": 322.420166015625,
+            "y": 291.0923309326172,
+            "width": 99.486083984375,
+            "height": 193.02322387695312
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.5015158653259277
+        },
+        {
+          "box": {
+            "x": 1066.1659545898438,
+            "y": 292.60821533203125,
+            "width": 97.2550048828125,
+            "height": 105.91259765625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.4812302589416504
+        },
+        {
+          "box": {
+            "x": 67.54306030273438,
+            "y": 378.6588134765625,
+            "width": 140.89398193359375,
+            "height": 250.6907958984375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.468472421169281
+        },
+        {
+          "box": {
+            "x": 517.318359375,
+            "y": 287.6287078857422,
+            "width": 86.228271484375,
+            "height": 120.14529418945312
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.46466219425201416
+        },
+        {
+          "box": {
+            "x": 362.02105712890625,
+            "y": 192.9904022216797,
+            "width": 109.8065185546875,
+            "height": 96.81570434570312
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.458827942609787
+        },
+        {
+          "box": {
+            "x": 420.8512268066406,
+            "y": 290.4195861816406,
+            "width": 81.61541748046875,
+            "height": 112.72772216796875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.4423445463180542
+        },
+        {
+          "box": {
+            "x": 681.4801330566406,
+            "y": 298.1104736328125,
+            "width": 67.77435302734375,
+            "height": 102.0010986328125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.40917283296585083
+        }
+      ],
+      "candidates": [
+        {
+          "box": {
+            "x": 481.2052459716797,
+            "y": 188.9789276123047,
+            "width": 83.67715454101562,
+            "height": 94.14529418945312
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.5160762667655945
+        },
+        {
+          "box": {
+            "x": 480.76922607421875,
+            "y": 189.83689880371094,
+            "width": 82.935302734375,
+            "height": 94.12576293945312
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.6478367447853088
+        },
+        {
+          "box": {
+            "x": 480.148681640625,
+            "y": 189.51336669921875,
+            "width": 83.7451171875,
+            "height": 94.5955810546875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.5992712378501892
+        },
+        {
+          "box": {
+            "x": 551.048583984375,
+            "y": 193.81639099121094,
+            "width": 96.9034423828125,
+            "height": 96.35720825195312
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.33967894315719604
+        },
+        {
+          "box": {
+            "x": 647.2115173339844,
+            "y": 182.1455535888672,
+            "width": 105.26519775390625,
+            "height": 115.27481079101562
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.28012633323669434
+        },
+        {
+          "box": {
+            "x": 647.7908020019531,
+            "y": 182.44921875,
+            "width": 104.41790771484375,
+            "height": 116.82977294921875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.24210429191589355
+        },
+        {
+          "box": {
+            "x": 362.6373596191406,
+            "y": 192.9772491455078,
+            "width": 109.8408203125,
+            "height": 97.45321655273438
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.27250906825065613
+        },
+        {
+          "box": {
+            "x": 362.9789276123047,
+            "y": 192.43423461914062,
+            "width": 109.04666137695312,
+            "height": 97.56982421875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.43902450799942017
+        },
+        {
+          "box": {
+            "x": 480.2958221435547,
+            "y": 189.4554901123047,
+            "width": 83.64944458007812,
+            "height": 94.72927856445312
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.44693881273269653
+        },
+        {
+          "box": {
+            "x": 481.15345764160156,
+            "y": 189.16122436523438,
+            "width": 83.08602905273438,
+            "height": 94.94390869140625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7241740226745605
+        },
+        {
+          "box": {
+            "x": 480.18194580078125,
+            "y": 189.0051727294922,
+            "width": 83.9337158203125,
+            "height": 95.53140258789062
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.6553317308425903
+        },
+        {
+          "box": {
+            "x": 552.0578308105469,
+            "y": 192.8906707763672,
+            "width": 94.65582275390625,
+            "height": 96.64712524414062
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.26096677780151367
+        },
+        {
+          "box": {
+            "x": 551.15576171875,
+            "y": 193.07618713378906,
+            "width": 99.5255126953125,
+            "height": 97.47116088867188
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.6520594358444214
+        },
+        {
+          "box": {
+            "x": 551.0530700683594,
+            "y": 193.17103576660156,
+            "width": 99.37847900390625,
+            "height": 98.17330932617188
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.5211639404296875
+        },
+        {
+          "box": {
+            "x": 647.241943359375,
+            "y": 182.0088653564453,
+            "width": 106.9979248046875,
+            "height": 114.37252807617188
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.6828517913818359
+        },
+        {
+          "box": {
+            "x": 647.2407531738281,
+            "y": 183.2261962890625,
+            "width": 104.64813232421875,
+            "height": 112.9500732421875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7295950651168823
+        },
+        {
+          "box": {
+            "x": 742.8654479980469,
+            "y": 189.95033264160156,
+            "width": 94.45172119140625,
+            "height": 116.06625366210938
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.21317297220230103
+        },
+        {
+          "box": {
+            "x": 834.0118713378906,
+            "y": 189.63818359375,
+            "width": 107.20599365234375,
+            "height": 100.96990966796875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.3619217872619629
+        },
+        {
+          "box": {
+            "x": 362.9110107421875,
+            "y": 193.2663116455078,
+            "width": 108.8460693359375,
+            "height": 95.83981323242188
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.3008330464363098
+        },
+        {
+          "box": {
+            "x": 480.703125,
+            "y": 187.7401123046875,
+            "width": 83.4273681640625,
+            "height": 95.80731201171875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.3432350754737854
+        },
+        {
+          "box": {
+            "x": 551.6420593261719,
+            "y": 192.8567352294922,
+            "width": 99.23834228515625,
+            "height": 96.66140747070312
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.6577211618423462
+        },
+        {
+          "box": {
+            "x": 551.5928649902344,
+            "y": 193.561279296875,
+            "width": 99.14776611328125,
+            "height": 95.46875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.5573703050613403
+        },
+        {
+          "box": {
+            "x": 1023.3359680175781,
+            "y": 200.3317108154297,
+            "width": 101.58221435546875,
+            "height": 96.95816040039062
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.2273324728012085
+        },
+        {
+          "box": {
+            "x": 827.7999572753906,
+            "y": 289.5771179199219,
+            "width": 78.86419677734375,
+            "height": 105.54205322265625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.43475422263145447
+        },
+        {
+          "box": {
+            "x": 332.83416748046875,
+            "y": 292.24769592285156,
+            "width": 85.66900634765625,
+            "height": 110.96517944335938
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.24731788039207458
+        },
+        {
+          "box": {
+            "x": 333.180908203125,
+            "y": 292.61366271972656,
+            "width": 85.53173828125,
+            "height": 111.53549194335938
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.2561875879764557
+        },
+        {
+          "box": {
+            "x": 419.9818115234375,
+            "y": 291.18922424316406,
+            "width": 82.87432861328125,
+            "height": 112.17672729492188
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.3337044417858124
+        },
+        {
+          "box": {
+            "x": 420.33827209472656,
+            "y": 291.25975036621094,
+            "width": 82.09640502929688,
+            "height": 111.99942016601562
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.3852560818195343
+        },
+        {
+          "box": {
+            "x": 518.1479797363281,
+            "y": 288.1595458984375,
+            "width": 86.38909912109375,
+            "height": 115.9564208984375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.2967863976955414
+        },
+        {
+          "box": {
+            "x": 681.4801330566406,
+            "y": 298.1104736328125,
+            "width": 67.77435302734375,
+            "height": 102.0010986328125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.40917283296585083
+        },
+        {
+          "box": {
+            "x": 680.644775390625,
+            "y": 298.6674499511719,
+            "width": 68.701416015625,
+            "height": 102.16949462890625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.3432413339614868
+        },
+        {
+          "box": {
+            "x": 829.935302734375,
+            "y": 288.51918029785156,
+            "width": 78.979248046875,
+            "height": 110.34713745117188
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.6285870671272278
+        },
+        {
+          "box": {
+            "x": 828.1744689941406,
+            "y": 288.6630554199219,
+            "width": 78.60540771484375,
+            "height": 108.90264892578125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.6595653295516968
+        },
+        {
+          "box": {
+            "x": 827.5319519042969,
+            "y": 288.53599548339844,
+            "width": 79.66705322265625,
+            "height": 107.71072387695312
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.41207608580589294
+        },
+        {
+          "box": {
+            "x": 902.4035339355469,
+            "y": 291.49981689453125,
+            "width": 86.26568603515625,
+            "height": 104.93798828125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.4915033280849457
+        },
+        {
+          "box": {
+            "x": 902.5290222167969,
+            "y": 292.53367614746094,
+            "width": 84.78497314453125,
+            "height": 104.09109497070312
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.4290609359741211
+        },
+        {
+          "box": {
+            "x": 333.5520477294922,
+            "y": 291.0256652832031,
+            "width": 85.65481567382812,
+            "height": 111.81268310546875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.3348275423049927
+        },
+        {
+          "box": {
+            "x": 333.51483154296875,
+            "y": 291.58799743652344,
+            "width": 86.5869140625,
+            "height": 111.29385375976562
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.28746259212493896
+        },
+        {
+          "box": {
+            "x": 420.8512268066406,
+            "y": 290.4195861816406,
+            "width": 81.61541748046875,
+            "height": 112.72772216796875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.4423445463180542
+        },
+        {
+          "box": {
+            "x": 421.7326965332031,
+            "y": 290.73052978515625,
+            "width": 80.65869140625,
+            "height": 112.3695068359375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.4003522992134094
+        },
+        {
+          "box": {
+            "x": 519.0720825195312,
+            "y": 287.36004638671875,
+            "width": 83.35546875,
+            "height": 119.1058349609375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.2586561441421509
+        },
+        {
+          "box": {
+            "x": 517.7589721679688,
+            "y": 287.44679260253906,
+            "width": 86.6123046875,
+            "height": 118.86019897460938
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.2638814449310303
+        },
+        {
+          "box": {
+            "x": 681.6269226074219,
+            "y": 298.2858581542969,
+            "width": 68.21734619140625,
+            "height": 101.41241455078125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.33993738889694214
+        },
+        {
+          "box": {
+            "x": 681.0149536132812,
+            "y": 297.8800506591797,
+            "width": 68.9183349609375,
+            "height": 101.97659301757812
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.32707148790359497
+        },
+        {
+          "box": {
+            "x": 680.5212707519531,
+            "y": 298.50567626953125,
+            "width": 68.83782958984375,
+            "height": 101.3748779296875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.38166600465774536
+        },
+        {
+          "box": {
+            "x": 828.806640625,
+            "y": 288.2895812988281,
+            "width": 80.36767578125,
+            "height": 108.91497802734375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.5708811283111572
+        },
+        {
+          "box": {
+            "x": 827.6276245117188,
+            "y": 288.33770751953125,
+            "width": 79.8482666015625,
+            "height": 108.6839599609375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.4768560826778412
+        },
+        {
+          "box": {
+            "x": 902.17919921875,
+            "y": 290.69581604003906,
+            "width": 86.998779296875,
+            "height": 104.94296264648438
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.49141085147857666
+        },
+        {
+          "box": {
+            "x": 902.7597045898438,
+            "y": 291.75730895996094,
+            "width": 84.56787109375,
+            "height": 103.43325805664062
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.4518943130970001
+        },
+        {
+          "box": {
+            "x": 984.2103271484375,
+            "y": 310.10272216796875,
+            "width": 95.456298828125,
+            "height": 94.3203125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.4061563313007355
+        },
+        {
+          "box": {
+            "x": 984.8991088867188,
+            "y": 308.9139404296875,
+            "width": 95.4185791015625,
+            "height": 95.7662353515625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.712117612361908
+        },
+        {
+          "box": {
+            "x": 985.1445007324219,
+            "y": 309.67889404296875,
+            "width": 94.93145751953125,
+            "height": 94.2064208984375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.5955389738082886
+        },
+        {
+          "box": {
+            "x": 1065.0943603515625,
+            "y": 292.30755615234375,
+            "width": 97.674560546875,
+            "height": 107.29638671875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.20789891481399536
+        },
+        {
+          "box": {
+            "x": 421.5277862548828,
+            "y": 291.422119140625,
+            "width": 80.97409057617188,
+            "height": 111.685302734375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.28087174892425537
+        },
+        {
+          "box": {
+            "x": 680.7316589355469,
+            "y": 297.939453125,
+            "width": 68.94708251953125,
+            "height": 100.7894287109375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.21489843726158142
+        },
+        {
+          "box": {
+            "x": 983.8583984375,
+            "y": 308.4281311035156,
+            "width": 96.69970703125,
+            "height": 94.69818115234375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.5106921792030334
+        },
+        {
+          "box": {
+            "x": 985.1171875,
+            "y": 307.7846984863281,
+            "width": 95.185302734375,
+            "height": 95.65277099609375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.779631495475769
+        },
+        {
+          "box": {
+            "x": 986.0941162109375,
+            "y": 307.33514404296875,
+            "width": 93.817626953125,
+            "height": 96.0845947265625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.42410939931869507
+        },
+        {
+          "box": {
+            "x": 684.7675170898438,
+            "y": 401.2476806640625,
+            "width": 102.96337890625,
+            "height": 115.368408203125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.22276419401168823
+        },
+        {
+          "box": {
+            "x": 871.1626281738281,
+            "y": 393.6387634277344,
+            "width": 107.25018310546875,
+            "height": 111.29595947265625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.21953463554382324
+        },
+        {
+          "box": {
+            "x": 66.17529296875,
+            "y": 480.9104309082031,
+            "width": 102.42398071289062,
+            "height": 139.47528076171875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.2102096974849701
+        },
+        {
+          "box": {
+            "x": 255.45122528076172,
+            "y": 483.3467712402344,
+            "width": 98.14186096191406,
+            "height": 144.03594970703125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.4961017072200775
+        },
+        {
+          "box": {
+            "x": 255.35577392578125,
+            "y": 482.35565185546875,
+            "width": 100.87921142578125,
+            "height": 146.4327392578125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.6248581409454346
+        },
+        {
+          "box": {
+            "x": 339.29144287109375,
+            "y": 485.0392761230469,
+            "width": 103.4232177734375,
+            "height": 138.63922119140625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7192588448524475
+        },
+        {
+          "box": {
+            "x": 339.9939727783203,
+            "y": 485.7181396484375,
+            "width": 103.68490600585938,
+            "height": 136.377197265625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.21060550212860107
+        },
+        {
+          "box": {
+            "x": 340.3387451171875,
+            "y": 482.2907409667969,
+            "width": 100.09686279296875,
+            "height": 144.13848876953125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.42680004239082336
+        },
+        {
+          "box": {
+            "x": 340.3412780761719,
+            "y": 483.3947448730469,
+            "width": 103.23760986328125,
+            "height": 142.06427001953125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.22297760844230652
+        },
+        {
+          "box": {
+            "x": 430.96421813964844,
+            "y": 498.65948486328125,
+            "width": 95.84585571289062,
+            "height": 132.2877197265625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.23302167654037476
+        },
+        {
+          "box": {
+            "x": 431.02232360839844,
+            "y": 499.1117858886719,
+            "width": 93.67532348632812,
+            "height": 131.26177978515625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.36895644664764404
+        },
+        {
+          "box": {
+            "x": 908.8561096191406,
+            "y": 509.5243835449219,
+            "width": 90.06439208984375,
+            "height": 124.34283447265625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.27837517857551575
+        },
+        {
+          "box": {
+            "x": 912.4508361816406,
+            "y": 509.66845703125,
+            "width": 88.39691162109375,
+            "height": 124.262939453125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.2281467318534851
+        },
+        {
+          "box": {
+            "x": 999.5069580078125,
+            "y": 501.02703857421875,
+            "width": 95.9365234375,
+            "height": 128.2381591796875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.370543897151947
+        },
+        {
+          "box": {
+            "x": 998.0039672851562,
+            "y": 500.3778381347656,
+            "width": 98.2557373046875,
+            "height": 127.86419677734375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.29271847009658813
+        },
+        {
+          "box": {
+            "x": 615.26806640625,
+            "y": 511.59130859375,
+            "width": 107.4608154296875,
+            "height": 126.2227783203125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.20489272475242615
+        },
+        {
+          "box": {
+            "x": 362.0367736816406,
+            "y": 193.37188720703125,
+            "width": 110.7578125,
+            "height": 97.46209716796875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.28250885009765625
+        },
+        {
+          "box": {
+            "x": 361.4835205078125,
+            "y": 192.48529052734375,
+            "width": 111.3636474609375,
+            "height": 98.24285888671875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.45122164487838745
+        },
+        {
+          "box": {
+            "x": 480.83119201660156,
+            "y": 188.6962432861328,
+            "width": 84.50057983398438,
+            "height": 96.84359741210938
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.3574404716491699
+        },
+        {
+          "box": {
+            "x": 481.7322235107422,
+            "y": 188.75514221191406,
+            "width": 83.29043579101562,
+            "height": 95.87228393554688
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.6950361132621765
+        },
+        {
+          "box": {
+            "x": 552.1807556152344,
+            "y": 191.8472137451172,
+            "width": 98.56280517578125,
+            "height": 100.45510864257812
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.6569141149520874
+        },
+        {
+          "box": {
+            "x": 552.0242004394531,
+            "y": 192.61544799804688,
+            "width": 99.69598388671875,
+            "height": 99.3385009765625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7204850316047668
+        },
+        {
+          "box": {
+            "x": 648.3446655273438,
+            "y": 182.33172607421875,
+            "width": 102.7294921875,
+            "height": 113.3489990234375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7448258399963379
+        },
+        {
+          "box": {
+            "x": 647.9835205078125,
+            "y": 182.11212158203125,
+            "width": 103.1044921875,
+            "height": 113.02960205078125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7434003949165344
+        },
+        {
+          "box": {
+            "x": 743.237548828125,
+            "y": 188.6171875,
+            "width": 92.636962890625,
+            "height": 124.3409423828125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.43692493438720703
+        },
+        {
+          "box": {
+            "x": 744.3893737792969,
+            "y": 189.2284393310547,
+            "width": 92.50787353515625,
+            "height": 121.66043090820312
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.33712318539619446
+        },
+        {
+          "box": {
+            "x": 835.3976745605469,
+            "y": 190.1000213623047,
+            "width": 104.85723876953125,
+            "height": 100.45913696289062
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.6063117980957031
+        },
+        {
+          "box": {
+            "x": 835.7161865234375,
+            "y": 189.79541015625,
+            "width": 104.0413818359375,
+            "height": 100.70465087890625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.49476927518844604
+        },
+        {
+          "box": {
+            "x": 362.02105712890625,
+            "y": 192.9904022216797,
+            "width": 109.8065185546875,
+            "height": 96.81570434570312
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.458827942609787
+        },
+        {
+          "box": {
+            "x": 362.13853454589844,
+            "y": 192.1995086669922,
+            "width": 109.93899536132812,
+            "height": 97.93936157226562
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.3919842541217804
+        },
+        {
+          "box": {
+            "x": 363.3379821777344,
+            "y": 192.09849548339844,
+            "width": 109.92352294921875,
+            "height": 97.22232055664062
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.2695903182029724
+        },
+        {
+          "box": {
+            "x": 481.7065124511719,
+            "y": 188.72085571289062,
+            "width": 83.54986572265625,
+            "height": 95.30023193359375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.2833402752876282
+        },
+        {
+          "box": {
+            "x": 481.1927490234375,
+            "y": 189.1632537841797,
+            "width": 83.66259765625,
+            "height": 94.58377075195312
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.6014010906219482
+        },
+        {
+          "box": {
+            "x": 552.2615356445312,
+            "y": 192.15496826171875,
+            "width": 97.9000244140625,
+            "height": 99.652587890625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.648358941078186
+        },
+        {
+          "box": {
+            "x": 551.6074523925781,
+            "y": 192.978515625,
+            "width": 99.05755615234375,
+            "height": 98.6787109375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.6941042542457581
+        },
+        {
+          "box": {
+            "x": 648.6021118164062,
+            "y": 182.15602111816406,
+            "width": 102.3240966796875,
+            "height": 113.03305053710938
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7157273292541504
+        },
+        {
+          "box": {
+            "x": 648.1291198730469,
+            "y": 182.3118438720703,
+            "width": 102.65484619140625,
+            "height": 112.79415893554688
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.653508186340332
+        },
+        {
+          "box": {
+            "x": 744.1693420410156,
+            "y": 188.145263671875,
+            "width": 91.82440185546875,
+            "height": 125.53802490234375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.5455796122550964
+        },
+        {
+          "box": {
+            "x": 744.1669006347656,
+            "y": 189.0421905517578,
+            "width": 91.75848388671875,
+            "height": 122.29696655273438
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.5552067756652832
+        },
+        {
+          "box": {
+            "x": 831.9257507324219,
+            "y": 190.1116180419922,
+            "width": 109.23370361328125,
+            "height": 100.34194946289062
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.4196140468120575
+        },
+        {
+          "box": {
+            "x": 834.7000732421875,
+            "y": 190.33445739746094,
+            "width": 104.6302490234375,
+            "height": 100.05813598632812
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.5319051742553711
+        },
+        {
+          "box": {
+            "x": 835.0777282714844,
+            "y": 189.83155822753906,
+            "width": 104.50860595703125,
+            "height": 100.76632690429688
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.4540354907512665
+        },
+        {
+          "box": {
+            "x": 924.7447509765625,
+            "y": 201.5632781982422,
+            "width": 130.489013671875,
+            "height": 100.44387817382812
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.2282383143901825
+        },
+        {
+          "box": {
+            "x": 924.1867980957031,
+            "y": 201.3650360107422,
+            "width": 130.25457763671875,
+            "height": 101.32974243164062
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.2856219410896301
+        },
+        {
+          "box": {
+            "x": 551.7909851074219,
+            "y": 192.89175415039062,
+            "width": 98.15631103515625,
+            "height": 99.35491943359375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.22060632705688477
+        },
+        {
+          "box": {
+            "x": 648.3062744140625,
+            "y": 182.185791015625,
+            "width": 103.698486328125,
+            "height": 114.93798828125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7241016030311584
+        },
+        {
+          "box": {
+            "x": 648.3165283203125,
+            "y": 182.1109619140625,
+            "width": 102.685302734375,
+            "height": 114.15179443359375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.6250311732292175
+        },
+        {
+          "box": {
+            "x": 744.1311340332031,
+            "y": 189.2303466796875,
+            "width": 92.01605224609375,
+            "height": 130.38775634765625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.3647152781486511
+        },
+        {
+          "box": {
+            "x": 744.4227600097656,
+            "y": 189.953125,
+            "width": 91.50360107421875,
+            "height": 127.18878173828125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.2168152928352356
+        },
+        {
+          "box": {
+            "x": 420.0020294189453,
+            "y": 290.0959167480469,
+            "width": 82.92599487304688,
+            "height": 115.09185791015625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.2980709969997406
+        },
+        {
+          "box": {
+            "x": 517.318359375,
+            "y": 287.6287078857422,
+            "width": 86.228271484375,
+            "height": 120.14529418945312
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.46466219425201416
+        },
+        {
+          "box": {
+            "x": 827.0705871582031,
+            "y": 288.2744140625,
+            "width": 78.00555419921875,
+            "height": 107.694580078125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.5180559158325195
+        },
+        {
+          "box": {
+            "x": 903.0881652832031,
+            "y": 293.126220703125,
+            "width": 83.72576904296875,
+            "height": 100.473388671875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.6856852173805237
+        },
+        {
+          "box": {
+            "x": 323.5603332519531,
+            "y": 291.93833923339844,
+            "width": 96.6632080078125,
+            "height": 192.07107543945312
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.24442148208618164
+        },
+        {
+          "box": {
+            "x": 325.2245330810547,
+            "y": 290.72129821777344,
+            "width": 95.61880493164062,
+            "height": 190.55581665039062
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.3765738606452942
+        },
+        {
+          "box": {
+            "x": 418.5838623046875,
+            "y": 291.61570739746094,
+            "width": 85.009033203125,
+            "height": 116.56814575195312
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.2489713728427887
+        },
+        {
+          "box": {
+            "x": 516.07275390625,
+            "y": 287.86822509765625,
+            "width": 87.5460205078125,
+            "height": 119.7626953125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.2803005576133728
+        },
+        {
+          "box": {
+            "x": 515.3030090332031,
+            "y": 286.9873962402344,
+            "width": 88.72528076171875,
+            "height": 146.31158447265625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.29793310165405273
+        },
+        {
+          "box": {
+            "x": 680.3265380859375,
+            "y": 300.75250244140625,
+            "width": 68.8443603515625,
+            "height": 98.6697998046875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.3485792875289917
+        },
+        {
+          "box": {
+            "x": 826.6584167480469,
+            "y": 288.94386291503906,
+            "width": 79.13458251953125,
+            "height": 108.19088745117188
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7069987058639526
+        },
+        {
+          "box": {
+            "x": 902.0772399902344,
+            "y": 293.0950164794922,
+            "width": 84.94122314453125,
+            "height": 100.17947387695312
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.37674272060394287
+        },
+        {
+          "box": {
+            "x": 903.162841796875,
+            "y": 293.9285430908203,
+            "width": 83.2716064453125,
+            "height": 99.75534057617188
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7181509733200073
+        },
+        {
+          "box": {
+            "x": 903.6475830078125,
+            "y": 294.4411926269531,
+            "width": 82.8594970703125,
+            "height": 99.41009521484375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.5259661674499512
+        },
+        {
+          "box": {
+            "x": 984.4192504882812,
+            "y": 307.338134765625,
+            "width": 95.3826904296875,
+            "height": 95.3843994140625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.6053797006607056
+        },
+        {
+          "box": {
+            "x": 985.0727844238281,
+            "y": 306.6305236816406,
+            "width": 94.62982177734375,
+            "height": 95.24945068359375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.6559264063835144
+        },
+        {
+          "box": {
+            "x": 1066.47509765625,
+            "y": 291.74623107910156,
+            "width": 95.01611328125,
+            "height": 107.27853393554688
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.4490557014942169
+        },
+        {
+          "box": {
+            "x": 1065.3193969726562,
+            "y": 292.3011169433594,
+            "width": 97.2552490234375,
+            "height": 107.01300048828125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.2084275782108307
+        },
+        {
+          "box": {
+            "x": 320.7492370605469,
+            "y": 290.8837127685547,
+            "width": 99.5616455078125,
+            "height": 194.31655883789062
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.38941842317581177
+        },
+        {
+          "box": {
+            "x": 322.420166015625,
+            "y": 291.0923309326172,
+            "width": 99.486083984375,
+            "height": 193.02322387695312
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.5015158653259277
+        },
+        {
+          "box": {
+            "x": 414.28289794921875,
+            "y": 291.5506591796875,
+            "width": 90.16253662109375,
+            "height": 198.8431396484375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.3851799964904785
+        },
+        {
+          "box": {
+            "x": 415.661865234375,
+            "y": 291.30377197265625,
+            "width": 88.52606201171875,
+            "height": 197.697509765625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.35008692741394043
+        },
+        {
+          "box": {
+            "x": 415.8239288330078,
+            "y": 290.39585876464844,
+            "width": 87.36666870117188,
+            "height": 201.30398559570312
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.37313181161880493
+        },
+        {
+          "box": {
+            "x": 508.7799530029297,
+            "y": 288.05841064453125,
+            "width": 94.94949340820312,
+            "height": 209.452880859375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.21591496467590332
+        },
+        {
+          "box": {
+            "x": 511.69874572753906,
+            "y": 287.96141052246094,
+            "width": 92.52377319335938,
+            "height": 213.96621704101562
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.36622798442840576
+        },
+        {
+          "box": {
+            "x": 680.4626770019531,
+            "y": 298.576904296875,
+            "width": 70.29119873046875,
+            "height": 100.6793212890625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.21333107352256775
+        },
+        {
+          "box": {
+            "x": 826.3362731933594,
+            "y": 288.71783447265625,
+            "width": 79.69122314453125,
+            "height": 109.797607421875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.43382126092910767
+        },
+        {
+          "box": {
+            "x": 903.319580078125,
+            "y": 293.9316711425781,
+            "width": 82.39990234375,
+            "height": 100.63275146484375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7155144214630127
+        },
+        {
+          "box": {
+            "x": 983.8195190429688,
+            "y": 307.7220153808594,
+            "width": 96.3062744140625,
+            "height": 95.51007080078125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.6191954016685486
+        },
+        {
+          "box": {
+            "x": 984.6733703613281,
+            "y": 306.47412109375,
+            "width": 95.13153076171875,
+            "height": 95.501953125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.6165348291397095
+        },
+        {
+          "box": {
+            "x": 1066.1659545898438,
+            "y": 292.60821533203125,
+            "width": 97.2550048828125,
+            "height": 105.91259765625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.4812302589416504
+        },
+        {
+          "box": {
+            "x": 1064.625,
+            "y": 292.30364990234375,
+            "width": 98.444091796875,
+            "height": 106.7391357421875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.227726012468338
+        },
+        {
+          "box": {
+            "x": 229.38129425048828,
+            "y": 362.0339050292969,
+            "width": 97.20744323730469,
+            "height": 116.79010009765625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.3106570243835449
+        },
+        {
+          "box": {
+            "x": 226.66168212890625,
+            "y": 362.0155029296875,
+            "width": 100.671875,
+            "height": 117.866455078125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.23845943808555603
+        },
+        {
+          "box": {
+            "x": 321.00685119628906,
+            "y": 292.5846862792969,
+            "width": 99.84970092773438,
+            "height": 192.32403564453125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.33415770530700684
+        },
+        {
+          "box": {
+            "x": 321.13983154296875,
+            "y": 292.68287658691406,
+            "width": 100.95489501953125,
+            "height": 192.45785522460938
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.2676522731781006
+        },
+        {
+          "box": {
+            "x": 412.8092803955078,
+            "y": 291.2987060546875,
+            "width": 92.22933959960938,
+            "height": 200.7020263671875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.24945831298828125
+        },
+        {
+          "box": {
+            "x": 413.97552490234375,
+            "y": 291.489013671875,
+            "width": 91.31292724609375,
+            "height": 200.6778564453125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.4050407409667969
+        },
+        {
+          "box": {
+            "x": 413.6753234863281,
+            "y": 291.66773986816406,
+            "width": 90.65631103515625,
+            "height": 201.50936889648438
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.23490333557128906
+        },
+        {
+          "box": {
+            "x": 506.4441833496094,
+            "y": 288.1548614501953,
+            "width": 97.53228759765625,
+            "height": 212.47885131835938
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.2086505889892578
+        },
+        {
+          "box": {
+            "x": 507.8297576904297,
+            "y": 287.9794006347656,
+            "width": 96.32449340820312,
+            "height": 213.66326904296875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.24646922945976257
+        },
+        {
+          "box": {
+            "x": 870.3271484375,
+            "y": 392.82476806640625,
+            "width": 107.8216552734375,
+            "height": 114.388427734375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.2976238429546356
+        },
+        {
+          "box": {
+            "x": 218.83059692382812,
+            "y": 362.021728515625,
+            "width": 107.58538818359375,
+            "height": 116.2615966796875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.25758376717567444
+        },
+        {
+          "box": {
+            "x": 684.1863403320312,
+            "y": 401.1333312988281,
+            "width": 103.4022216796875,
+            "height": 113.40814208984375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.22194546461105347
+        },
+        {
+          "box": {
+            "x": 683.8760070800781,
+            "y": 400.5939025878906,
+            "width": 103.56048583984375,
+            "height": 113.39398193359375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.2539528012275696
+        },
+        {
+          "box": {
+            "x": 778.7270202636719,
+            "y": 402.2848815917969,
+            "width": 94.72198486328125,
+            "height": 104.04034423828125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.20374947786331177
+        },
+        {
+          "box": {
+            "x": 869.8342895507812,
+            "y": 393.33642578125,
+            "width": 107.0294189453125,
+            "height": 112.811279296875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.5114847421646118
+        },
+        {
+          "box": {
+            "x": 870.2302551269531,
+            "y": 393.7099304199219,
+            "width": 105.80218505859375,
+            "height": 111.23443603515625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.4562758505344391
+        },
+        {
+          "box": {
+            "x": 67.54306030273438,
+            "y": 378.6588134765625,
+            "width": 140.89398193359375,
+            "height": 250.6907958984375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.468472421169281
+        },
+        {
+          "box": {
+            "x": 65.56941986083984,
+            "y": 379.1356201171875,
+            "width": 141.33387756347656,
+            "height": 250.8294677734375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.4395255744457245
+        },
+        {
+          "box": {
+            "x": 684.3497314453125,
+            "y": 401.2858581542969,
+            "width": 102.895751953125,
+            "height": 113.13702392578125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.22083547711372375
+        },
+        {
+          "box": {
+            "x": 683.6793212890625,
+            "y": 401.12933349609375,
+            "width": 103.6644287109375,
+            "height": 113.1273193359375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.2560231685638428
+        },
+        {
+          "box": {
+            "x": 778.2866516113281,
+            "y": 401.9488220214844,
+            "width": 94.21136474609375,
+            "height": 103.04473876953125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.22691592574119568
+        },
+        {
+          "box": {
+            "x": 778.4681701660156,
+            "y": 402.36944580078125,
+            "width": 94.51458740234375,
+            "height": 103.9188232421875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.2943177819252014
+        },
+        {
+          "box": {
+            "x": 869.3711853027344,
+            "y": 392.5993957519531,
+            "width": 107.93341064453125,
+            "height": 112.77313232421875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.5232295393943787
+        },
+        {
+          "box": {
+            "x": 869.5295104980469,
+            "y": 393.17315673828125,
+            "width": 106.79010009765625,
+            "height": 111.7481689453125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.43749773502349854
+        },
+        {
+          "box": {
+            "x": 64.11332702636719,
+            "y": 378.95367431640625,
+            "width": 146.289306640625,
+            "height": 250.4337158203125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.2435740828514099
+        },
+        {
+          "box": {
+            "x": 65.50706481933594,
+            "y": 378.7833251953125,
+            "width": 144.4317626953125,
+            "height": 249.9920654296875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.3208971619606018
+        },
+        {
+          "box": {
+            "x": 65.50532531738281,
+            "y": 381.2270812988281,
+            "width": 140.23321533203125,
+            "height": 246.26312255859375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.40312665700912476
+        },
+        {
+          "box": {
+            "x": 157.0059814453125,
+            "y": 457.8555908203125,
+            "width": 123.994384765625,
+            "height": 146.978759765625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.3612503409385681
+        },
+        {
+          "box": {
+            "x": 157.58407592773438,
+            "y": 456.35028076171875,
+            "width": 123.12478637695312,
+            "height": 147.5069580078125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.4085124731063843
+        },
+        {
+          "box": {
+            "x": 255.41374969482422,
+            "y": 482.1781311035156,
+            "width": 98.77503967285156,
+            "height": 144.62591552734375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.6772724390029907
+        },
+        {
+          "box": {
+            "x": 340.32212829589844,
+            "y": 485.277587890625,
+            "width": 103.87136840820312,
+            "height": 142.146484375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.5114589929580688
+        },
+        {
+          "box": {
+            "x": 65.5660171508789,
+            "y": 386.2552490234375,
+            "width": 136.9925994873047,
+            "height": 242.2828369140625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.2250979244709015
+        },
+        {
+          "box": {
+            "x": 157.81576538085938,
+            "y": 456.7769775390625,
+            "width": 122.08883666992188,
+            "height": 144.8453369140625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.3399115204811096
+        },
+        {
+          "box": {
+            "x": 157.18072509765625,
+            "y": 456.3177795410156,
+            "width": 122.55947875976562,
+            "height": 144.78607177734375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.5313176512718201
+        },
+        {
+          "box": {
+            "x": 254.2782974243164,
+            "y": 481.6757507324219,
+            "width": 101.29191589355469,
+            "height": 143.19830322265625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.5703572630882263
+        },
+        {
+          "box": {
+            "x": 254.6543960571289,
+            "y": 482.2650146484375,
+            "width": 100.50108337402344,
+            "height": 143.7913818359375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8111895322799683
+        },
+        {
+          "box": {
+            "x": 254.579833984375,
+            "y": 482.40234375,
+            "width": 100.1529541015625,
+            "height": 143.2615966796875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7473102807998657
+        },
+        {
+          "box": {
+            "x": 341.6890563964844,
+            "y": 484.7655029296875,
+            "width": 101.9783935546875,
+            "height": 143.285400390625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.34393757581710815
+        },
+        {
+          "box": {
+            "x": 341.7161865234375,
+            "y": 486.5810546875,
+            "width": 101.55450439453125,
+            "height": 140.423828125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.6213874220848083
+        },
+        {
+          "box": {
+            "x": 342.8228759765625,
+            "y": 485.654296875,
+            "width": 101.1201171875,
+            "height": 141.423583984375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.6212299466133118
+        },
+        {
+          "box": {
+            "x": 428.7649688720703,
+            "y": 500.06854248046875,
+            "width": 98.05734252929688,
+            "height": 131.596923828125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.3256087303161621
+        },
+        {
+          "box": {
+            "x": 428.61474609375,
+            "y": 499.70123291015625,
+            "width": 97.69952392578125,
+            "height": 131.802490234375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.39593222737312317
+        },
+        {
+          "box": {
+            "x": 522.8184814453125,
+            "y": 507.8384094238281,
+            "width": 98.439453125,
+            "height": 126.62054443359375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.22647392749786377
+        },
+        {
+          "box": {
+            "x": 616.28125,
+            "y": 509.4700622558594,
+            "width": 108.3936767578125,
+            "height": 127.94903564453125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.3381217420101166
+        },
+        {
+          "box": {
+            "x": 616.6156616210938,
+            "y": 510.15106201171875,
+            "width": 108.1357421875,
+            "height": 126.66650390625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.46499553322792053
+        },
+        {
+          "box": {
+            "x": 1001.3097534179688,
+            "y": 501.5199279785156,
+            "width": 92.0113525390625,
+            "height": 126.73553466796875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.31474167108535767
+        },
+        {
+          "box": {
+            "x": 255.58611297607422,
+            "y": 482.85528564453125,
+            "width": 98.95503234863281,
+            "height": 144.2646484375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.6464163661003113
+        },
+        {
+          "box": {
+            "x": 255.42467498779297,
+            "y": 482.4230651855469,
+            "width": 99.13166809082031,
+            "height": 144.66436767578125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.7377322316169739
+        },
+        {
+          "box": {
+            "x": 255.15647888183594,
+            "y": 482.8624572753906,
+            "width": 99.96987915039062,
+            "height": 143.75506591796875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.6375139951705933
+        },
+        {
+          "box": {
+            "x": 342.686767578125,
+            "y": 485.4281005859375,
+            "width": 99.70404052734375,
+            "height": 142.05615234375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.5489445924758911
+        },
+        {
+          "box": {
+            "x": 342.9977111816406,
+            "y": 486.39752197265625,
+            "width": 99.10711669921875,
+            "height": 140.978515625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.5850921273231506
+        },
+        {
+          "box": {
+            "x": 427.76866149902344,
+            "y": 499.2076110839844,
+            "width": 98.94363403320312,
+            "height": 131.85137939453125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.39607182145118713
+        },
+        {
+          "box": {
+            "x": 428.01483154296875,
+            "y": 499.3916931152344,
+            "width": 98.63763427734375,
+            "height": 130.28277587890625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.3559139370918274
+        },
+        {
+          "box": {
+            "x": 523.0976257324219,
+            "y": 507.2272644042969,
+            "width": 97.82427978515625,
+            "height": 126.49688720703125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.2214953899383545
+        },
+        {
+          "box": {
+            "x": 617.07958984375,
+            "y": 509.7519836425781,
+            "width": 107.21240234375,
+            "height": 126.83807373046875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.4897017776966095
+        },
+        {
+          "box": {
+            "x": 616.919921875,
+            "y": 509.6377258300781,
+            "width": 107.7188720703125,
+            "height": 126.15203857421875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.5335206389427185
+        },
+        {
+          "box": {
+            "x": 616.7952575683594,
+            "y": 508.40557861328125,
+            "width": 108.18218994140625,
+            "height": 128.286865234375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.24186569452285767
+        },
+        {
+          "box": {
+            "x": 999.5190124511719,
+            "y": 500.1374206542969,
+            "width": 96.90655517578125,
+            "height": 124.74713134765625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.21529772877693176
+        },
+        {
+          "box": {
+            "x": 255.3878936767578,
+            "y": 481.5564270019531,
+            "width": 98.74484252929688,
+            "height": 145.30340576171875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.5883864164352417
+        },
+        {
+          "box": {
+            "x": 255.37771606445312,
+            "y": 482.1903076171875,
+            "width": 100.2999267578125,
+            "height": 144.414794921875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.31189680099487305
+        },
+        {
+          "box": {
+            "x": 341.9712829589844,
+            "y": 485.29901123046875,
+            "width": 100.24761962890625,
+            "height": 143.8592529296875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.40149348974227905
+        },
+        {
+          "box": {
+            "x": 426.6063995361328,
+            "y": 498.6448669433594,
+            "width": 101.01803588867188,
+            "height": 133.12969970703125
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.297186017036438
+        },
+        {
+          "box": {
+            "x": 427.34075927734375,
+            "y": 499.92572021484375,
+            "width": 99.66998291015625,
+            "height": 131.1453857421875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.32553523778915405
+        },
+        {
+          "box": {
+            "x": 615.7379150390625,
+            "y": 510.67120361328125,
+            "width": 108.87841796875,
+            "height": 124.499755859375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.43501999974250793
+        },
+        {
+          "box": {
+            "x": 616.835205078125,
+            "y": 510.024658203125,
+            "width": 107.873291015625,
+            "height": 125.1324462890625
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.4493652582168579
+        }
+      ]
+    }
+  ]
+}

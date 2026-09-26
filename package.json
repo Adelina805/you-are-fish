@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "homework:detect": "python3 homework/scripts/batch_phone_detect.py",
+    "homework:experiments": "python3 homework/scripts/run_experiments.py --all"
   },
   "dependencies": {
     "@mediapipe/tasks-vision": "^0.10.35",

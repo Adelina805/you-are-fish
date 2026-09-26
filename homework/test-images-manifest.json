@@ -1,0 +1,516 @@
+[
+  {
+    "filename": "coco128_phone_000000000328.jpg",
+    "source": "COCO128 (Ultralytics subset of COCO)",
+    "url": "https://github.com/ultralytics/assets coco128 000000000328.jpg",
+    "expected_phone": true,
+    "notes": "YOLO-label class 67 count=1; multi-object COCO scene",
+    "variety_tags": [
+      "coco",
+      "real-world",
+      "possibly-small-phone",
+      "cluttered-background"
+    ]
+  },
+  {
+    "filename": "coco128_phone_000000000387.jpg",
+    "source": "COCO128 (Ultralytics subset of COCO)",
+    "url": "https://github.com/ultralytics/assets coco128 000000000387.jpg",
+    "expected_phone": true,
+    "notes": "YOLO-label class 67 count=1; multi-object COCO scene",
+    "variety_tags": [
+      "coco",
+      "real-world",
+      "possibly-small-phone",
+      "cluttered-background"
+    ]
+  },
+  {
+    "filename": "coco128_phone_000000000395.jpg",
+    "source": "COCO128 (Ultralytics subset of COCO)",
+    "url": "https://github.com/ultralytics/assets coco128 000000000395.jpg",
+    "expected_phone": true,
+    "notes": "YOLO-label class 67 count=2; multi-object COCO scene",
+    "variety_tags": [
+      "coco",
+      "real-world",
+      "possibly-small-phone",
+      "cluttered-background"
+    ]
+  },
+  {
+    "filename": "coco128_phone_000000000536.jpg",
+    "source": "COCO128 (Ultralytics subset of COCO)",
+    "url": "https://github.com/ultralytics/assets coco128 000000000536.jpg",
+    "expected_phone": true,
+    "notes": "YOLO-label class 67 count=3; multi-object COCO scene",
+    "variety_tags": [
+      "coco",
+      "real-world",
+      "possibly-small-phone",
+      "cluttered-background"
+    ]
+  },
+  {
+    "filename": "coco128_phone_000000000560.jpg",
+    "source": "COCO128 (Ultralytics subset of COCO)",
+    "url": "https://github.com/ultralytics/assets coco128 000000000560.jpg",
+    "expected_phone": true,
+    "notes": "YOLO-label class 67 count=1; multi-object COCO scene",
+    "variety_tags": [
+      "coco",
+      "real-world",
+      "possibly-small-phone",
+      "cluttered-background"
+    ]
+  },
+  {
+    "filename": "coco128_phone_000000000328_scale_small.jpg",
+    "source": "Augmented from COCO128 phone image",
+    "url": "https://github.com/ultralytics/assets coco128 000000000328.jpg",
+    "expected_phone": true,
+    "notes": "Deterministic augmentation 'scale_small' of coco128_phone_000000000328.jpg for scale/lighting/viewpoint variety",
+    "variety_tags": [
+      "augmented",
+      "derived-from-coco",
+      "scale-small",
+      "downscaled"
+    ]
+  },
+  {
+    "filename": "coco128_phone_000000000328_dark.jpg",
+    "source": "Augmented from COCO128 phone image",
+    "url": "https://github.com/ultralytics/assets coco128 000000000328.jpg",
+    "expected_phone": true,
+    "notes": "Deterministic augmentation 'dark' of coco128_phone_000000000328.jpg for scale/lighting/viewpoint variety",
+    "variety_tags": [
+      "augmented",
+      "derived-from-coco",
+      "lighting-dark"
+    ]
+  },
+  {
+    "filename": "coco128_phone_000000000387_bright.jpg",
+    "source": "Augmented from COCO128 phone image",
+    "url": "https://github.com/ultralytics/assets coco128 000000000387.jpg",
+    "expected_phone": true,
+    "notes": "Deterministic augmentation 'bright' of coco128_phone_000000000387.jpg for scale/lighting/viewpoint variety",
+    "variety_tags": [
+      "augmented",
+      "derived-from-coco",
+      "lighting-bright"
+    ]
+  },
+  {
+    "filename": "coco128_phone_000000000395_bright.jpg",
+    "source": "Augmented from COCO128 phone image",
+    "url": "https://github.com/ultralytics/assets coco128 000000000395.jpg",
+    "expected_phone": true,
+    "notes": "Deterministic augmentation 'bright' of coco128_phone_000000000395.jpg for scale/lighting/viewpoint variety",
+    "variety_tags": [
+      "augmented",
+      "derived-from-coco",
+      "lighting-bright"
+    ]
+  },
+  {
+    "filename": "coco128_phone_000000000395_crop.jpg",
+    "source": "Augmented from COCO128 phone image",
+    "url": "https://github.com/ultralytics/assets coco128 000000000395.jpg",
+    "expected_phone": true,
+    "notes": "Deterministic augmentation 'crop' of coco128_phone_000000000395.jpg for scale/lighting/viewpoint variety",
+    "variety_tags": [
+      "augmented",
+      "derived-from-coco",
+      "viewpoint-crop",
+      "partial-context"
+    ]
+  },
+  {
+    "filename": "coco128_phone_000000000536_scale_small.jpg",
+    "source": "Augmented from COCO128 phone image",
+    "url": "https://github.com/ultralytics/assets coco128 000000000536.jpg",
+    "expected_phone": true,
+    "notes": "Deterministic augmentation 'scale_small' of coco128_phone_000000000536.jpg for scale/lighting/viewpoint variety",
+    "variety_tags": [
+      "augmented",
+      "derived-from-coco",
+      "scale-small",
+      "downscaled"
+    ]
+  },
+  {
+    "filename": "coco128_phone_000000000536_crop.jpg",
+    "source": "Augmented from COCO128 phone image",
+    "url": "https://github.com/ultralytics/assets coco128 000000000536.jpg",
+    "expected_phone": true,
+    "notes": "Deterministic augmentation 'crop' of coco128_phone_000000000536.jpg for scale/lighting/viewpoint variety",
+    "variety_tags": [
+      "augmented",
+      "derived-from-coco",
+      "viewpoint-crop",
+      "partial-context"
+    ]
+  },
+  {
+    "filename": "coco128_phone_000000000560_dark.jpg",
+    "source": "Augmented from COCO128 phone image",
+    "url": "https://github.com/ultralytics/assets coco128 000000000560.jpg",
+    "expected_phone": true,
+    "notes": "Deterministic augmentation 'dark' of coco128_phone_000000000560.jpg for scale/lighting/viewpoint variety",
+    "variety_tags": [
+      "augmented",
+      "derived-from-coco",
+      "lighting-dark"
+    ]
+  },
+  {
+    "filename": "commons_01.jpg",
+    "source": "Wikimedia Commons",
+    "url": "https://commons.wikimedia.org/wiki/File:5_different_Smartphones.jpg",
+    "title": "File:5 different Smartphones.jpg",
+    "expected_phone": true,
+    "notes": "Search query: smartphone",
+    "variety_tags": [
+      "wikimedia",
+      "phone-subject",
+      "product"
+    ]
+  },
+  {
+    "filename": "commons_02.jpg",
+    "source": "Wikimedia Commons",
+    "url": "https://commons.wikimedia.org/wiki/File:Anamorphic_lens_for_Smartphone.jpg",
+    "title": "File:Anamorphic lens for Smartphone.jpg",
+    "expected_phone": true,
+    "notes": "Search query: smartphone",
+    "variety_tags": [
+      "wikimedia",
+      "phone-subject",
+      "product"
+    ]
+  },
+  {
+    "filename": "commons_03.jpg",
+    "source": "Wikimedia Commons",
+    "url": "https://commons.wikimedia.org/wiki/File:Blackview_A60_Smartphone_Android_mobile_phone_and_folio_case.jpg",
+    "title": "File:Blackview A60 Smartphone Android mobile phone and folio case.jpg",
+    "expected_phone": true,
+    "notes": "Search query: smartphone",
+    "variety_tags": [
+      "wikimedia",
+      "phone-subject",
+      "product"
+    ]
+  },
+  {
+    "filename": "commons_04.jpg",
+    "source": "Wikimedia Commons",
+    "url": "https://commons.wikimedia.org/wiki/File:Blackview_A60_Smartphone_Android_mobile_phone_front_face_logged_in_screen.jpg",
+    "title": "File:Blackview A60 Smartphone Android mobile phone front face logged in screen.jpg",
+    "expected_phone": true,
+    "notes": "Search query: smartphone",
+    "variety_tags": [
+      "wikimedia",
+      "phone-subject",
+      "product"
+    ]
+  },
+  {
+    "filename": "commons_05.jpg",
+    "source": "Wikimedia Commons",
+    "url": "https://commons.wikimedia.org/wiki/File:Leaflet_at_Narita_arrival._Requirement_to_have_a_smartphone_to_enter_Japan_during_COVID-19_pandemic.jpg",
+    "title": "File:Leaflet at Narita arrival. Requirement to have a smartphone to enter Japan during COVID-19 pandemic.jpg",
+    "expected_phone": true,
+    "notes": "Search query: smartphone",
+    "variety_tags": [
+      "wikimedia",
+      "phone-subject",
+      "product"
+    ]
+  },
+  {
+    "filename": "commons_06.png",
+    "source": "Wikimedia Commons",
+    "url": "https://commons.wikimedia.org/wiki/File:Nokia_6630.png",
+    "title": "File:Nokia 6630.png",
+    "expected_phone": true,
+    "notes": "Search query: smartphone",
+    "variety_tags": [
+      "wikimedia",
+      "phone-subject",
+      "product"
+    ]
+  },
+  {
+    "filename": "commons_07.png",
+    "source": "Wikimedia Commons",
+    "url": "https://commons.wikimedia.org/wiki/File:Nokia_6670.png",
+    "title": "File:Nokia 6670.png",
+    "expected_phone": true,
+    "notes": "Search query: smartphone",
+    "variety_tags": [
+      "wikimedia",
+      "phone-subject",
+      "product"
+    ]
+  },
+  {
+    "filename": "commons_08.jpg",
+    "source": "Wikimedia Commons",
+    "url": "https://commons.wikimedia.org/wiki/File:Smartphone_Use.jpg",
+    "title": "File:Smartphone Use.jpg",
+    "expected_phone": true,
+    "notes": "Search query: smartphone",
+    "variety_tags": [
+      "wikimedia",
+      "phone-subject",
+      "product"
+    ]
+  },
+  {
+    "filename": "commons_09.png",
+    "source": "Wikimedia Commons",
+    "url": "https://commons.wikimedia.org/wiki/File:Smartphone_di_varie_marche.png",
+    "title": "File:Smartphone di varie marche.png",
+    "expected_phone": true,
+    "notes": "Search query: smartphone",
+    "variety_tags": [
+      "wikimedia",
+      "phone-subject",
+      "product"
+    ]
+  },
+  {
+    "filename": "commons_10.jpg",
+    "source": "Wikimedia Commons",
+    "url": "https://commons.wikimedia.org/wiki/File:Smartphone_display_screen.jpg",
+    "title": "File:Smartphone display screen.jpg",
+    "expected_phone": true,
+    "notes": "Search query: smartphone",
+    "variety_tags": [
+      "wikimedia",
+      "phone-subject",
+      "product"
+    ]
+  },
+  {
+    "filename": "commons_11.jpg",
+    "source": "Wikimedia Commons",
+    "url": "https://commons.wikimedia.org/wiki/File:Smartphone_ownership_in_2013.jpg",
+    "title": "File:Smartphone ownership in 2013.jpg",
+    "expected_phone": true,
+    "notes": "Search query: smartphone",
+    "variety_tags": [
+      "wikimedia",
+      "phone-subject",
+      "product"
+    ]
+  },
+  {
+    "filename": "commons_12.jpg",
+    "source": "Wikimedia Commons",
+    "url": "https://commons.wikimedia.org/wiki/File:Close_up_of_mobile_phone,_with_a_hand_showing_a_camouflage_cuff._MOD_45155935.jpg",
+    "title": "File:Close up of mobile phone, with a hand showing a camouflage cuff. MOD 45155935.jpg",
+    "expected_phone": true,
+    "notes": "Search query: mobile phone in hand",
+    "variety_tags": [
+      "wikimedia",
+      "held-in-hand",
+      "occlusion-risk",
+      "viewpoint"
+    ]
+  },
+  {
+    "filename": "commons_13.jpg",
+    "source": "Wikimedia Commons",
+    "url": "https://commons.wikimedia.org/wiki/File:Hand_held_phone_in_car.JPG",
+    "title": "File:Hand held phone in car.JPG",
+    "expected_phone": true,
+    "notes": "Search query: mobile phone in hand",
+    "variety_tags": [
+      "wikimedia",
+      "held-in-hand",
+      "occlusion-risk",
+      "viewpoint"
+    ]
+  },
+  {
+    "filename": "commons_14.jpg",
+    "source": "Wikimedia Commons",
+    "url": "https://commons.wikimedia.org/wiki/File:Hand_held_phone_in_car_(color_balanced).JPG",
+    "title": "File:Hand held phone in car (color balanced).JPG",
+    "expected_phone": true,
+    "notes": "Search query: mobile phone in hand",
+    "variety_tags": [
+      "wikimedia",
+      "held-in-hand",
+      "occlusion-risk",
+      "viewpoint"
+    ]
+  },
+  {
+    "filename": "commons_15.jpg",
+    "source": "Wikimedia Commons",
+    "url": "https://commons.wikimedia.org/wiki/File:Hand_with_Mobile_Phone_(Imagicity_181).jpg",
+    "title": "File:Hand with Mobile Phone (Imagicity 181).jpg",
+    "expected_phone": true,
+    "notes": "Search query: mobile phone in hand",
+    "variety_tags": [
+      "wikimedia",
+      "held-in-hand",
+      "occlusion-risk",
+      "viewpoint"
+    ]
+  },
+  {
+    "filename": "commons_16.jpg",
+    "source": "Wikimedia Commons",
+    "url": "https://commons.wikimedia.org/wiki/File:Mobile_Phone_Base_Station_Toothill,_Rastrick_-_geograph.org.uk_-_1070280.jpg",
+    "title": "File:Mobile Phone Base Station Toothill, Rastrick - geograph.org.uk - 1070280.jpg",
+    "expected_phone": true,
+    "notes": "Search query: mobile phone in hand",
+    "variety_tags": [
+      "wikimedia",
+      "held-in-hand",
+      "occlusion-risk",
+      "viewpoint"
+    ]
+  },
+  {
+    "filename": "commons_17.jpg",
+    "source": "Wikimedia Commons",
+    "url": "https://commons.wikimedia.org/wiki/File:Mobile_phone_PHS_Japan_1997-2003.jpg",
+    "title": "File:Mobile phone PHS Japan 1997-2003.jpg",
+    "expected_phone": true,
+    "notes": "Search query: mobile phone in hand",
+    "variety_tags": [
+      "wikimedia",
+      "held-in-hand",
+      "occlusion-risk",
+      "viewpoint"
+    ]
+  },
+  {
+    "filename": "commons_18.jpg",
+    "source": "Wikimedia Commons",
+    "url": "https://commons.wikimedia.org/wiki/File:Mobile_phone_stall_-_Pristina.JPG",
+    "title": "File:Mobile phone stall - Pristina.JPG",
+    "expected_phone": true,
+    "notes": "Search query: mobile phone in hand",
+    "variety_tags": [
+      "wikimedia",
+      "held-in-hand",
+      "occlusion-risk",
+      "viewpoint"
+    ]
+  },
+  {
+    "filename": "coco128_nophone_000000000009.jpg",
+    "source": "COCO128 (Ultralytics subset of COCO)",
+    "url": "https://github.com/ultralytics/assets coco128 000000000009.jpg",
+    "expected_phone": false,
+    "notes": "No cell-phone class in YOLO labels; negative / distractor scene",
+    "variety_tags": [
+      "coco",
+      "negative",
+      "cluttered-background"
+    ]
+  },
+  {
+    "filename": "coco128_nophone_000000000030.jpg",
+    "source": "COCO128 (Ultralytics subset of COCO)",
+    "url": "https://github.com/ultralytics/assets coco128 000000000030.jpg",
+    "expected_phone": false,
+    "notes": "No cell-phone class in YOLO labels; negative / distractor scene",
+    "variety_tags": [
+      "coco",
+      "negative",
+      "cluttered-background"
+    ]
+  },
+  {
+    "filename": "coco128_nophone_000000000036.jpg",
+    "source": "COCO128 (Ultralytics subset of COCO)",
+    "url": "https://github.com/ultralytics/assets coco128 000000000036.jpg",
+    "expected_phone": false,
+    "notes": "No cell-phone class in YOLO labels; negative / distractor scene",
+    "variety_tags": [
+      "coco",
+      "negative",
+      "cluttered-background"
+    ]
+  },
+  {
+    "filename": "coco128_nophone_000000000049.jpg",
+    "source": "COCO128 (Ultralytics subset of COCO)",
+    "url": "https://github.com/ultralytics/assets coco128 000000000049.jpg",
+    "expected_phone": false,
+    "notes": "No cell-phone class in YOLO labels; negative / distractor scene",
+    "variety_tags": [
+      "coco",
+      "negative",
+      "cluttered-background"
+    ]
+  },
+  {
+    "filename": "coco128_nophone_000000000109.jpg",
+    "source": "COCO128 (Ultralytics subset of COCO)",
+    "url": "https://github.com/ultralytics/assets coco128 000000000109.jpg",
+    "expected_phone": false,
+    "notes": "No cell-phone class in YOLO labels; negative / distractor scene",
+    "variety_tags": [
+      "coco",
+      "negative",
+      "cluttered-background"
+    ]
+  },
+  {
+    "filename": "coco128_nophone_000000000113.jpg",
+    "source": "COCO128 (Ultralytics subset of COCO)",
+    "url": "https://github.com/ultralytics/assets coco128 000000000113.jpg",
+    "expected_phone": false,
+    "notes": "No cell-phone class in YOLO labels; negative / distractor scene",
+    "variety_tags": [
+      "coco",
+      "negative",
+      "cluttered-background"
+    ]
+  },
+  {
+    "filename": "coco128_nophone_000000000133.jpg",
+    "source": "COCO128 (Ultralytics subset of COCO)",
+    "url": "https://github.com/ultralytics/assets coco128 000000000133.jpg",
+    "expected_phone": false,
+    "notes": "No cell-phone class in YOLO labels; negative / distractor scene",
+    "variety_tags": [
+      "coco",
+      "negative",
+      "cluttered-background"
+    ]
+  },
+  {
+    "filename": "coco128_nophone_000000000142.jpg",
+    "source": "COCO128 (Ultralytics subset of COCO)",
+    "url": "https://github.com/ultralytics/assets coco128 000000000142.jpg",
+    "expected_phone": false,
+    "notes": "No cell-phone class in YOLO labels; negative / distractor scene",
+    "variety_tags": [
+      "coco",
+      "negative",
+      "cluttered-background"
+    ]
+  },
+  {
+    "filename": "coco128_nophone_000000000257.jpg",
+    "source": "COCO128 (Ultralytics subset of COCO)",
+    "url": "https://github.com/ultralytics/assets coco128 000000000257.jpg",
+    "expected_phone": false,
+    "notes": "No cell-phone class in YOLO labels; negative / distractor scene",
+    "variety_tags": [
+      "coco",
+      "negative",
+      "cluttered-background"
+    ]
+  }
+]

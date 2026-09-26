@@ -1,0 +1,124 @@
+{
+  "confidenceUsed": 0.2,
+  "success": [
+    {
+      "image": "commons_08.jpg",
+      "category": "successful",
+      "phoneCount": 1,
+      "bestScore": 0.9180644154548645,
+      "detections": [
+        {
+          "box": {
+            "x": 385.90533447265625,
+            "y": 160.23162841796875,
+            "width": 587.1378173828125,
+            "height": 595.649169921875
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.9180644154548645
+        }
+      ],
+      "annotated": "homework/results/examples/success__commons_08.jpg",
+      "why": "Expected phone present; detector returned 1 box(es) with bestScore=0.918 at conf=0.20."
+    },
+    {
+      "image": "commons_06.png",
+      "category": "successful",
+      "phoneCount": 1,
+      "bestScore": 0.8717578649520874,
+      "detections": [
+        {
+          "box": {
+            "x": 25.74529266357422,
+            "y": 3.1844558715820312,
+            "width": 1154.5851516723633,
+            "height": 2119.8431854248047
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.8717578649520874
+        }
+      ],
+      "annotated": "homework/results/examples/success__commons_06.jpg",
+      "why": "Expected phone present; detector returned 1 box(es) with bestScore=0.872 at conf=0.20."
+    }
+  ],
+  "partial": [
+    {
+      "image": "commons_09.png",
+      "category": "partially_successful",
+      "phoneCount": 2,
+      "bestScore": 0.25737500190734863,
+      "detections": [
+        {
+          "box": {
+            "x": 849.1173400878906,
+            "y": 33.93638610839844,
+            "width": 404.21624755859375,
+            "height": 474.1053771972656
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.25737500190734863
+        },
+        {
+          "box": {
+            "x": 1130.0673217773438,
+            "y": 39.24440002441406,
+            "width": 149.2960205078125,
+            "height": 326.1623229980469
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.25546425580978394
+        }
+      ],
+      "annotated": "homework/results/examples/partial__commons_09.jpg",
+      "why": "Phone found (count=2, bestScore=0.257) but under harder conditions (wikimedia,phone-subject,product)."
+    },
+    {
+      "image": "commons_14.jpg",
+      "category": "partially_successful",
+      "phoneCount": 1,
+      "bestScore": 0.2623389959335327,
+      "detections": [
+        {
+          "box": {
+            "x": 759.1156311035156,
+            "y": 401.6531066894531,
+            "width": 145.43548583984375,
+            "height": 235.20159912109375
+          },
+          "classId": 67,
+          "className": "cell phone",
+          "score": 0.2623389959335327
+        }
+      ],
+      "annotated": "homework/results/examples/partial__commons_14.jpg",
+      "why": "Phone found (count=1, bestScore=0.262) but under harder conditions (wikimedia,held-in-hand,occlusion-risk,viewpoint)."
+    }
+  ],
+  "failure": [
+    {
+      "image": "coco128_phone_000000000395.jpg",
+      "category": "failure",
+      "failureType": "fn",
+      "phoneCount": 0,
+      "bestScore": 0.19852402806282043,
+      "detections": [],
+      "annotated": "homework/results/examples/failure__coco128_phone_000000000395.jpg",
+      "why": "False negative: expected phone but phoneCount=0 (bestScore=0.199 stayed below threshold)."
+    },
+    {
+      "image": "coco128_phone_000000000328.jpg",
+      "category": "failure",
+      "failureType": "fn",
+      "phoneCount": 0,
+      "bestScore": 0.07413148880004883,
+      "detections": [],
+      "annotated": "homework/results/examples/failure__coco128_phone_000000000328.jpg",
+      "why": "False negative: expected phone but phoneCount=0 (bestScore=0.074 stayed below threshold)."
+    }
+  ]
+}

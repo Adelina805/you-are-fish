@@ -1,0 +1,41 @@
+[
+  {
+    "scoreThreshold": 0.2,
+    "tag": "conf_0.20",
+    "imagesWithPhones": 14,
+    "totalPhonesDetected": 44,
+    "meanInferMs": 110.05,
+    "tp": 14,
+    "fp": 0,
+    "tn": 9,
+    "fn": 17,
+    "detection_rate_on_expected": 0.452,
+    "false_positive_rate_on_negatives": 0.0
+  },
+  {
+    "scoreThreshold": 0.5,
+    "tag": "conf_0.50",
+    "imagesWithPhones": 11,
+    "totalPhonesDetected": 32,
+    "meanInferMs": 100.89,
+    "tp": 11,
+    "fp": 0,
+    "tn": 9,
+    "fn": 20,
+    "detection_rate_on_expected": 0.355,
+    "false_positive_rate_on_negatives": 0.0
+  },
+  {
+    "scoreThreshold": 0.8,
+    "tag": "conf_0.80",
+    "imagesWithPhones": 5,
+    "totalPhonesDetected": 13,
+    "meanInferMs": 104.92,
+    "tp": 5,
+    "fp": 0,
+    "tn": 9,
+    "fn": 26,
+    "detection_rate_on_expected": 0.161,
+    "false_positive_rate_on_negatives": 0.0
+  }
+]
