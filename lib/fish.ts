@@ -86,6 +86,127 @@ function clampFish(fish: FishState, width: number, height: number): void {
   }
 }
 
+export type FishFleeSide = "left" | "right";
+
+/** Nearest horizontal screen edge from the fish’s current x. */
+export function nearestFleeSide(fish: FishState, width: number): FishFleeSide {
+  return fish.x < width / 2 ? "left" : "right";
+}
+
+/** True when the fish body is mostly past the flee-side edge. */
+export function isFishMostlyOffScreen(
+  fish: FishState,
+  width: number,
+  side: FishFleeSide,
+): boolean {
+  if (side === "left") {
+    return fish.x < -FISH_RADIUS * 0.25;
+  }
+  return fish.x > width + FISH_RADIUS * 0.25;
+}
+
+/** True when the fish center is back inside the normal clamp region. */
+export function isFishOnScreen(fish: FishState, width: number, height: number): boolean {
+  const r = FISH_RADIUS;
+  return fish.x >= r && fish.x <= width - r && fish.y >= r && fish.y <= height - r;
+}
+
+/**
+ * Drive the fish quickly off the chosen horizontal side (no edge clamp).
+ * Vertical motion is damped so exit is mostly horizontal.
+ */
+export function updateFishFlee(
+  fish: FishState,
+  side: FishFleeSide,
+  dt: number,
+  height: number,
+): void {
+  if (dt <= 0) {
+    return;
+  }
+
+  const dirX = side === "left" ? -1 : 1;
+  // Slightly above normal max so the exit reads as a quick dash.
+  const fleeSpeed = FISH_MAX_SPEED * 1.35;
+  fish.vx = dirX * fleeSpeed;
+  fish.vy *= Math.max(0, 1 - FISH_DRAG * 2 * dt);
+  fish.headingX = dirX;
+  fish.headingY = 0;
+  fish.x += fish.vx * dt;
+  fish.y += fish.vy * dt;
+
+  // Keep y loosely in view while fleeing so return y stays sensible.
+  const r = FISH_RADIUS;
+  if (fish.y < r) {
+    fish.y = r;
+    fish.vy = 0;
+  } else if (fish.y > height - r) {
+    fish.y = height - r;
+    fish.vy = 0;
+  }
+}
+
+/**
+ * Place the fish just off-screen on `side`, facing inward, ready to swim back.
+ */
+export function placeFishForReturn(
+  fish: FishState,
+  side: FishFleeSide,
+  width: number,
+  height: number,
+): void {
+  const r = FISH_RADIUS;
+  fish.y = Math.min(Math.max(fish.y, r), height - r);
+  if (side === "left") {
+    fish.x = -r * 1.5;
+    fish.headingX = 1;
+  } else {
+    fish.x = width + r * 1.5;
+    fish.headingX = -1;
+  }
+  fish.headingY = 0;
+  fish.vx = fish.headingX * FISH_MAX_SPEED;
+  fish.vy = 0;
+}
+
+/**
+ * Swim back onto the screen from the flee side (no edge clamp until on-screen).
+ */
+export function updateFishReturn(
+  fish: FishState,
+  side: FishFleeSide,
+  dt: number,
+  width: number,
+  height: number,
+): void {
+  if (dt <= 0) {
+    return;
+  }
+
+  const dirX = side === "left" ? 1 : -1;
+  const targetX = side === "left" ? FISH_RADIUS * 2.5 : width - FISH_RADIUS * 2.5;
+  const targetY = Math.min(Math.max(fish.y, FISH_RADIUS), height - FISH_RADIUS);
+
+  const dx = targetX - fish.x;
+  const dy = targetY - fish.y;
+  const dist = Math.hypot(dx, dy) || 1;
+  const ux = dx / dist;
+  const uy = dy / dist;
+
+  // Bias strongly horizontal so return matches the flee axis.
+  const hx = ux * 0.85 + dirX * 0.15;
+  const hy = uy * 0.85;
+  const hLen = Math.hypot(hx, hy) || 1;
+
+  const speed = FISH_MAX_SPEED * 1.1;
+  fish.vx = (hx / hLen) * speed;
+  fish.vy = (hy / hLen) * speed;
+  fish.headingX = fish.vx / speed;
+  fish.headingY = fish.vy / speed;
+  fish.x += fish.vx * dt;
+  fish.y += fish.vy * dt;
+}
+
 export function updateFish(
   fish: FishState,
   direction: LookDirection | null,

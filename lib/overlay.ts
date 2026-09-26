@@ -28,6 +28,8 @@ export type PhoneDebugStats = {
   /** Detector finished loading successfully. */
   available: boolean;
   phoneDetected: boolean;
+  /** Stabilized presence (hysteresis), independent of raw YOLO flicker. */
+  phonePresent: boolean;
   /** Max phone-class score this frame (pre-threshold). */
   bestScore: number | null;
   beforeNms: number;
@@ -159,6 +161,7 @@ export function drawDebugOverlay(
         "",
         "Object Detection",
         `Phone     ${phone.phoneDetected ? "yes" : "no"}`,
+        `Phone present ${phone.phonePresent ? "yes" : "no"}`,
         `Best score ${best}`,
         `Before NMS ${phone.beforeNms}`,
         `After NMS  ${phone.afterNms}`,
@@ -212,6 +215,31 @@ export function drawDebugOverlay(
   ctx.restore();
 
   return panelTop + panelHeight + margin;
+}
+
+/** Centered interaction message (phone reaction). */
+export function drawCenteredMessage(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  text: string,
+): void {
+  if (!text) {
+    return;
+  }
+
+  const { width: uiW, height: uiH } = beginScaledUi(ctx, width, height);
+  const fontSize = Math.max(22, Math.round(36 * Math.min(1, uiW / 900)));
+  ctx.font = `600 ${fontSize}px ui-rounded, system-ui, sans-serif`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  const x = uiW / 2;
+  const y = uiH / 2;
+  ctx.fillStyle = "rgba(0, 0, 0, 0.45)";
+  ctx.fillText(text, x + 2, y + 2);
+  ctx.fillStyle = "#ffffff";
+  ctx.fillText(text, x, y);
+  ctx.restore();
 }
 
 /**

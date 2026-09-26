@@ -25,8 +25,15 @@ import {
 import {
   createFish,
   drawFish,
+  isFishMostlyOffScreen,
+  isFishOnScreen,
+  nearestFleeSide,
+  placeFishForReturn,
   updateFish,
+  updateFishFlee,
+  updateFishReturn,
   type FishFaceSource,
+  type FishFleeSide,
   type FishState,
 } from "@/lib/fish";
 import { estimateHeadPose } from "@/lib/head-pose";
@@ -37,11 +44,16 @@ import {
   type PhoneDetector,
 } from "@/lib/object-detection/phone-detector";
 import {
+  drawCenteredMessage,
   drawDebugOverlay,
   drawDirectionLabel,
   drawPhoneDetections,
   drawPoseSignalViz,
 } from "@/lib/overlay";
+import {
+  PHONE_BETTER_MESSAGE_MS,
+  PhonePresenceTracker,
+} from "@/lib/phone-presence";
 import { PoseHistory } from "@/lib/pose-history";
 import { PhoneBoxSmoother, PoseSmoother } from "@/lib/smoothing";
 
@@ -144,6 +156,9 @@ type MeshStyle = {
 
 type SessionMode = "stopped" | "preview" | "running";
 
+/** Temporary fish reaction while a phone is (or was) present. */
+type FishPhoneReaction = "normal" | "fleeing" | "hidden" | "returning";
+
 type Session = {
   landmarker: FaceLandmarkerType | null;
   drawing: DrawingUtilsType | null;
@@ -176,6 +191,13 @@ type Session = {
   phoneBestScore: number | null;
   /** True once loadPhoneDetector finished (success or soft-fail). */
   phoneDetectorLoadAttempted: boolean;
+  phonePresence: PhonePresenceTracker;
+  fishPhoneReaction: FishPhoneReaction;
+  fishFleeSide: FishFleeSide | null;
+  /** Centered interaction text; null when none. */
+  phoneMessage: string | null;
+  /** Wall-clock when “That’s better.” should clear; null if not scheduled. */
+  phoneBetterClearMs: number | null;
   lastTimestamp: number;
   lastFrameTime: number | null;
   fps: number;
@@ -208,6 +230,11 @@ function createSession(): Session {
     phoneDetections: [],
     phoneBestScore: null,
     phoneDetectorLoadAttempted: false,
+    phonePresence: new PhonePresenceTracker(),
+    fishPhoneReaction: "normal",
+    fishFleeSide: null,
+    phoneMessage: null,
+    phoneBetterClearMs: null,
     lastTimestamp: -1,
     lastFrameTime: null,
     fps: 0,
@@ -620,25 +647,114 @@ export default function CameraStage() {
       }
     }
 
+    const rawPhone = session.phoneDetections.length > 0;
+    session.phonePresence.update(rawPhone, now);
+
     if (session.calibrator.isComplete) {
       if (!session.fish) {
         session.fish = createFish(width, height);
       }
-      if (phaseRef.current === "playing") {
-        updateFish(session.fish, direction, dt, width, height);
+
+      const phonePresent = session.phonePresence.present;
+      const reaction = session.fishPhoneReaction;
+
+      // Start flee when stabilized presence turns on during normal play.
+      if (
+        phonePresent &&
+        reaction === "normal" &&
+        phaseRef.current === "playing"
+      ) {
+        session.fishFleeSide = nearestFleeSide(session.fish, width);
+        session.fishPhoneReaction = "fleeing";
+        session.phoneMessage = null;
+        session.phoneBetterClearMs = null;
+      }
+
+      // Phone gone while hidden (or still fleeing): return with “That’s better.”
+      if (
+        !phonePresent &&
+        (session.fishPhoneReaction === "hidden" ||
+          session.fishPhoneReaction === "fleeing")
+      ) {
+        const side =
+          session.fishFleeSide ?? nearestFleeSide(session.fish, width);
+        session.fishFleeSide = side;
+        if (session.fishPhoneReaction === "hidden") {
+          placeFishForReturn(session.fish, side, width, height);
+        }
+        session.fishPhoneReaction = "returning";
+        session.phoneMessage = "That's better.";
+        session.phoneBetterClearMs = now + PHONE_BETTER_MESSAGE_MS;
+      }
+
+      // Phone returns during return → flee again.
+      if (phonePresent && session.fishPhoneReaction === "returning") {
+        session.fishFleeSide = nearestFleeSide(session.fish, width);
+        session.fishPhoneReaction = "fleeing";
+        session.phoneMessage = null;
+        session.phoneBetterClearMs = null;
+      }
+
+      if (session.phoneBetterClearMs !== null && now >= session.phoneBetterClearMs) {
+        if (session.phoneMessage === "That's better.") {
+          session.phoneMessage = null;
+        }
+        session.phoneBetterClearMs = null;
+      }
+
+      const playing = phaseRef.current === "playing";
+      const activeReaction = session.fishPhoneReaction;
+
+      if (playing) {
+        if (activeReaction === "fleeing" && session.fishFleeSide) {
+          updateFishFlee(session.fish, session.fishFleeSide, dt, height);
+          if (isFishMostlyOffScreen(session.fish, width, session.fishFleeSide)) {
+            session.fishPhoneReaction = "hidden";
+            session.phoneMessage = "Put that away. You're a fish.";
+            session.phoneBetterClearMs = null;
+          }
+        } else if (activeReaction === "hidden") {
+          // Stay off-screen; no steering.
+        } else if (activeReaction === "returning" && session.fishFleeSide) {
+          updateFishReturn(
+            session.fish,
+            session.fishFleeSide,
+            dt,
+            width,
+            height,
+          );
+          if (isFishOnScreen(session.fish, width, height)) {
+            session.fishPhoneReaction = "normal";
+            session.fishFleeSide = null;
+            // Clamp into play bounds; steering resumes next frame.
+            updateFish(session.fish, null, 0, width, height);
+          }
+        } else {
+          updateFish(session.fish, direction, dt, width, height);
+        }
       } else {
         updateFish(session.fish, null, 0, width, height);
       }
-      emitBubblesContinuous(
-        session.bubbles,
-        session.fish,
-        mouthStatus.openness,
-        dt,
-        session.bubbleEmitter,
-      );
+
+      const fishVisible = session.fishPhoneReaction !== "hidden";
+      if (fishVisible) {
+        emitBubblesContinuous(
+          session.bubbles,
+          session.fish,
+          mouthStatus.openness,
+          dt,
+          session.bubbleEmitter,
+        );
+      }
       updateBubbles(session.bubbles, dt, width, height);
-      drawFish(ctx, session.fish, faceSource);
+      if (fishVisible) {
+        drawFish(ctx, session.fish, faceSource);
+      }
       drawBubbles(ctx, session.bubbles);
+
+      if (session.phoneMessage) {
+        drawCenteredMessage(ctx, width, height, session.phoneMessage);
+      }
     }
 
     if (trackingOpen) {
@@ -663,6 +779,7 @@ export default function CameraStage() {
           phoneStats = {
             available: true,
             phoneDetected: session.phoneDetections.length > 0,
+            phonePresent: session.phonePresence.present,
             bestScore: session.phoneBestScore,
             beforeNms: session.phoneCandidates.length,
             afterNms: session.phoneDetections.length,
@@ -674,6 +791,7 @@ export default function CameraStage() {
           phoneStats = {
             available: false,
             phoneDetected: false,
+            phonePresent: false,
             bestScore: null,
             beforeNms: 0,
             afterNms: 0,
@@ -686,6 +804,7 @@ export default function CameraStage() {
           phoneStats = {
             available: true,
             phoneDetected: false,
+            phonePresent: session.phonePresence.present,
             bestScore: null,
             beforeNms: 0,
             afterNms: 0,
