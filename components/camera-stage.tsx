@@ -7,6 +7,7 @@ import type {
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import {
+  burstBubbles,
   createBubbleEmitter,
   drawBubbles,
   emitBubblesContinuous,
@@ -36,6 +37,15 @@ import {
   type FishFleeSide,
   type FishState,
 } from "@/lib/fish";
+import {
+  drawFood,
+  foodCollected,
+  foodSpawnBounds,
+  isFoodInBounds,
+  spawnFood,
+  type Food,
+  type FoodSpawnAvoid,
+} from "@/lib/food";
 import { estimateHeadPose } from "@/lib/head-pose";
 import { MouthTracker } from "@/lib/mouth";
 import {
@@ -49,6 +59,7 @@ import {
   drawDirectionLabel,
   drawPhoneDetections,
   drawPoseSignalViz,
+  drawScore,
 } from "@/lib/overlay";
 import {
   PHONE_BETTER_MESSAGE_MS,
@@ -261,6 +272,12 @@ type Session = {
   fish: FishState | null;
   bubbles: Bubble[];
   bubbleEmitter: BubbleEmitter;
+  /** Single session-only food pellet; null until first playing spawn. */
+  food: Food | null;
+  /** Session-only collect count; resets with createSession / camera restart. */
+  score: number;
+  /** Prior-frame debug HUD bottom edge for food spawn avoidance; null if closed. */
+  lastHudBottom: number | null;
   /** Ephemeral per-frame face crop buffer; never persisted. */
   faceCropCanvas: HTMLCanvasElement | null;
   phoneDetector: PhoneDetector | null;
@@ -310,6 +327,9 @@ function createSession(): Session {
     fish: null,
     bubbles: [],
     bubbleEmitter: createBubbleEmitter(),
+    food: null,
+    score: 0,
+    lastHudBottom: null,
     faceCropCanvas: null,
     phoneDetector: null,
     nextPhoneInferMs: 0,
@@ -806,6 +826,14 @@ export default function CameraStage() {
 
       const playing = phaseRef.current === "playing";
       const activeReaction = session.fishPhoneReaction;
+      const foodAvoid: FoodSpawnAvoid | null =
+        trackingOpen && session.lastHudBottom !== null
+          ? {
+              hudBottom: session.lastHudBottom,
+              // Conservative left edge of the top-right debug panel band.
+              left: width - Math.min(width * 0.48, 320),
+            }
+          : null;
 
       if (playing) {
         if (activeReaction === "fleeing" && session.fishFleeSide) {
@@ -836,6 +864,58 @@ export default function CameraStage() {
         }
       } else {
         updateFish(session.fish, null, 0, width, height);
+        // While hidden from play (e.g. recalibrating), nudge the pellet off the
+        // fish so resuming never auto-awards a point.
+        if (session.food && foodCollected(session.fish, session.food)) {
+          session.food = spawnFood(
+            width,
+            height,
+            session.fish,
+            session.food,
+            foodAvoid,
+          );
+        }
+      }
+
+      if (playing) {
+        const bounds = foodSpawnBounds(width, height, foodAvoid);
+        if (!session.food) {
+          if (session.fishPhoneReaction === "normal") {
+            session.food = spawnFood(
+              width,
+              height,
+              session.fish,
+              null,
+              foodAvoid,
+            );
+          }
+        } else if (bounds && !isFoodInBounds(session.food, bounds)) {
+          session.food = spawnFood(
+            width,
+            height,
+            session.fish,
+            session.food,
+            foodAvoid,
+          );
+        }
+
+        // Collect only during normal play (paused while fleeing / hidden / returning).
+        if (
+          session.fishPhoneReaction === "normal" &&
+          session.food &&
+          foodCollected(session.fish, session.food)
+        ) {
+          const eaten = session.food;
+          session.score += 1;
+          burstBubbles(session.bubbles, eaten.x, eaten.y);
+          session.food = spawnFood(
+            width,
+            height,
+            session.fish,
+            eaten,
+            foodAvoid,
+          );
+        }
       }
 
       const fishVisible = session.fishPhoneReaction !== "hidden";
@@ -849,10 +929,16 @@ export default function CameraStage() {
         );
       }
       updateBubbles(session.bubbles, dt, width, height);
+      if (playing && session.food) {
+        drawFood(ctx, session.food);
+      }
       if (fishVisible) {
         drawFish(ctx, session.fish, faceSource);
       }
       drawBubbles(ctx, session.bubbles);
+      if (playing) {
+        drawScore(ctx, width, height, session.score);
+      }
 
       if (session.phoneMessage) {
         drawCenteredMessage(ctx, width, height, session.phoneMessage);
@@ -929,9 +1015,12 @@ export default function CameraStage() {
         mouthStatus,
         phoneStats,
       );
+      session.lastHudBottom = hudBottom;
       if (DEBUG) {
         drawPoseSignalViz(ctx, width, vizPose, session.history, hudBottom);
       }
+    } else {
+      session.lastHudBottom = null;
     }
 
     session.frameId = requestAnimationFrame(loop);

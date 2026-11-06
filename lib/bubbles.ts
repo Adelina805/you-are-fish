@@ -101,6 +101,26 @@ export function emitBubblesContinuous(
 }
 
 /**
+ * Short celebratory puff at a point (food collect). Reuses Bubble + update/draw.
+ */
+export function burstBubbles(
+  bubbles: Bubble[],
+  x: number,
+  y: number,
+  count = 6,
+): void {
+  for (let i = 0; i < count; i += 1) {
+    bubbles.push({
+      x: x + randRange(-6, 6),
+      y: y + randRange(-6, 6),
+      vx: randRange(-BUBBLE_DRIFT * 1.4, BUBBLE_DRIFT * 1.4),
+      vy: -BUBBLE_RISE_SPEED * randRange(1.1, 1.8),
+      r: randRange(3.5, 7),
+    });
+  }
+}
+
+/**
  * Rise, add light random drift, remove when fully off-screen.
  */
 export function updateBubbles(

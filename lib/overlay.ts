@@ -242,6 +242,28 @@ export function drawCenteredMessage(
   ctx.restore();
 }
 
+/** Small top-left session score (number only; no label / best / timer). */
+export function drawScore(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  score: number,
+): void {
+  const { width: uiW } = beginScaledUi(ctx, width, height);
+  const fontSize = Math.max(16, Math.round(18 * Math.min(1, uiW / 900)));
+  const x = 16;
+  const y = 16;
+  ctx.font = `600 ${fontSize}px ui-rounded, system-ui, sans-serif`;
+  ctx.textAlign = "left";
+  ctx.textBaseline = "top";
+  const text = `EATEN: ${score}`;
+  ctx.fillStyle = "rgba(0, 0, 0, 0.45)";
+  ctx.fillText(text, x + 1, y + 1);
+  ctx.fillStyle = "#ffffff";
+  ctx.fillText(text, x, y);
+  ctx.restore();
+}
+
 /**
  * Draw post-NMS phone boxes on the camera canvas (developer debug).
  * Boxes are already in mirrored source-canvas pixels.
