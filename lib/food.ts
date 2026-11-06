@@ -158,15 +158,15 @@ export function drawFood(
   ctx.save();
   ctx.beginPath();
   ctx.arc(food.x, food.y, r, 0, Math.PI * 2);
-  ctx.fillStyle = "#f4c430";
+  ctx.fillStyle = "#c4a574";
   ctx.fill();
-  ctx.strokeStyle = "#e8a010";
+  ctx.strokeStyle = "#9a7b4f";
   ctx.lineWidth = Math.max(1.5, r * 0.2);
   ctx.stroke();
   // Soft highlight so it reads as a pellet, not a flat disc.
   ctx.beginPath();
   ctx.arc(food.x - r * 0.25, food.y - r * 0.25, r * 0.28, 0, Math.PI * 2);
-  ctx.fillStyle = "rgba(255, 255, 255, 0.45)";
+  ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
   ctx.fill();
   ctx.restore();
 }
