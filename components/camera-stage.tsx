@@ -56,14 +56,33 @@ import {
 } from "@/lib/phone-presence";
 import { PoseHistory } from "@/lib/pose-history";
 import { PhoneBoxSmoother, PoseSmoother } from "@/lib/smoothing";
+import {
+  logStartupTiming,
+  logYoloTiming,
+  markStartup,
+  resetStartupTiming,
+  setLandmarkerDelegate,
+} from "@/lib/startup-timing";
 
-const MODEL_URL =
-  "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task";
-const WASM_URL = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.35/wasm";
+/** Same-origin Face Landmarker model (served from `public/models/`). */
+const MODEL_URL = "/models/face_landmarker.task";
+/** Same-origin MediaPipe WASM fileset (served from `public/mediapipe/wasm/`). */
+const WASM_URL = "/mediapipe/wasm";
 const CAMERA_ENABLED_KEY = "you-are-fish:camera-enabled";
+const DELEGATE_CACHE_KEY = "you-are-fish:face-delegate";
 const BLUE_WASH = "rgba(20, 80, 140, 0.35)";
 const COUNTDOWN_SEC = 3;
 const SUCCESS_HOLD_MS = 1000;
+
+type FaceDelegate = "GPU" | "CPU";
+type LoadingStage = "camera" | "face_tracking" | "almost_ready";
+
+const LOADING_STAGE_COPY: Record<LoadingStage, string> = {
+  camera: "Opening the camera…",
+  face_tracking: "Loading face tracking…",
+  almost_ready: "Almost ready…",
+};
+
 /**
  * Min start-to-start period for phone infer (~6.25 Hz). Actual gap is also at
  * least the duration of the previous run so a slow machine cannot pin a core.
@@ -138,6 +157,75 @@ async function shouldAutoStartCamera(): Promise<boolean> {
   return hasCameraEnabledFlag();
 }
 
+function isCoarseMobile(): boolean {
+  if (typeof window === "undefined") {
+    return false;
+  }
+  try {
+    if (window.matchMedia("(pointer: coarse)").matches) {
+      return true;
+    }
+  } catch {
+    // matchMedia may be unavailable in older environments
+  }
+  return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+}
+
+function hasWebGl2(): boolean {
+  try {
+    const canvas = document.createElement("canvas");
+    return Boolean(canvas.getContext("webgl2"));
+  } catch {
+    return false;
+  }
+}
+
+function readCachedDelegate(): FaceDelegate | null {
+  try {
+    const value = sessionStorage.getItem(DELEGATE_CACHE_KEY);
+    if (value === "GPU" || value === "CPU") {
+      return value;
+    }
+  } catch {
+    // sessionStorage may be unavailable
+  }
+  return null;
+}
+
+function writeCachedDelegate(delegate: FaceDelegate): void {
+  try {
+    sessionStorage.setItem(DELEGATE_CACHE_KEY, delegate);
+  } catch {
+    // sessionStorage may be unavailable
+  }
+}
+
+/**
+ * Prefer a single createFromOptions path. Mobile / no WebGL2 → CPU only.
+ * Cache the winner so later starts in the same tab skip a failed GPU attempt.
+ * Cached GPU still keeps CPU as a last-resort fallback.
+ */
+function preferredFaceDelegates(): FaceDelegate[] {
+  const cached = readCachedDelegate();
+  if (cached === "CPU") {
+    return ["CPU"];
+  }
+  if (cached === "GPU") {
+    return ["GPU", "CPU"];
+  }
+  if (isCoarseMobile() || !hasWebGl2()) {
+    return ["CPU"];
+  }
+  return ["GPU", "CPU"];
+}
+
+function cameraVideoConstraints(): MediaTrackConstraints {
+  if (isCoarseMobile()) {
+    return { facingMode: "user", width: { ideal: 640 }, height: { ideal: 480 } };
+  }
+  return { facingMode: "user", width: { ideal: 1280 }, height: { ideal: 720 } };
+}
+
 type AppPhase =
   | "camera_idle"
   | "camera_loading"
@@ -154,7 +242,7 @@ type MeshStyle = {
   lineWidth: number;
 };
 
-type SessionMode = "stopped" | "preview" | "running";
+type SessionMode = "stopped" | "running";
 
 /** Temporary fish reaction while a phone is (or was) present. */
 type FishPhoneReaction = "normal" | "fleeing" | "hidden" | "returning";
@@ -191,6 +279,8 @@ type Session = {
   phoneBestScore: number | null;
   /** True once loadPhoneDetector finished (success or soft-fail). */
   phoneDetectorLoadAttempted: boolean;
+  /** True once loadPhoneDetector was kicked off (avoids duplicate starts). */
+  phoneDetectorLoadStarted: boolean;
   phonePresence: PhonePresenceTracker;
   fishPhoneReaction: FishPhoneReaction;
   fishFleeSide: FishFleeSide | null;
@@ -230,6 +320,7 @@ function createSession(): Session {
     phoneDetections: [],
     phoneBestScore: null,
     phoneDetectorLoadAttempted: false,
+    phoneDetectorLoadStarted: false,
     phonePresence: new PhonePresenceTracker(),
     fishPhoneReaction: "normal",
     fishFleeSide: null,
@@ -316,7 +407,9 @@ function drawMirroredVideo(
 async function loadVision(session: Session): Promise<void> {
   silenceMediapipeWasmLogs();
   const vision = await import("@mediapipe/tasks-vision");
+  markStartup("vision_import_done");
   const fileset = await vision.FilesetResolver.forVisionTasks(WASM_URL);
+  markStartup("wasm_fileset_done");
   const options = {
     runningMode: "VIDEO" as const,
     numFaces: 1,
@@ -324,17 +417,30 @@ async function loadVision(session: Session): Promise<void> {
     outputFaceBlendshapes: true,
   };
 
-  try {
-    session.landmarker = await vision.FaceLandmarker.createFromOptions(fileset, {
-      ...options,
-      baseOptions: { modelAssetPath: MODEL_URL, delegate: "GPU" },
-    });
-  } catch {
-    session.landmarker = await vision.FaceLandmarker.createFromOptions(fileset, {
-      ...options,
-      baseOptions: { modelAssetPath: MODEL_URL, delegate: "CPU" },
-    });
+  const delegates = preferredFaceDelegates();
+  let lastError: unknown = null;
+  let created = false;
+  for (const delegate of delegates) {
+    try {
+      session.landmarker = await vision.FaceLandmarker.createFromOptions(fileset, {
+        ...options,
+        baseOptions: { modelAssetPath: MODEL_URL, delegate },
+      });
+      writeCachedDelegate(delegate);
+      setLandmarkerDelegate(delegate);
+      created = true;
+      break;
+    } catch (caught) {
+      lastError = caught;
+      session.landmarker = null;
+    }
   }
+  if (!created) {
+    throw lastError instanceof Error
+      ? lastError
+      : new Error("Could not create Face Landmarker");
+  }
+  markStartup("landmarker_ready");
 
   session.DrawingUtils = vision.DrawingUtils;
   const FaceLandmarker = vision.FaceLandmarker;
@@ -370,8 +476,12 @@ async function loadVision(session: Session): Promise<void> {
   ];
 }
 
-/** Soft-load: failure must not block Face Landmarker / fish. */
-async function loadPhoneDetector(session: Session): Promise<void> {
+/**
+ * Soft-load after the first face frame so ORT/YOLO never share bandwidth with
+ * MediaPipe on the Enable Camera → Ready path. Failure must not block fish.
+ */
+async function loadPhoneDetector(session: Session, generation: number): Promise<void> {
+  markStartup("yolo_import");
   try {
     // Dynamic import keeps onnxruntime-web / worker off the camera startup path.
     const { PhoneDetector } = await import("@/lib/object-detection/phone-detector");
@@ -383,6 +493,8 @@ async function loadPhoneDetector(session: Session): Promise<void> {
       return;
     }
     session.phoneDetector = detector;
+    markStartup("yolo_ready");
+    logYoloTiming(DEBUG, generation);
   } catch (caught) {
     session.phoneDetector = null;
     console.warn(
@@ -392,6 +504,14 @@ async function loadPhoneDetector(session: Session): Promise<void> {
   } finally {
     session.phoneDetectorLoadAttempted = true;
   }
+}
+
+function maybeStartPhoneDetectorLoad(session: Session, generation: number): void {
+  if (session.phoneDetectorLoadStarted || session.phoneDetectorLoadAttempted) {
+    return;
+  }
+  session.phoneDetectorLoadStarted = true;
+  void loadPhoneDetector(session, generation);
 }
 
 /**
@@ -445,8 +565,10 @@ export default function CameraStage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const sessionRef = useRef<Session>(createSession());
   const showTrackingInfoRef = useRef(false);
-  const phaseRef = useRef<AppPhase>("camera_loading");
-  const [phase, setPhase] = useState<AppPhase>("camera_loading");
+  const phaseRef = useRef<AppPhase>("camera_idle");
+  const startGenerationRef = useRef(0);
+  const [phase, setPhase] = useState<AppPhase>("camera_idle");
+  const [loadingStage, setLoadingStage] = useState<LoadingStage>("camera");
   const [error, setError] = useState<string | null>(null);
   const [countdown, setCountdown] = useState<number | null>(null);
   const [showTrackingInfo, setShowTrackingInfo] = useState(false);
@@ -484,30 +606,6 @@ export default function CameraStage() {
       });
     }
     session.faceCropCanvas = null;
-  }, []);
-
-  const previewLoop = useCallback(() => {
-    const session = sessionRef.current;
-    if (session.mode !== "preview") {
-      return;
-    }
-
-    const video = videoRef.current;
-    const canvas = canvasRef.current;
-    if (!video || !canvas || video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) {
-      session.frameId = requestAnimationFrame(previewLoop);
-      return;
-    }
-
-    fitCanvasToDisplay(canvas);
-    const ctx = canvas.getContext("2d");
-    if (!ctx) {
-      session.frameId = requestAnimationFrame(previewLoop);
-      return;
-    }
-
-    drawMirroredVideo(ctx, canvas, video);
-    session.frameId = requestAnimationFrame(previewLoop);
   }, []);
 
   const loop = useCallback(() => {
@@ -567,6 +665,10 @@ export default function CameraStage() {
 
     const result = landmarker.detectForVideo(canvas, timestamp);
     if (phaseRef.current === "camera_loading") {
+      markStartup("first_detect_done");
+      markStartup("calibration_ready");
+      logStartupTiming(DEBUG, startGenerationRef.current);
+      maybeStartPhoneDetectorLoad(session, startGenerationRef.current);
       phaseRef.current = "calibration_ready";
       setPhase("calibration_ready");
     }
@@ -837,16 +939,42 @@ export default function CameraStage() {
 
   const start = useCallback(
     async (options?: { isCancelled?: () => boolean }) => {
-      const isCancelled = () => options?.isCancelled?.() ?? false;
+      const generation = startGenerationRef.current + 1;
+      startGenerationRef.current = generation;
+      const isCancelled = () =>
+        startGenerationRef.current !== generation || (options?.isCancelled?.() ?? false);
 
       setError(null);
+      setLoadingStage("camera");
       setAppPhase("camera_loading");
+      resetStartupTiming();
+      markStartup("enable_click");
+
+      // Abandon any in-flight prior start; effect cleanup / a newer generation
+      // owns teardown via stop() + isCancelled checks below.
+      const prior = sessionRef.current;
+      prior.mode = "stopped";
+      if (prior.frameId) {
+        cancelAnimationFrame(prior.frameId);
+        prior.frameId = 0;
+      }
+      prior.landmarker?.close();
+      prior.landmarker = null;
+      const priorPhone = prior.phoneDetector;
+      prior.phoneDetector = null;
+      prior.phoneInferenceInFlight = false;
+      if (priorPhone) {
+        void priorPhone.close().catch(() => {
+          /* ignore */
+        });
+      }
+
       sessionRef.current = createSession();
       const session = sessionRef.current;
 
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: "user", width: { ideal: 1280 }, height: { ideal: 720 } },
+          video: cameraVideoConstraints(),
           audio: false,
         });
         if (isCancelled()) {
@@ -862,23 +990,28 @@ export default function CameraStage() {
         }
         video.srcObject = stream;
         await video.play();
+        markStartup("gum_done");
+        setLoadingStage("face_tracking");
 
-        session.mode = "preview";
-        session.frameId = requestAnimationFrame(previewLoop);
-
+        // No previewLoop while the loading cover is up — avoid burning frames
+        // the user cannot see. Draw begins when mode becomes "running".
         await loadVision(session);
         if (isCancelled()) {
-          stop();
+          session.landmarker?.close();
+          session.landmarker = null;
+          // Only tear down the camera if this generation still owns the element.
+          if (sessionRef.current === session) {
+            stop();
+          }
           return;
         }
 
-        // Soft-load in background: do not delay face/calibration on ONNX fetch.
-        void loadPhoneDetector(session);
-
+        setLoadingStage("almost_ready");
         setCameraEnabledFlag(true);
         session.mode = "running";
         // Stay on camera_loading until the first detectForVideo completes
         // (that call can freeze the main thread; the cover hides the hitch).
+        // YOLO starts only after that first frame (see loop).
         session.frameId = requestAnimationFrame(loop);
       } catch (caught) {
         if (isCancelled()) {
@@ -894,7 +1027,7 @@ export default function CameraStage() {
         setAppPhase("camera_error");
       }
     },
-    [loop, previewLoop, setAppPhase, stop],
+    [loop, setAppPhase, stop],
   );
 
   const beginCalibration = useCallback(() => {
@@ -1002,7 +1135,7 @@ export default function CameraStage() {
           <h1 className="font-serif text-4xl tracking-wide text-[#d7ecf5] sm:text-5xl md:text-6xl">
             You Are Fish
           </h1>
-          <p className="max-w-md text-[#9ec3d4]">Getting the camera ready…</p>
+          <p className="max-w-md text-[#9ec3d4]">{LOADING_STAGE_COPY[loadingStage]}</p>
           <div
             className="mt-2 h-8 w-8 animate-spin rounded-full border-2 border-[#9ec3d4]/30 border-t-[#9ec3d4]"
             aria-hidden="true"

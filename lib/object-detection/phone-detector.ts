@@ -40,7 +40,7 @@ export const PHONE_SCORE_THRESHOLD = 0.15;
 
 export const DEFAULT_PHONE_DETECTOR_CONFIG: PhoneDetectorConfig = {
   scoreThreshold: PHONE_SCORE_THRESHOLD,
-  iouThreshold: 0.45,
+  iouThreshold: 0.80,
   nmsEnabled: true,
   inputSize: 640,
   modelUrl: DEFAULT_PHONE_MODEL_URL,
