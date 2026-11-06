@@ -1238,8 +1238,7 @@ export default function CameraStage() {
             You Are Fish
           </h1>
           <p className="max-w-md text-[#9ec3d4]">
-            This live page uses your webcam in the browser. Nothing is uploaded;
-            head pose stays on this device.
+            Become a fish using your webcam.
           </p>
           {error ? <p className="max-w-md text-sm text-red-300">{error}</p> : null}
           <button
@@ -1255,10 +1254,10 @@ export default function CameraStage() {
       {phase === "calibration_ready" ? (
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-black/45 px-6 text-center">
           <h2 className="font-serif text-3xl tracking-wide text-[#d7ecf5] sm:text-4xl">
-            Get ready to become a fish
+            Prepare to be fish.
           </h2>
           <p className="max-w-sm text-[#9ec3d4]">
-            Look straight ahead and hold still for a moment.
+            Look straight ahead and hold still.
           </p>
           <button
             type="button"
