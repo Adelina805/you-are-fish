@@ -1275,7 +1275,7 @@ export default function CameraStage() {
             {countdown}
           </p>
           <p className="max-w-sm text-[#9ec3d4]">
-            Remain still and look straight ahead.
+            Look straight ahead and hold still.
           </p>
         </div>
       ) : null}
