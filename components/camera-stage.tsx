@@ -81,7 +81,7 @@ const MODEL_URL = "/models/face_landmarker.task";
 const WASM_URL = "/mediapipe/wasm";
 const CAMERA_ENABLED_KEY = "you-are-fish:camera-enabled";
 const DELEGATE_CACHE_KEY = "you-are-fish:face-delegate";
-const BLUE_WASH = "rgba(20, 80, 140, 0.35)";
+const BLUE_WASH = "rgba(0, 110, 230, 0.42)";
 const COUNTDOWN_SEC = 3;
 const SUCCESS_HOLD_MS = 1000;
 
