@@ -4,7 +4,7 @@ import type { LookDirection } from "@/lib/direction";
  * Pixels per second² toward the look direction (scaled by look magnitude).
  * Keep roughly FISH_MAX_SPEED * FISH_DRAG so mag≈1 settles near the cap quickly.
  */
-export const FISH_ACCEL = 6000;
+export const FISH_ACCEL = 4800;
 
 /**
  * Per-second velocity decay. Higher = velocity tracks head more tightly
@@ -13,13 +13,13 @@ export const FISH_ACCEL = 6000;
 export const FISH_DRAG = 10;
 
 /** Maximum speed in pixels per second. */
-export const FISH_MAX_SPEED = 600;
+export const FISH_MAX_SPEED = 480;
 
 /**
  * Gentle cruise speed (px/s) along the last heading when look is CENTER
  * or unavailable. Settles via thrust = IDLE * DRAG against drag.
  */
-export const FISH_IDLE_SPEED = 80;
+export const FISH_IDLE_SPEED = 64;
 
 export const FISH_RADIUS = 36;
 
