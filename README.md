@@ -11,6 +11,47 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+## Milestone 1: Webcam feed
+
+Open the webcam and display the live feed in the browser.
+
+## Milestone 2: One-face Face Landmarker
+
+Open the webcam, detect one face with MediaPipe Tasks Face Landmarker, and draw the face mesh over the live feed.
+
+## Milestone 3: Head orientation
+
+Open the webcam in the browser, detect one face, and estimate head orientation from MediaPipe Face Landmarker’s facial transformation matrix.
+
+The matrix is a weighted Procrustes alignment of the canonical 3D face to the detected face (scale + rotation + translation). The app recovers the rotation with SVD and converts it to intrinsic Tait-Bryan YXZ angles. Values are shown in degrees; directional classification (Milestone 5) is applied only after calibration.
+
+Sign convention (after correcting for the mirrored selfie canvas):
+
+- Positive yaw: looking left
+- Positive pitch: looking up
+- Positive roll: tilting clockwise from the camera’s view
+
+With `DEBUG = true` in [`lib/debug.ts`](lib/debug.ts), a top-right debug panel shows raw yaw (horizontal bar) and pitch (vertical bar) with a zero crosshair, current marker, and recent unsmoothed history trail when Tracking Info is open.
+
+The Face Landmarker model is loaded in the browser from MediaPipe’s CDN.
+
+## Milestone 4: Per-user calibration
+
+After the camera starts, a guided overlay asks you to get ready. Press **Ready**, hold still through a short countdown, and the app collects head-pose samples for about 1.5 seconds to compute a neutral yaw/pitch baseline. Later measurements subtract that baseline so zero means your comfortable rest pose, not a fixed canonical face. Use **Recalibrate** in Tracking Info (**ⓘ**) any time to redo it.
+
+Tracking Info shows:
+
+- raw yaw/pitch
+- calibrated yaw/pitch (after baseline subtraction)
+- the calculated neutral baseline
+- FPS, face detected, and related stats
+
+With `DEBUG = true` in [`lib/debug.ts`](lib/debug.ts), the pose signal viz (and face mesh / direction label) appear when Tracking Info is open; they use calibrated values after calibration completes.
+
+### Why calibrate per user?
+
+MediaPipe's facial transformation matrix is a Procrustes fit to a canonical 3D face, so its Euler angles are relative to that model, not to "this person looking at this screen." A global zero of `(0, 0)` would assume identical camera geometry, seating posture, anatomy, and session setup for everyone. In practice, laptop webcams sit below eye level, people sit differently, and face shape varies. Per-user calibration makes zero mean "looking comfortably at the screen right now," which is what later directional controls will need.
+
 ## Milestone 5: Directional classifier
 
 After calibration, calibrated yaw/pitch are smoothed with an exponential moving average, then classified into a continuous 2D look vector in screen space. Inside the dead zone the UI shows `CENTER`; outside it shows a direction arrow plus unit coordinates `(x, y)` and angle. No fish yet.
@@ -45,47 +86,6 @@ The defaults are starting guesses, not a one-shot tune:
 3. Set each axis between those two bounds: `noise_ceiling < dead_zone < intentional_gesture`. Yaw and pitch often differ, so keep separate constants.
 4. Re-test: still → stays `CENTER`; slow glance → arrow tracks continuously; return to rest → `CENTER` again. If it flickers at the edge, raise the dead zone slightly. If you must crane your neck, lower it.
 5. Repeat after changing chair, camera height, or distance.
-
-## Milestone 4: Per-user calibration
-
-After the camera starts, a guided overlay asks you to get ready. Press **Ready**, hold still through a short countdown, and the app collects head-pose samples for about 1.5 seconds to compute a neutral yaw/pitch baseline. Later measurements subtract that baseline so zero means your comfortable rest pose, not a fixed canonical face. Use **Recalibrate** in Tracking Info (**ⓘ**) any time to redo it.
-
-Tracking Info shows:
-
-- raw yaw/pitch
-- calibrated yaw/pitch (after baseline subtraction)
-- the calculated neutral baseline
-- FPS, face detected, and related stats
-
-With `DEBUG = true` in [`lib/debug.ts`](lib/debug.ts), the pose signal viz (and face mesh / direction label) appear when Tracking Info is open; they use calibrated values after calibration completes.
-
-### Why calibrate per user?
-
-MediaPipe's facial transformation matrix is a Procrustes fit to a canonical 3D face, so its Euler angles are relative to that model, not to "this person looking at this screen." A global zero of `(0, 0)` would assume identical camera geometry, seating posture, anatomy, and session setup for everyone. In practice, laptop webcams sit below eye level, people sit differently, and face shape varies. Per-user calibration makes zero mean "looking comfortably at the screen right now," which is what later directional controls will need.
-
-## Milestone 3: Head orientation
-
-Open the webcam in the browser, detect one face, and estimate head orientation from MediaPipe Face Landmarker’s facial transformation matrix.
-
-The matrix is a weighted Procrustes alignment of the canonical 3D face to the detected face (scale + rotation + translation). The app recovers the rotation with SVD and converts it to intrinsic Tait-Bryan YXZ angles. Values are shown in degrees; directional classification (Milestone 5) is applied only after calibration.
-
-Sign convention (after correcting for the mirrored selfie canvas):
-
-- Positive yaw: looking left
-- Positive pitch: looking up
-- Positive roll: tilting clockwise from the camera’s view
-
-With `DEBUG = true` in [`lib/debug.ts`](lib/debug.ts), a top-right debug panel shows raw yaw (horizontal bar) and pitch (vertical bar) with a zero crosshair, current marker, and recent unsmoothed history trail when Tracking Info is open.
-
-The Face Landmarker model is loaded in the browser from MediaPipe’s CDN.
-
-## Milestone 2: One-face Face Landmarker
-
-Open the webcam, detect one face with MediaPipe Tasks Face Landmarker, and draw the face mesh over the live feed.
-
-## Milestone 1: Webcam feed
-
-Open the webcam and display the live feed in the browser.
 
 ### LATER:
 
